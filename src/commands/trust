@@ -34,7 +34,7 @@ invoke(){
   echo "the 'Primary key fingerprint' of the key. You need to check that against the key fingerprint"
   echo "that the key's owner gives you."
   echo
-  echo "(If they're using simplekey too, they can run `simplekey fingerprint` to list it."
+  echo "(If they're using egpg too, they can run `egpg fingerprint` to list it."
   echo
 
   $GNUPG --sign-key "${key_name}"

@@ -25,12 +25,12 @@ print_help(){
 invoke(){
   if [ -z $command_name ]; then
     echo
-    echo "'simplekey' is a wrapper around gnupg to simplify its operations."
+    echo "'egpg' is a wrapper around gnupg to simplify its operations."
     echo "Generally speaking, you'll want to 'seal' files before sending them to people,"
     echo "and 'open' files you've received."
     echo
 
-    for command in $(ls ${simplekey_root}/commands/); do
+    for command in $(ls ${egpg_root}/commands/); do
       subcommand_name=${command}
       print_help $command
       echo

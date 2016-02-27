@@ -1,5 +1,19 @@
 #!/usr/bin/env sh
 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see
+# <http://www.gnu.org/licenses/>.
+
 GNUPGHOME="${GNUPGHOME:-$(gpgconf --list-dirs | grep ^homedir | sed 's/^[^:]*://')}"
 
 colon_field(){
@@ -32,29 +46,29 @@ if [ -z $MY_KEY ]; then
 fi
 
 #Dispatch the command - commands are listed explicitly to avoid errors
-simplekey_root=$(dirname $0)
+egpg_root=$(dirname $0)
 find_subcommand() {
   case $1 in
     (seal)
       subcommand_name="seal"
-      subcommand_path="${simplekey_root}/commands/seal" ;;
+      subcommand_path="${egpg_root}/commands/seal" ;;
     (open)
       subcommand_name="open"
-      subcommand_path="${simplekey_root}/commands/open" ;;
+      subcommand_path="${egpg_root}/commands/open" ;;
     (generate)
       subcommand_name="generate"
-      subcommand_path="${simplekey_root}/commands/generate" ;;
+      subcommand_path="${egpg_root}/commands/generate" ;;
     (fingerprint)
       subcommand_name="fingerprint"
-      subcommand_path="${simplekey_root}/commands/fingerprint" ;;
+      subcommand_path="${egpg_root}/commands/fingerprint" ;;
     (help)
       subcommand_name="help"
-      subcommand_path="${simplekey_root}/commands/help" ;;
+      subcommand_path="${egpg_root}/commands/help" ;;
     (*)
       echo "Unknown command: ${subcommand}"
       echo
       subcommand_name=""
-      subcommand_path="${simplekey_root}/commands/help" ;;
+      subcommand_path="${egpg_root}/commands/help" ;;
   esac
 }
 
