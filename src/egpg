@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,6 +15,13 @@
 # <http://www.gnu.org/licenses/>.
 
 GNUPGHOME="${GNUPGHOME:-$(gpgconf --list-dirs | grep ^homedir | sed 's/^[^:]*://')}"
+
+### dev
+export GNUPGHOME="$(pwd)/.gnupg"
+if [[ ! -d $GNUPGHOME ]]; then
+    mkdir -p $GNUPGHOME
+    chmod 700 $GNUPGHOME
+fi
 
 colon_field(){
   echo $2 | cut -d: -f${1}
@@ -37,9 +44,6 @@ get_my_key(){
 }
 get_my_key
 
-#echo $MY_KEY
-#echo $GNUPGHOME
-
 if [ -z $MY_KEY ]; then
   echo "Hm. I can't find a secret key for you - this isn't going to be very useful until you get one set up."
   echo "Try: $0 help generate"
@@ -49,22 +53,22 @@ fi
 egpg_root=$(dirname $0)
 find_subcommand() {
   case $1 in
-    (seal)
+    seal)
       subcommand_name="seal"
       subcommand_path="${egpg_root}/commands/seal" ;;
-    (open)
+    open)
       subcommand_name="open"
       subcommand_path="${egpg_root}/commands/open" ;;
-    (generate)
+    generate)
       subcommand_name="generate"
       subcommand_path="${egpg_root}/commands/generate" ;;
-    (fingerprint)
+    fingerprint)
       subcommand_name="fingerprint"
       subcommand_path="${egpg_root}/commands/fingerprint" ;;
-    (help)
+    help)
       subcommand_name="help"
       subcommand_path="${egpg_root}/commands/help" ;;
-    (*)
+    *)
       echo "Unknown command: ${subcommand}"
       echo
       subcommand_name=""
@@ -102,5 +106,3 @@ shift
 find_subcommand $subcommand
 source $subcommand_path
 run "$@"
-
-# vim: set ft=sh
