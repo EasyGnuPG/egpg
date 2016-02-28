@@ -35,79 +35,43 @@ validate(){
 }
 
 invoke(){
-
-  echo "Creating the base key - you'll be asked for a password. Make it a good one."
-  echo "  The generation process itself may take a few minutes."
-
-  #The tabs below are important: sh here docs trim tabs, not spaces
-  $GNUPG --batch --gen-key <<-PARAM
-	Key-Type: RSA
-	Key-Length: 4096
-	Key-Usage: encrypt,sign,auth
-	Name-Real: $real_name
-	Name-Comment: $comment
-	Name-Email: $email
-	Expire-Date: 0
-	Preferences: SHA512 SHA384 SHA256 SHA224 AES256 AES192 AES CAST5 ZLIB BZIP2 ZIP Uncompressed
-	%ask-passphrase
-	%commit
+  echo "Creating the key - you'll be asked for a password. Make it a good one."
+  $GNUPG -q --batch --gen-key <<-PARAM
+Key-Type: RSA
+Key-Length: 4096
+Key-Usage: encrypt,sign,auth
+Name-Real: $real_name
+Name-Comment: $comment
+Name-Email: $email
+Expire-Date: 0
+Preferences: SHA512 SHA384 SHA256 SHA224 AES256 AES192 AES CAST5 ZLIB BZIP2 ZIP Uncompressed
+%ask-passphrase
+%commit
 PARAM
+  [[ $? != 0 ]] && return 1
 
-  if [ $? != 0 ]; then
-    return 1
-  fi
-
-  echo
-  echo "Now we're going to set up some sub keys, so that you don't have to use the base key day-to-day"
-  echo "  You'll be asked for your password from before."
-  echo
-  echo "There'll be lots of output now..."
-  echo
-
-  #The tabs below are important: sh here docs trim tabs, not spaces
-  $GNUPG --command-fd=0 --edit-key $email <<-COMMANDS
-	addkey
-	4
-	4096
-	2y
-	addkey
-	6
-	4096
-	2y
-        save
-COMMANDS
-
+  # set up some sub keys, in order not to use the base key day-to-day
+  local COMMANDS=$(echo "addkey|4|4096|2y|addkey|6|4096|2y|save" | tr '|' "\n")
+  script -c "$GNUPG --command-fd=0 --edit-key $email <<< \"$COMMANDS\"" >/dev/null
   RETVAL=$?
 
+  # generate a revokation certificate
   get_my_key
-
   revoke_path="${GNUPGHOME}/${MY_KEY}-revoke.gpg.asc"
   echo $revoke_path
+  COMMANDS=$(echo "y|1|Revocation generated along with key ahead of need.|y" | tr '|' "\n")
+  script -c "$GNUPG --command-fd=0 --output \"${revoke_path}\" --gen-revoke $email <<< \"$COMMANDS\"" >/dev/null
+  [[ $? -ne 0 ]] && RETVAL=$?
 
-  $GNUPG --command-fd=0 --output "${revoke_path}" --gen-revoke $email <<-COMMANDS
-        y
-        1
-        Revocation generated along with key ahead of need.
-
-        y
-COMMANDS
-
-  if [ $RETVAL -ne 0 ]; then
-    RETVAL=$?
-  fi
-
-  #For development purposes
-  send_command= "$GNUPG --keyserver hkp://keys.gnupg.net --send-keys $email"
-  if [ $DONT_SEND = "yes" ]; then
-    echo "Not actually sending key..."
-    echo "Would do: $send_command"
-  else
-    $send_command
-  fi
-
-  if [ $RETVAL -ne 0 ]; then
-    RETVAL=$?
-  fi
+#  #For development purposes
+#  send_command= "$GNUPG --keyserver hkp://keys.gnupg.net --send-keys $email"
+#  if [ $DONT_SEND = "yes" ]; then
+#    echo "Not actually sending key..."
+#    echo "Would do: $send_command"
+#  else
+#    $send_command
+#  fi
+#  [[ $? -ne 0 ]] && RETVAL=$?
 
   return $RETVAL
 }
