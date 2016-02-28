@@ -27,7 +27,7 @@ The philosophic goals here are these:
 
 ## Requirements
 
-You'll need gnupg2 installed. Most Linux distros have some variant of
+You'll need `gpg2` installed. Most Linux distros have some variant of
 
 `apt-get install gnupg`
 
@@ -39,8 +39,11 @@ Or else install the full [GPGTools][2] suite.
 
 Whatever package you install will need to include `gpg` and `gpgconf`.
 
-You'll also need `sh`, `grep` and `sed`. I only mention that because
-the requirements have been made intentionally as light as possible.
+You'll also need [haveged][3] which will improve greatly the speed of
+generating new gpg keys. In Debian based distros it can be installed with:
+
+`apt-get install haveged`
+
 
 ## Usage:
 
@@ -92,3 +95,4 @@ I'm eagerly hoping for outside review and contribution to this project.
 
 [1]: http://brew.sh/
 [2]: https://gpgtools.org/
+[3]: http://www.issihosts.com/haveged/

@@ -50,7 +50,22 @@ get_passphrase() {
     done
 }
 
+haveged_start() {
+    [[ -z "$(ps ax | grep -v grep | grep haveged)" ]] || return
+    echo "
+Starting haveged which will greatly improve the speed of creating
+a new key, by improving the entropy generation of the system.
+"
+    sudo haveged -w 1024
+    HAVEGED_STARTED="true"
+}
+haveged_stop() {
+    [[ -z $HAVEGED_STARTED ]] && return
+    sudo killall haveged
+}
+
 invoke(){
+    haveged_start
     echo -e "\nCreating a new key - you'll be asked for a passphrase. Make it a good one.\n"
     get_passphrase
 
@@ -89,6 +104,8 @@ PARAM
 #    $send_command
 #  fi
 #  [[ $? -ne 0 ]] && RETVAL=$?
+
+  haveged_stop
 
   return $RETVAL
 }
