@@ -80,20 +80,18 @@ Expire-Date: 0
 Preferences: SHA512 SHA384 SHA256 SHA224 AES256 AES192 AES CAST5 ZLIB BZIP2 ZIP Uncompressed
 Passphrase: $PASSPHRASE
 PARAM
-  [[ $? != 0 ]] && return 1
+  [[ $? -ne 0 ]] && return 1
 
   # set up some sub keys, in order not to use the base key day-to-day
   local COMMANDS=$(echo "addkey|4|4096|2y|addkey|6|4096|2y|save" | tr '|' "\n")
-  script -c "echo -e \"$PASSPHRASE\n$COMMANDS\" | $GNUPG --batch --passphrase-fd=0 --command-fd=0 --edit-key $email" >/dev/null
-  RETVAL=$?
+  script -c "echo -e \"$PASSPHRASE\n$COMMANDS\" | $GNUPG --batch --passphrase-fd=0 --command-fd=0 --edit-key $email" /dev/null >/dev/null
 
   # generate a revokation certificate
   get_my_key
   revoke_path="${GNUPGHOME}/${MY_KEY}-revoke.gpg.asc"
   COMMANDS=$(echo "y|1|Revocation generated along with key ahead of need.||y" | tr '|' "\n")
-  script -c "echo -e \"$COMMANDS\" | $GNUPG --command-fd=0 --output $revoke_path --gen-revoke $email" >/dev/null
-  [[ $? -ne 0 ]] && RETVAL=$? && exit 1
-  echo "Revocation certificate: $revoke_path"
+  script -c "$GNUPG --command-fd=0 --output $revoke_path --gen-revoke $email <<< \"$COMMANDS\" " /dev/null >/dev/null
+  [[ -f $revoke_path ]] && echo "Revocation certificate: $revoke_path"
 
 #  #For development purposes
 #  send_command= "$GNUPG --keyserver hkp://keys.gnupg.net --send-keys $email"
@@ -103,11 +101,8 @@ PARAM
 #  else
 #    $send_command
 #  fi
-#  [[ $? -ne 0 ]] && RETVAL=$?
 
   haveged_stop
-
-  return $RETVAL
 }
 
 success(){
