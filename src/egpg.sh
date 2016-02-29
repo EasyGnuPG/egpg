@@ -149,19 +149,20 @@ egpg:  EasyGnuPG  v0.1    ( https://github.com/dashohoxha/egpg )
 
 cmd_help() {
     cat <<-_EOF
+EasyGnuPG is a wrapper around GnuPG to simplify its operations.
 
 Usage: $PROGRAM <command> [<options>]
 
 Commands and their options are listed below.
+
+    key-gen [<email> <real-name>]
+        Create a new GPG key.
 
     help
         Show this help text.
 
     version
         Show version information.
-
-    key-gen [<email> <real-name>]
-        Create a new key for use with GPG.
 
 More information may be found in the egpg(1) man page.
 
