@@ -149,14 +149,17 @@ egpg:  EasyGnuPG  v0.1    ( https://github.com/dashohoxha/egpg )
 
 cmd_help() {
     cat <<-_EOF
+
+Usage: $0 <command> [<options>]
+
 EasyGnuPG is a wrapper around GnuPG to simplify its operations.
-
-Usage: $PROGRAM <command> [<options>]
-
 Commands and their options are listed below.
 
     key-gen [<email> <real-name>]
         Create a new GPG key.
+
+    key-id,fingerprint,fp
+        Show the id (fingerprint) of the key.
 
     help
         Show this help text.
@@ -222,7 +225,13 @@ _EOF
     #  else
     #    $send_command
     #  fi
+}
 
+cmd_fingerprint() {
+    get_my_key
+    [[ -z $MY_KEY ]] && echo "No key found." && return 1
+    echo "The fingerprint of your key is:"
+    colon_field 10 $("$GPG" --with-colons --fingerprint $MY_KEY | grep '^fpr') | sed 's/..../\0 /g'
 }
 
 #
@@ -238,8 +247,9 @@ customize_file="$EGPG_DIR/customize.sh"
 run_cmd() {
     local cmd="$1" ; shift
     case "$cmd" in
-        key-gen)     cmd_key_gen "$@" ;;
-        *)           try_ext_cmd $cmd "$@" ;;
+        key-gen)                cmd_key_gen "$@" ;;
+        key-id|fp|fingerprint)  cmd_fingerprint "$@" ;;
+        *)                      try_ext_cmd $cmd "$@" ;;
     esac
 
     # cleanup the temporary workdir, if it is still there
