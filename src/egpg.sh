@@ -161,6 +161,15 @@ Commands and their options are listed below.
     key-id,fingerprint,fp
         Show the id (fingerprint) of the key.
 
+    seal <file> [<recipient>+]
+        Sign and encrypt a file to at least one recipient.
+        The resulting sealed file will have the extension '.asc'
+
+    open <file>
+        Decrypt and verify the signature of the given file.
+        The file has to end with '.asc' and the output will have
+        that extension stripped.
+
     revoke [<revocation-certificate.gpg.asc>]
         Cancel the key by publishing the given revocation certificate.
 
@@ -246,9 +255,40 @@ to generate a new one. Are you sure about this?" || return 1
     [[ -n $KEYSERVER ]] && "$GPG" --keyserver $KEYSERVER --send-keys $MY_KEY
 }
 
+cmd_seal() {
+    local file="$1" ; shift
+    [[ -z "$file" ]] && fail "Usage: $(basename "$0") seal <file> [<recipient>+]"
+    [[ -f "$file" ]] || fail "Cannot find file '$file'"
+
+    # get recipients
+    get_my_key
+    local recipients="--hidden-recipient $MY_KEY"
+    while [[ -n "$1" ]]; do
+        recipients="$recipients --recipient $1"
+    done
+
+    # sign and encrypt
+    "$GPG" --quiet --auto-key-locate=local,cert,keyserver,pka \
+        $recipients --sign --encrypt --armor "$file"
+}
+
+cmd_open() {
+    local file="$1" ; shift
+    [[ -z "$file" ]] && fail "Usage: $(basename "$0") open <file>"
+    [[ -f "$file" ]] || fail "Cannot find file '$file'"
+
+    # decrypt and verify
+    local output=${file%.asc}
+    local keyserver=${KEYSERVER:-hkp://keys.gnupg.net}
+    "$GPG" --keyserver $keyserver \
+        --keyserver-options auto-key-retrieve,verbose,honor-keyserver-url \
+        --output "$output" --decrypt "$file"
+}
+
 #
 # END subcommand functions
 #
+
 
 # The file 'customize.sh' can be used to redefine
 # and customize some functions, without having to
@@ -256,17 +296,17 @@ to generate a new one. Are you sure about this?" || return 1
 customize_file="$EGPG_DIR/customize.sh"
 [[ -f "$customize_file" ]] && source "$customize_file"
 
+
 run_cmd() {
     local cmd="$1" ; shift
     case "$cmd" in
         key-gen)                cmd_key_gen "$@" ;;
         key-id|fp|fingerprint)  cmd_fingerprint "$@" ;;
         revoke)                 cmd_revoke "$@" ;;
+        seal)                   cmd_seal "$@" ;;
+        open)                   cmd_open "$@" ;;
         *)                      try_ext_cmd $cmd "$@" ;;
     esac
-
-    # cleanup the temporary workdir, if it is still there
-    [[ -n "$WORKDIR" ]] && rm -rf "$WORKDIR"
 }
 
 try_ext_cmd() {
