@@ -116,9 +116,9 @@ haveged_start() {
     [[ -z "$(ps ax | grep -v grep | grep haveged)" ]] || return
     echo "
 Starting haveged which will greatly improve the speed of creating
-a new key, by improving the entropy generation of the system.
-"
+a new key, by improving the entropy generation of the system."
     sudo haveged -w 1024
+    echo
     HAVEGED_STARTED="true"
 }
 haveged_stop() {
@@ -161,6 +161,9 @@ Commands and their options are listed below.
     key-id,fingerprint,fp
         Show the id (fingerprint) of the key.
 
+    revoke [<revocation-certificate.gpg.asc>]
+        Cancel the key by publishing the given revocation certificate.
+
     help
         Show this help text.
 
@@ -185,6 +188,7 @@ cmd_key_gen() {
         && fail "There is already a key for '$email'"
 
     [[ -n "$real_name" ]] || read -e -p "Real Name to be associated with the key: " real_name
+    real_name=${real_name:-anonymous}
 
     haveged_start
     get_passphrase
@@ -212,19 +216,13 @@ _EOF
     # generate a revokation certificate
     echo "Creating a revocation certificate."
     get_my_key
-    revoke_path="${GNUPGHOME}/${MY_KEY}-revoke.gpg.asc"
+    revoke_cert="${GNUPGHOME}/${MY_KEY}-revoke.gpg.asc"
     COMMANDS=$(echo "y|1|Revocation generated along with key ahead of need.||y" | tr '|' "\n")
-    script -c "$GPG --command-fd=0 --output $revoke_path --gen-revoke $email <<< \"$COMMANDS\" " /dev/null >/dev/null
-    [[ -f $revoke_path ]] && echo -e "Revocation certificate saved at: \n    $revoke_path"
+    script -c "$GPG --command-fd=0 --output $revoke_cert --gen-revoke $email <<< \"$COMMANDS\" " /dev/null >/dev/null
+    [[ -f $revoke_cert ]] && echo -e "Revocation certificate saved at: \n    $revoke_cert"
 
-    #  #For development purposes
-    #  send_command= "$GPG --keyserver hkp://keys.gnupg.net --send-keys $email"
-    #  if [ $DONT_SEND = "yes" ]; then
-    #    echo "Not actually sending key..."
-    #    echo "Would do: $send_command"
-    #  else
-    #    $send_command
-    #  fi
+    # send the key to keyserver
+    [[ -n $KEYSERVER ]] && "$GPG" --keyserver $KEYSERVER --send-keys $MY_KEY
 }
 
 cmd_fingerprint() {
@@ -232,6 +230,20 @@ cmd_fingerprint() {
     [[ -z $MY_KEY ]] && echo "No key found." && return 1
     echo "The fingerprint of your key is:"
     colon_field 10 $("$GPG" --with-colons --fingerprint $MY_KEY | grep '^fpr') | sed 's/..../\0 /g'
+}
+
+cmd_revoke() {
+    local revoke_cert="$1"
+    get_my_key
+    [[ -n "$revoke_cert" ]] || revoke_cert="${GNUPGHOME}/${MY_KEY}-revoke.gpg.asc"
+    [[ -f "$revoke_cert" ]] || fail "Revocation certificate not found: $revoke_cert"
+
+    yesno "
+Revocation will make your current key useless. You'll need
+to generate a new one. Are you sure about this?" || return 1
+
+    "$GPG" --import "$revoke_cert"
+    [[ -n $KEYSERVER ]] && "$GPG" --keyserver $KEYSERVER --send-keys $MY_KEY
 }
 
 #
@@ -249,6 +261,7 @@ run_cmd() {
     case "$cmd" in
         key-gen)                cmd_key_gen "$@" ;;
         key-id|fp|fingerprint)  cmd_fingerprint "$@" ;;
+        revoke)                 cmd_revoke "$@" ;;
         *)                      try_ext_cmd $cmd "$@" ;;
     esac
 
@@ -297,6 +310,10 @@ config() {
 # GnuPG options
 GPG_OPTS=
 
+# Push local changes to the keyserver.
+# Leave it empty (or comment out) to disable sending.
+#KEYSERVER=hkp://keys.gnupg.net
+
 # Enable debug output
 DEBUG=
 _EOF
@@ -304,6 +321,7 @@ _EOF
 
     # set defaults, if some configurations are missing
     GPG_OPTS=${GPG_OPTS:-}
+    #KEYSERVER=${KEYSERVER:-hkp://keys.gnupg.net}
     DEBUG=${DEBUG:-}
 }
 
