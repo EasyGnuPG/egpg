@@ -341,7 +341,7 @@ try_ext_cmd() {
         cmd_$cmd "$@"
         return
     fi
-    echo "Unknown command '$cmd'. Try: $PROGRAM help."
+    echo -e "Unknown command '$cmd'.\nTry:  $0 help"
 }
 
 config() {
