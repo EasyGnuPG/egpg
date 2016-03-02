@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-dark.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <title>Easy GnuPG by dashohoxha</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>Easy GnuPG</h1>
+        <h2>Easy GnuPG, shell scripts to make GnuPG more accessible and easier to use.</h2>
+
+        <section id="downloads">
+          <a href="https://github.com/dashohoxha/egpg/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/dashohoxha/egpg/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/dashohoxha/egpg" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <p>There are scads of options presented by GnuPG, which are all part of
+making it the flexible and powerful an encryption framework that it
+is. But it's extremely complicated to get started with, and that quite
+reasonably puts people off.</p>
+
+<p><strong>egpg</strong> is a wrapper script that tries to simplify the process of
+using GnuPG. In order to simplify things, it is opinionated about the
+"right" way to use GnuPG.</p>
+
+<p>The philosophic goals here are these:</p>
+
+<ol>
+<li><p>Make GPG as easy to use as possible. The more people using strong
+encryption, the better for everyone. One of the big hang ups right
+now is that the GPG tools are difficult to use - moreso than they
+strictly have to be.</p></li>
+<li><p>Make the interface itself auditable. This is why this is presented
+as shell scripts rather than a web service or a GUI. If you're
+concerned about what <strong>egpg</strong> does, open up the files and read
+them, or have someone you trust read them.</p></li>
+<li><p>Build a guide forward. The simplified interface provided here
+should be good to get started with, and with luck many users will
+find they never need anything beyond what <strong>egpg</strong> provides. If you
+find that you need to do something more, though, the goal is that
+you have a foundation to start with, and some direction on how to
+proceed.</p></li>
+</ol>
+
+<h2>
+<a id="requirements" class="anchor" href="#requirements" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Requirements</h2>
+
+<ul>
+<li>
+<p>You'll need <code>gpg2</code> installed. Most Linux distros have some variant
+of</p>
+
+<p><code>apt-get install gnupg</code></p>
+
+<p>Mac OS X users with <a href="http://brew.sh/">homebrew</a> installed can do</p>
+
+<p><code>brew install gnupg2</code></p>
+
+<p>Or else install the full <a href="https://gpgtools.org/">GPGTools</a> suite.</p>
+
+<p>Whatever package you install will need to include <code>gpg</code> and
+<code>gpgconf</code>.</p>
+</li>
+<li>
+<p>You'll also need <a href="http://www.issihosts.com/haveged/">haveged</a> which will improve greatly the speed
+of generating new gpg keys. In Debian based distros it can be
+installed with:</p>
+
+<p><code>apt-get install haveged</code></p>
+</li>
+<li>
+<p>It is also nice to have <a href="https://gaffer.ptitcanardnoir.org/intrigeri/code/parcimonie/">parcimonie</a> installed (although not required):</p>
+
+<p><code>apt-get install parcimonie</code></p>
+</li>
+</ul>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage:</h2>
+
+<p>*<em>egpg</em> presents a series of subcommands. At present there are:</p>
+
+<pre><code>./egpg help
+./egpg key-gen &lt;email&gt; [&lt;name&gt;]
+./egpg fingerprint
+./egpg revoke [&lt;revocation-certificate&gt;]
+./egpg seal &lt;file&gt; [&lt;recipient&gt;+]
+./egpg open &lt;file&gt;
+</code></pre>
+
+<p>Those are the day to day "sign-encrypt" and "decrypt-verify"
+operations.</p>
+
+<p>Planned are:</p>
+
+<pre><code>./egpg init
+./egpg trust &lt;users key&gt;
+</code></pre>
+
+<p>These should be the minimal set required to use GPG effectively.</p>
+
+<p>Any suggestions or discussions about supported operations, simplified
+terminology, etc. is wellcome.</p>
+      </section>
+    </div>
+
+    
+  </body>
+</html>
