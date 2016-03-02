@@ -1,19 +1,17 @@
-**egpg** is set of shell scripts to try to simplify what can be the
-very confusing process of using GnuPG.
-
-In order to simplify things, it is opinionated about the "right" way
-to use GnuPG.
-
-There are scads of options presented by OpenPGP, which are all part of
+There are scads of options presented by GnuPG, which are all part of
 making it the flexible and powerful an encryption framework that it
 is. But it's extremely complicated to get started with, and that quite
 reasonably puts people off.
 
+**egpg** is a wrapper script that tries to simplify the process of
+using GnuPG. In order to simplify things, it is opinionated about the
+"right" way to use GnuPG.
+
 The philosophic goals here are these:
 
-1. Make PGP as easy to use as possible. The more people using strong
+1. Make GPG as easy to use as possible. The more people using strong
    encryption, the better for everyone. One of the big hang ups right
-   now is that the PGP tools are difficult to use - moreso than they
+   now is that the GPG tools are difficult to use - moreso than they
    strictly have to be.
 
 2. Make the interface itself auditable. This is why this is presented
@@ -75,7 +73,7 @@ operations.
 Planned are:
 
 ```
-./egpg configure
+./egpg init
 ./egpg trust <users key>
 ```
 
