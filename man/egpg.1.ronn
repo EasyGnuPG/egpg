@@ -1,0 +1,163 @@
+egpg(1) -- Easy GnuPG
+=====================
+
+## SYNOPSIS
+
+   `egpg` <COMMAND> [<ARGS>...] [<OPTIONS>...]
+
+
+## DESCRIPTION
+
+   There are scads of options presented by GnuPG, which are all part
+   of making it the flexible and powerful an encryption framework that
+   it is. But it's extremely complicated to get started with, and that
+   quite reasonably puts people off.
+
+   **egpg** is a wrapper script that tries to simplify the process of
+   using GnuPG. In order to simplify things, it is opinionated about
+   the "right" way to use GnuPG.
+
+
+## COMMANDS
+
+* `key-gen` [<email> <name>]
+
+    Create a new GPG key.
+
+* `key-id`,`fingerprint`,`fp`
+
+    Show the id (fingerprint) of the key.
+
+* `seal` <file> [<recipient>...]
+
+    Sign and encrypt a file to at least one recipient.  The resulting
+    sealed file will have the extension `.asc`
+
+* `open` <file>
+
+    Decrypt and verify the signature of the given file.  The file has
+    to end with `.asc` and the output will have that extension
+    stripped.
+
+* `revoke` [<revocation-certificate>]
+
+    Cancel the key by publishing the given revocation certificate.
+
+* `help`
+
+    Show the help text.
+
+* `version`
+
+    Show version information.
+
+
+## FILES
+
+   `~/.egpg/`
+          The default egpg directory.
+
+   `~/.egpg/.gnupg`
+          The GnuPG directory.
+
+   `~/.egpg/config.sh`
+          The configuration file.
+
+   `~/.egpg/customize.sh`
+          Optional customization file.
+
+
+## ENVIRONMENT VARIABLES
+
+   `EGPG_DIR`
+          Overrides the default egpg directory.
+
+   `GNUPGHOME`
+          The directory used by GnuPG.
+
+
+## CUSTOMIZATION
+
+The file `$EGPG_DIR/customize.sh` can be used to redefine and
+customize some functions, without having to touch the code of the main
+script.  Also, external commands can be customized (or new commands
+can be defined) by adding the file `$EGPG_DIR/cmd_command.sh`, which
+contains the function `cmd_command() { . . . }`.
+
+In general, for an external command the script will first look for
+`$EGPG_DIR/cmd_command.sh`, then for
+`$LIB/ext/$PLATFORM/cmd_command.sh`, and finally for
+`$LIB/ext/cmd_command.sh`.  The first that is found is loaded and
+used.
+
+
+## SIMPLE EXAMPLE
+
+   Some basic usage is demonstrated on the examples below.
+
+   user@laptop:~$ `rm -rf ~/.egpg/`
+
+   user@laptop:~$ `egpg key-gen test@example.org "Test User"`
+
+    Creating a new key.
+
+
+    Starting haveged which will greatly improve the speed of creating
+    a new key, by improving the entropy generation of the system.
+    [sudo] password for user: 
+
+    Enter passphrase for the new key: 
+    Retype the passphrase of the key: 
+    gpg: key FE64FE7D marked as ultimately trusted
+
+    Excellent! You created a fresh GPG key. Here's what it looks like:
+    sec   4096R/FE64FE7D 2016-03-02
+    uid                  Test User <test@example.org>
+    ssb   4096R/C05C59E9 2016-03-02 [expires: 2018-03-02]
+    ssb   4096R/E6AB3C1C 2016-03-02 [expires: 2018-03-02]
+
+    Creating a revocation certificate.
+    Revocation certificate saved at: 
+        /home/user/.egpg/.gnupg/B9E3B53BFE64FE7D-revoke.gpg.asc
+
+   user@laptop:~$ `egpg fingerprint`
+
+    The fingerprint of your key is:
+    1088 6787 6658 FD04 4963 8D56 B9E3 B53B FE64 FE7D
+
+   user@laptop:~$ `echo "This is a test message." > test.txt`
+
+   user@laptop:~$ `egpg seal test.txt 8D6414F9`
+
+   user@laptop:~$ `egpg open test.txt.asc`
+
+   user@laptop:~$ `egpg revoke`
+
+   user@laptop:~$ `rm -rf ~/.egpg/`
+
+
+## AUTHOR
+
+   Copyright (C) 2016  Dashamir Hoxha (dashohoxha@gmail.com). The
+   code is on GitHub at https://github.com/dashohoxha/egpg.
+
+
+## COPYLEFT
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+## SEE ALSO
+
+   `gpg2`(1), `haveged`(8), `parcimonie`(1p).
+

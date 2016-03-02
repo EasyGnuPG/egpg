@@ -1,0 +1,228 @@
+.\" generated with Ronn/v0.7.3
+.\" http://github.com/rtomayko/ronn/tree/0.7.3
+.
+.TH "EGPG" "1" "March 2016" "dashohoxha" "Easy GnuPG"
+.
+.SH "NAME"
+\fBegpg\fR \- Easy GnuPG
+.
+.SH "SYNOPSIS"
+\fBegpg\fR \fICOMMAND\fR [\fIARGS\fR\.\.\.] [\fIOPTIONS\fR\.\.\.]
+.
+.SH "DESCRIPTION"
+There are scads of options presented by GnuPG, which are all part of making it the flexible and powerful an encryption framework that it is\. But it\'s extremely complicated to get started with, and that quite reasonably puts people off\.
+.
+.P
+\fBegpg\fR is a wrapper script that tries to simplify the process of using GnuPG\. In order to simplify things, it is opinionated about the "right" way to use GnuPG\.
+.
+.SH "COMMANDS"
+.
+.IP "\(bu" 4
+\fBkey\-gen\fR [\fIemail\fR \fIname\fR]
+.
+.IP
+Create a new GPG key\.
+.
+.IP "\(bu" 4
+\fBkey\-id\fR,\fBfingerprint\fR,\fBfp\fR
+.
+.IP
+Show the id (fingerprint) of the key\.
+.
+.IP "\(bu" 4
+\fBseal\fR \fIfile\fR [\fIrecipient\fR\.\.\.]
+.
+.IP
+Sign and encrypt a file to at least one recipient\. The resulting sealed file will have the extension \fB\.asc\fR
+.
+.IP "\(bu" 4
+\fBopen\fR \fIfile\fR
+.
+.IP
+Decrypt and verify the signature of the given file\. The file has to end with \fB\.asc\fR and the output will have that extension stripped\.
+.
+.IP "\(bu" 4
+\fBrevoke\fR [\fIrevocation\-certificate\fR]
+.
+.IP
+Cancel the key by publishing the given revocation certificate\.
+.
+.IP "\(bu" 4
+\fBhelp\fR
+.
+.IP
+Show the help text\.
+.
+.IP "\(bu" 4
+\fBversion\fR
+.
+.IP
+Show version information\.
+.
+.IP "" 0
+.
+.SH "FILES"
+\fB~/\.egpg/\fR
+.
+.IP "" 4
+.
+.nf
+
+      The default egpg directory\.
+.
+.fi
+.
+.IP "" 0
+.
+.P
+\fB~/\.egpg/\.gnupg\fR
+.
+.IP "" 4
+.
+.nf
+
+      The GnuPG directory\.
+.
+.fi
+.
+.IP "" 0
+.
+.P
+\fB~/\.egpg/config\.sh\fR
+.
+.IP "" 4
+.
+.nf
+
+      The configuration file\.
+.
+.fi
+.
+.IP "" 0
+.
+.P
+\fB~/\.egpg/customize\.sh\fR
+.
+.IP "" 4
+.
+.nf
+
+      Optional customization file\.
+.
+.fi
+.
+.IP "" 0
+.
+.SH "ENVIRONMENT VARIABLES"
+\fBEGPG_DIR\fR
+.
+.IP "" 4
+.
+.nf
+
+      Overrides the default egpg directory\.
+.
+.fi
+.
+.IP "" 0
+.
+.P
+\fBGNUPGHOME\fR
+.
+.IP "" 4
+.
+.nf
+
+      The directory used by GnuPG\.
+.
+.fi
+.
+.IP "" 0
+.
+.SH "CUSTOMIZATION"
+The file \fB$EGPG_DIR/customize\.sh\fR can be used to redefine and customize some functions, without having to touch the code of the main script\. Also, external commands can be customized (or new commands can be defined) by adding the file \fB$EGPG_DIR/cmd_command\.sh\fR, which contains the function \fBcmd_command() { \. \. \. }\fR\.
+.
+.P
+In general, for an external command the script will first look for \fB$EGPG_DIR/cmd_command\.sh\fR, then for \fB$LIB/ext/$PLATFORM/cmd_command\.sh\fR, and finally for \fB$LIB/ext/cmd_command\.sh\fR\. The first that is found is loaded and used\.
+.
+.SH "SIMPLE EXAMPLE"
+Some basic usage is demonstrated on the examples below\.
+.
+.P
+user@laptop:~$ \fBrm \-rf ~/\.egpg/\fR
+.
+.P
+user@laptop:~$ \fBegpg key\-gen test@example\.org "Test User"\fR
+.
+.IP "" 4
+.
+.nf
+
+Creating a new key\.
+
+
+Starting haveged which will greatly improve the speed of creating
+a new key, by improving the entropy generation of the system\.
+[sudo] password for user:
+
+Enter passphrase for the new key:
+Retype the passphrase of the key:
+gpg: key FE64FE7D marked as ultimately trusted
+
+Excellent! You created a fresh GPG key\. Here\'s what it looks like:
+sec   4096R/FE64FE7D 2016\-03\-02
+uid                  Test User <test@example\.org>
+ssb   4096R/C05C59E9 2016\-03\-02 [expires: 2018\-03\-02]
+ssb   4096R/E6AB3C1C 2016\-03\-02 [expires: 2018\-03\-02]
+
+Creating a revocation certificate\.
+Revocation certificate saved at:
+    /home/user/\.egpg/\.gnupg/B9E3B53BFE64FE7D\-revoke\.gpg\.asc
+.
+.fi
+.
+.IP "" 0
+.
+.P
+user@laptop:~$ \fBegpg fingerprint\fR
+.
+.IP "" 4
+.
+.nf
+
+The fingerprint of your key is:
+1088 6787 6658 FD04 4963 8D56 B9E3 B53B FE64 FE7D
+.
+.fi
+.
+.IP "" 0
+.
+.P
+user@laptop:~$ \fBecho "This is a test message\." > test\.txt\fR
+.
+.P
+user@laptop:~$ \fBegpg seal test\.txt 8D6414F9\fR
+.
+.P
+user@laptop:~$ \fBegpg open test\.txt\.asc\fR
+.
+.P
+user@laptop:~$ \fBegpg revoke\fR
+.
+.P
+user@laptop:~$ \fBrm \-rf ~/\.egpg/\fR
+.
+.SH "AUTHOR"
+Copyright (C) 2016 Dashamir Hoxha (dashohoxha@gmail\.com)\. The code is on GitHub at https://github\.com/dashohoxha/egpg\.
+.
+.SH "COPYLEFT"
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version\.
+.
+.P
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE\. See the GNU General Public License for more details\.
+.
+.P
+You should have received a copy of the GNU General Public License along with this program\. If not, see \fIhttp://www\.gnu\.org/licenses/\fR\.
+.
+.SH "SEE ALSO"
+\fBgpg2\fR(1), \fBhaveged\fR(8), \fBparcimonie\fR(1p)\.
