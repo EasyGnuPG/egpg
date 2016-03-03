@@ -36,13 +36,17 @@ GPG="gpg" ; which gpg2 &>/dev/null && GPG="gpg2"
 # BEGIN helper functions
 #
 
+gpg() {
+    "$GPG" "$@"
+}
+
 colon_field(){
   echo $2 | cut -d: -f${1}
 }
 
 get_my_key(){
-  MY_KEY=$(colon_field 3 $($GPG --gpgconf-list | grep ^default-key))
-  [[ -z $MY_KEY ]] && MY_KEY=$(colon_field 5 $($GPG --list-secret-keys --with-colons | grep ^sec | head -n 1))
+  MY_KEY=$(colon_field 3 $(gpg --gpgconf-list | grep ^default-key))
+  [[ -z $MY_KEY ]] && MY_KEY=$(colon_field 5 $(gpg --list-secret-keys --with-colons | grep ^sec | head -n 1))
 }
 
 get_passphrase() {
@@ -196,7 +200,7 @@ cmd_key_gen() {
     [[ -n "$email" ]] || read -e -p "Email to be associated with the key: " email
     [[ -z "$(echo $email | grep '@.*\.')" ]] \
         && fail "This email address ($email) does not appear to be valid (needs an @ and then a .)"
-    [[ -n "$("$GPG" -K "$email" 2>/dev/null | grep '^sec')" ]] \
+    [[ -n "$(gpg -K "$email" 2>/dev/null | grep '^sec')" ]] \
         && fail "There is already a key for '$email'"
 
     [[ -n "$real_name" ]] || read -e -p "Real Name to be associated with the key: " real_name
@@ -205,7 +209,7 @@ cmd_key_gen() {
     haveged_start
     get_passphrase
 
-    $GPG --quiet --batch --gen-key <<-_EOF
+    gpg --quiet --batch --gen-key <<-_EOF
 Key-Type: RSA
 Key-Length: 4096
 Key-Usage: encrypt,sign,auth
@@ -219,29 +223,29 @@ _EOF
 
     # set up some sub keys, in order not to use the base key day-to-day
     local COMMANDS=$(echo "addkey|4|4096|2y|addkey|6|4096|2y|save" | tr '|' "\n")
-    script -c "echo -e \"$PASSPHRASE\n$COMMANDS\" | $GPG --batch --passphrase-fd=0 --command-fd=0 --edit-key $email" /dev/null >/dev/null
+    script -c "echo -e \"$PASSPHRASE\n$COMMANDS\" | gpg --batch --passphrase-fd=0 --command-fd=0 --edit-key $email" /dev/null >/dev/null
     haveged_stop
 
     echo -e "\nExcellent! You created a fresh GPG key. Here's what it looks like:"
-    $GPG -K "$email"
+    gpg -K "$email"
 
     # generate a revokation certificate
     echo "Creating a revocation certificate."
     get_my_key
     revoke_cert="${GNUPGHOME}/${MY_KEY}-revoke.gpg.asc"
     COMMANDS=$(echo "y|1|Revocation generated along with key ahead of need.||y" | tr '|' "\n")
-    script -c "$GPG --command-fd=0 --output $revoke_cert --gen-revoke $email <<< \"$COMMANDS\" " /dev/null >/dev/null
+    script -c "gpg --command-fd=0 --output $revoke_cert --gen-revoke $email <<< \"$COMMANDS\" " /dev/null >/dev/null
     [[ -f $revoke_cert ]] && echo -e "Revocation certificate saved at: \n    $revoke_cert"
 
     # send the key to keyserver
-    [[ -n $KEYSERVER ]] && "$GPG" --keyserver $KEYSERVER --send-keys $MY_KEY
+    [[ -n $KEYSERVER ]] && gpg --keyserver $KEYSERVER --send-keys $MY_KEY
 }
 
 cmd_fingerprint() {
     get_my_key
     [[ -z $MY_KEY ]] && echo "No key found." && return 1
     echo "The fingerprint of your key is:"
-    colon_field 10 $("$GPG" --with-colons --fingerprint $MY_KEY | grep '^fpr') | sed 's/..../\0 /g'
+    colon_field 10 $(gpg --with-colons --fingerprint $MY_KEY | grep '^fpr') | sed 's/..../\0 /g'
 }
 
 cmd_revoke() {
@@ -254,8 +258,8 @@ cmd_revoke() {
 Revocation will make your current key useless. You'll need
 to generate a new one. Are you sure about this?" || return 1
 
-    "$GPG" --import "$revoke_cert"
-    [[ -n $KEYSERVER ]] && "$GPG" --keyserver $KEYSERVER --send-keys $MY_KEY
+    gpg --import "$revoke_cert"
+    [[ -n $KEYSERVER ]] && gpg --keyserver $KEYSERVER --send-keys $MY_KEY
 }
 
 cmd_seal() {
@@ -273,7 +277,7 @@ cmd_seal() {
 
     # sign and encrypt
     local keyserver=${KEYSERVER:-hkp://keys.gnupg.net}
-    "$GPG" --quiet --auto-key-locate=local,cert,keyserver,pka \
+    gpg --quiet --auto-key-locate=local,cert,keyserver,pka \
         --keyserver $keyserver $recipients \
         --sign --encrypt --armor "$file"
 }
@@ -286,7 +290,7 @@ cmd_open() {
     # decrypt and verify
     local output=${file%.asc}
     local keyserver=${KEYSERVER:-hkp://keys.gnupg.net}
-    "$GPG" --keyserver $keyserver \
+    gpg --keyserver $keyserver \
         --keyserver-options auto-key-retrieve,verbose,honor-keyserver-url \
         --output "$output" --decrypt "$file"
 }
