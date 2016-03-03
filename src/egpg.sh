@@ -29,15 +29,15 @@ export GNUPGHOME="$EGPG_DIR/.gnupg"
 LIBDIR="$(dirname "$0")"
 PLATFORM="$(uname | cut -d _ -f 1 | tr '[:upper:]' '[:lower:]')"
 
-GPG="gpg" ; which gpg2 &>/dev/null && GPG="gpg2"
-
 
 #
 # BEGIN helper functions
 #
 
+GPG="gpg" ; which gpg2 &>/dev/null && GPG="gpg2"
+
 gpg() {
-    "$GPG" "$@"
+    $GPG "$@"
 }
 
 colon_field(){
@@ -49,7 +49,7 @@ get_my_key(){
   [[ -z $MY_KEY ]] && MY_KEY=$(colon_field 5 $(gpg --list-secret-keys --with-colons | grep ^sec | head -n 1))
 }
 
-get_passphrase() {
+get_new_passphrase() {
     local passphrase passphrase_again
     while true; do
         read -r -p "Enter passphrase for the new key: " -s passphrase || return
@@ -63,6 +63,12 @@ get_passphrase() {
             echo "Error: the entered passphrases do not match."
         fi
     done
+}
+
+get_passphrase() {
+    [[ -z "$PASSPHRASE" ]] || return
+    read -r -p "Passphrase: " -s PASSPHRASE || return
+    [[ -t 0 ]] && echo
 }
 
 yesno() {
@@ -168,6 +174,9 @@ Commands and their options are listed below.
     key-id,fingerprint,fp
         Show the id (fingerprint) of the key.
 
+    key-rev-cert ["description"]
+        Generate a revocation certificate for the key.
+
     seal <file> [<recipient>+]
         Sign and encrypt a file to at least one recipient.
         The resulting sealed file will have the extension '.asc'
@@ -207,7 +216,7 @@ cmd_key_gen() {
     real_name=${real_name:-anonymous}
 
     haveged_start
-    get_passphrase
+    get_new_passphrase
 
     gpg --quiet --batch --gen-key <<-_EOF
 Key-Type: RSA
@@ -233,15 +242,21 @@ _EOF
     gpg -K "$email"
 
     # generate a revokation certificate
-    echo "Creating a revocation certificate."
-    get_my_key
-    revoke_cert="${GNUPGHOME}/${MY_KEY}-revoke.gpg.asc"
-    COMMANDS=$(echo "y|1|Revocation generated along with key ahead of need.||y" | tr '|' "\n")
-    script -c "gpg --command-fd=0 --output $revoke_cert --gen-revoke $email <<< \"$COMMANDS\" " /dev/null >/dev/null
-    [[ -f $revoke_cert ]] && echo -e "Revocation certificate saved at: \n    $revoke_cert"
+    cmd_key_rev_cert "This revocation certificate was generated when the key was created."
 
     # send the key to keyserver
     [[ -n $KEYSERVER ]] && gpg --keyserver $KEYSERVER --send-keys $MY_KEY
+}
+
+cmd_key_rev_cert() {
+    local description=${1:-"Key is being revoked"}
+    echo "Creating a revocation certificate."
+    get_my_key
+    revoke_cert="${GNUPGHOME}/${MY_KEY}-revoke.gpg.asc"
+    get_passphrase
+    local commands=$(echo "$PASSPHRASE|y|1|$description||y" | tr '|' "\n")
+    script -c "gpg --yes --command-fd=0 --passphrase-fd=0 --output $revoke_cert --gen-revoke $MY_KEY <<< \"$commands\" " /dev/null >/dev/null
+    [[ -f $revoke_cert ]] && echo -e "Revocation certificate saved at: \n    $revoke_cert"
 }
 
 cmd_fingerprint() {
@@ -318,6 +333,7 @@ run_cmd() {
         revoke)                 cmd_revoke "$@" ;;
         seal)                   cmd_seal "$@" ;;
         open)                   cmd_open "$@" ;;
+        key-rev-cert)           cmd_key_rev_cert "$@" ;;
         *)                      try_ext_cmd $cmd "$@" ;;
     esac
 }
