@@ -265,14 +265,17 @@ cmd_seal() {
 
     # get recipients
     get_my_key
-    local recipients="--hidden-recipient $MY_KEY"
+    local recipients="--recipient $MY_KEY"
     while [[ -n "$1" ]]; do
         recipients="$recipients --recipient $1"
+        shift
     done
 
     # sign and encrypt
+    local keyserver=${KEYSERVER:-hkp://keys.gnupg.net}
     "$GPG" --quiet --auto-key-locate=local,cert,keyserver,pka \
-        $recipients --sign --encrypt --armor "$file"
+        --keyserver $keyserver $recipients \
+        --sign --encrypt --armor "$file"
 }
 
 cmd_open() {
