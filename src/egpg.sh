@@ -155,9 +155,7 @@ platform_file="$LIBDIR/platform/$PLATFORM.sh"
 #
 
 cmd_version() {
-    echo "
-egpg:  EasyGnuPG  v0.5    ( https://github.com/dashohoxha/egpg )
-"
+    echo "egpg:  EasyGnuPG  v0.5    (hosted at: https://github.com/dashohoxha/egpg) "
 }
 
 cmd_help() {
@@ -255,8 +253,8 @@ cmd_key_rev_cert() {
     revoke_cert="${GNUPGHOME}/${MY_KEY}-revoke.gpg.asc"
     get_passphrase
     local commands=$(echo "$PASSPHRASE|y|1|$description||y" | tr '|' "\n")
-    script -c "gpg --yes --command-fd=0 --passphrase-fd=0 --output $revoke_cert --gen-revoke $MY_KEY <<< \"$commands\" " /dev/null >/dev/null
-    [[ -f $revoke_cert ]] && echo -e "Revocation certificate saved at: \n    $revoke_cert"
+    script -c "gpg --yes --command-fd=0 --passphrase-fd=0 --output \"$revoke_cert\" --gen-revoke $MY_KEY <<< \"$commands\" " /dev/null >/dev/null
+    if [[ -f "$revoke_cert" ]]; then  echo -e "Revocation certificate saved at: \n    \"$revoke_cert\"" ; fi
 }
 
 cmd_fingerprint() {
