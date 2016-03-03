@@ -212,17 +212,20 @@ cmd_key_gen() {
     gpg --quiet --batch --gen-key <<-_EOF
 Key-Type: RSA
 Key-Length: 4096
-Key-Usage: encrypt,sign,auth
+Key-Usage: encrypt,sign
 Name-Real: $real_name
 Name-Email: $email
-Expire-Date: 0
+Subkey-Type: RSA
+Subkey-Length: 4096
+Subkey-Usage: auth
+Expire-Date: 1y
 Preferences: SHA512 SHA384 SHA256 SHA224 AES256 AES192 AES CAST5 ZLIB BZIP2 ZIP Uncompressed
 Passphrase: $PASSPHRASE
 _EOF
     [[ $? -ne 0 ]] && return 1
 
     # set up some sub keys, in order not to use the base key day-to-day
-    local COMMANDS=$(echo "addkey|4|4096|2y|addkey|6|4096|2y|save" | tr '|' "\n")
+    local COMMANDS=$(echo "addkey|4|4096|1y|addkey|6|4096|1y|save" | tr '|' "\n")
     script -c "echo -e \"$PASSPHRASE\n$COMMANDS\" | gpg --batch --passphrase-fd=0 --command-fd=0 --edit-key $email" /dev/null >/dev/null
     haveged_stop
 
