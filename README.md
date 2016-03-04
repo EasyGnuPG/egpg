@@ -60,15 +60,19 @@ The philosophic goals here are these:
 
 ```
 ./egpg help
+
 ./egpg key-gen <email> [<name>]
 ./egpg fingerprint
 ./egpg revoke [<revocation-certificate>]
+
+./egpg sign <file>
+./egpg verify <file>
+
 ./egpg seal <file> [<recipient>+]
-./egpg open <file>
+./egpg open <file.sealed>
 ```
 
-Those are the day to day "sign-encrypt" and "decrypt-verify"
-operations.
+See also the manual page: http://dashohoxha.github.io/egpg/man/
 
 Planned are:
 
