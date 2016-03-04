@@ -155,7 +155,7 @@ platform_file="$LIBDIR/platform/$PLATFORM.sh"
 #
 
 cmd_version() {
-    echo "egpg:  EasyGnuPG  v0.5    (hosted at: https://github.com/dashohoxha/egpg) "
+    echo "egpg:  EasyGnuPG  v0.6    (hosted at: https://github.com/dashohoxha/egpg) "
 }
 
 cmd_help() {
