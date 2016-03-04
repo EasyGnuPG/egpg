@@ -118,7 +118,7 @@ _EOF
         fi
         WORKDIR="$(mktemp -d "${TMPDIR:-/tmp}/$template")"
         shred_tmpfile() {
-            find "$WORKDIR" -type f -exec $SHRED {} +
+            find "$WORKDIR" -type f -exec shred {} +
             rm -rf "$WORKDIR"
         }
         trap shred_tmpfile INT TERM EXIT
@@ -140,7 +140,7 @@ haveged_stop() {
 }
 
 GETOPT="getopt"
-SHRED="shred -f -z"
+shred() { $(which shred) -f -z -u "$@" ; }
 
 platform_file="$LIBDIR/platform/$PLATFORM.sh"
 [[ -f "$platform_file" ]] && source "$platform_file"
@@ -177,12 +177,19 @@ Commands and their options are listed below.
 
     seal <file> [<recipient>+]
         Sign and encrypt a file to at least one recipient.
-        The resulting sealed file will have the extension '.asc'
+        The resulting file will have the extension '.sealed'
 
-    open <file>
+    open <file.sealed>
         Decrypt and verify the signature of the given file.
-        The file has to end with '.asc' and the output will have
+        The file has to end with '.sealed' and the output will have
         that extension stripped.
+
+    sign <file>
+        Sign a file. The signature will be saved to <file.signature>.
+
+    verify <file>
+        Verify the signature of the given file.  The signature file
+        <file.signature> must be present as well.
 
     revoke [<revocation-certificate.gpg.asc>]
         Cancel the key by publishing the given revocation certificate.
@@ -283,6 +290,11 @@ cmd_seal() {
     [[ -z "$file" ]] && fail "Usage: $(basename "$0") seal <file> [<recipient>+]"
     [[ -f "$file" ]] || fail "Cannot find file '$file'"
 
+    if [[ -f "$file.sealed" ]]; then
+        yesno "File '$file.sealed' exists. Overwrite?" || return
+        rm -f "$file.sealed"
+    fi
+
     # get recipients
     get_my_key
     local recipients="--recipient $MY_KEY"
@@ -293,22 +305,46 @@ cmd_seal() {
 
     # sign and encrypt
     local keyserver=${KEYSERVER:-hkp://keys.gnupg.net}
-    gpg --quiet --auto-key-locate=local,cert,keyserver,pka \
+    gpg --auto-key-locate=local,cert,keyserver,pka \
         --keyserver $keyserver $recipients \
-        --sign --encrypt --armor "$file"
+        --sign --encrypt --armor \
+        --output "$file.sealed" "$file"
+
+    [[ -f "$file.sealed" ]] && shred "$file"
 }
 
 cmd_open() {
     local file="$1" ; shift
-    [[ -z "$file" ]] && fail "Usage: $(basename "$0") open <file>"
+    [[ -z "$file" ]] && fail "Usage: $(basename "$0") open <file.sealed>"
     [[ -f "$file" ]] || fail "Cannot find file '$file'"
 
+    local output=${file%.sealed}
+    [[ "$output" != "$file" ]] || fail "The given file does not end in '.sealed'."
+
     # decrypt and verify
-    local output=${file%.asc}
     local keyserver=${KEYSERVER:-hkp://keys.gnupg.net}
     gpg --keyserver $keyserver \
         --keyserver-options auto-key-retrieve,verbose,honor-keyserver-url \
-        --output "$output" --decrypt "$file"
+        --decrypt --output "$output" "$file"
+}
+
+cmd_sign() {
+    local file="$1" ; shift
+    [[ -z "$file" ]] && fail "Usage: $(basename "$0") sign <file>"
+    [[ -f "$file" ]] || fail "Cannot find file '$file'"
+
+    # sign
+    gpg --detach-sign --armor --output "$file.signature" "$file"
+}
+
+cmd_verify() {
+    local file="$1" ; shift
+    [[ -z "$file" ]] && fail "Usage: $(basename "$0") verify <file>"
+    [[ -f "$file" ]] || fail "Cannot find file '$file'"
+    [[ -f "$file.signature" ]] || fail "Cannot find file '$file.signature'"
+
+    # verify
+    gpg --verify "$file.signature" "$file"
 }
 
 #
@@ -331,6 +367,8 @@ run_cmd() {
         revoke)                 cmd_revoke "$@" ;;
         seal)                   cmd_seal "$@" ;;
         open)                   cmd_open "$@" ;;
+        sign)                   cmd_sign "$@" ;;
+        verify)                 cmd_verify "$@" ;;
         key-rev-cert)           cmd_key_rev_cert "$@" ;;
         *)                      try_ext_cmd $cmd "$@" ;;
     esac
