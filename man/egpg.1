@@ -30,16 +30,28 @@ Create a new GPG key\.
 Show the id (fingerprint) of the key\.
 .
 .IP "\(bu" 4
+\fBsign\fR \fIfile\fR
+.
+.IP
+Sign a file\. The signature will be saved to <file\.signature>\.
+.
+.IP "\(bu" 4
+\fBverify\fR \fIfile\fR
+.
+.IP
+Verify the signature of the given file\. The signature file <file\.signature> must be present as well\.
+.
+.IP "\(bu" 4
 \fBseal\fR \fIfile\fR [\fIrecipient\fR\.\.\.]
 .
 .IP
-Sign and encrypt a file to at least one recipient\. The resulting sealed file will have the extension \fB\.asc\fR
+Sign and encrypt a file to at least one recipient\. The resulting sealed file will have the extension \fB\.sealed\fR and the orginal file will be erased\.
 .
 .IP "\(bu" 4
-\fBopen\fR \fIfile\fR
+\fBopen\fR <file\.sealed>
 .
 .IP
-Decrypt and verify the signature of the given file\. The file has to end with \fB\.asc\fR and the output will have that extension stripped\.
+Decrypt and verify the signature of the given file\. The file has to end with \fB\.sealed\fR and the output will have that extension stripped\.
 .
 .IP "\(bu" 4
 \fBrevoke\fR [\fIrevocation\-certificate\fR]
@@ -201,10 +213,16 @@ The fingerprint of your key is:
 user@laptop:~$ \fBecho "This is a test message\." > test\.txt\fR
 .
 .P
-user@laptop:~$ \fBegpg seal test\.txt 8D6414F9\fR
+user@laptop:~$ \fBegpg seal test\.txt test1@example\.org test2@example\.org\fR
 .
 .P
-user@laptop:~$ \fBegpg open test\.txt\.asc\fR
+user@laptop:~$ \fBegpg open test\.txt\.sealed\fR
+.
+.P
+user@laptop:~$ \fBegpg sign test\.txt\fR
+.
+.P
+user@laptop:~$ \fBegpg verify test\.txt\fR
 .
 .P
 user@laptop:~$ \fBegpg revoke\fR

@@ -28,15 +28,25 @@ egpg(1) -- Easy GnuPG
 
     Show the id (fingerprint) of the key.
 
+* `sign` <file>
+
+    Sign a file. The signature will be saved to <file.signature>.
+
+* `verify` <file>
+
+    Verify the signature of the given file.  The signature file
+    <file.signature> must be present as well.
+
 * `seal` <file> [<recipient>...]
 
     Sign and encrypt a file to at least one recipient.  The resulting
-    sealed file will have the extension `.asc`
+    sealed file will have the extension `.sealed` and the orginal file
+    will be erased.
 
-* `open` <file>
+* `open` <file.sealed>
 
     Decrypt and verify the signature of the given file.  The file has
-    to end with `.asc` and the output will have that extension
+    to end with `.sealed` and the output will have that extension
     stripped.
 
 * `revoke` [<revocation-certificate>]
@@ -127,9 +137,13 @@ used.
 
    user@laptop:~$ `echo "This is a test message." > test.txt`
 
-   user@laptop:~$ `egpg seal test.txt 8D6414F9`
+   user@laptop:~$ `egpg seal test.txt test1@example.org test2@example.org`
 
-   user@laptop:~$ `egpg open test.txt.asc`
+   user@laptop:~$ `egpg open test.txt.sealed`
+
+   user@laptop:~$ `egpg sign test.txt`
+
+   user@laptop:~$ `egpg verify test.txt`
 
    user@laptop:~$ `egpg revoke`
 
