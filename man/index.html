@@ -124,14 +124,22 @@
 <li><p><code>key-id</code>,<code>fingerprint</code>,<code>fp</code></p>
 
 <p>  Show the id (fingerprint) of the key.</p></li>
+<li><p><code>sign</code> <var>file</var></p>
+
+<p>  Sign a file. The signature will be saved to &lt;file.signature>.</p></li>
+<li><p><code>verify</code> <var>file</var></p>
+
+<p>  Verify the signature of the given file.  The signature file
+  &lt;file.signature> must be present as well.</p></li>
 <li><p><code>seal</code> <var>file</var> [<var>recipient</var>...]</p>
 
 <p>  Sign and encrypt a file to at least one recipient.  The resulting
-  sealed file will have the extension <code>.asc</code></p></li>
-<li><p><code>open</code> <var>file</var></p>
+  sealed file will have the extension <code>.sealed</code> and the orginal file
+  will be erased.</p></li>
+<li><p><code>open</code> &lt;file.sealed></p>
 
 <p>  Decrypt and verify the signature of the given file.  The file has
-  to end with <code>.asc</code> and the output will have that extension
+  to end with <code>.sealed</code> and the output will have that extension
   stripped.</p></li>
 <li><p><code>revoke</code> [<var>revocation-certificate</var>]</p>
 
@@ -231,9 +239,13 @@ Revocation certificate saved at:
 
 <p>   user@laptop:~$ <code>echo "This is a test message." &gt; test.txt</code></p>
 
-<p>   user@laptop:~$ <code>egpg seal test.txt 8D6414F9</code></p>
+<p>   user@laptop:~$ <code>egpg seal test.txt test1@example.org test2@example.org</code></p>
 
-<p>   user@laptop:~$ <code>egpg open test.txt.asc</code></p>
+<p>   user@laptop:~$ <code>egpg open test.txt.sealed</code></p>
+
+<p>   user@laptop:~$ <code>egpg sign test.txt</code></p>
+
+<p>   user@laptop:~$ <code>egpg verify test.txt</code></p>
 
 <p>   user@laptop:~$ <code>egpg revoke</code></p>
 
