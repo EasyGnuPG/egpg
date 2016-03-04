@@ -178,6 +178,7 @@ Commands and their options are listed below.
     seal <file> [<recipient>+]
         Sign and encrypt a file to at least one recipient.
         The resulting file will have the extension '.sealed'
+        The original file will be erased.
 
     open <file.sealed>
         Decrypt and verify the signature of the given file.
@@ -191,7 +192,7 @@ Commands and their options are listed below.
         Verify the signature of the given file.  The signature file
         <file.signature> must be present as well.
 
-    revoke [<revocation-certificate.gpg.asc>]
+    revoke [<revocation-certificate>]
         Cancel the key by publishing the given revocation certificate.
 
     help
@@ -257,7 +258,7 @@ cmd_key_rev_cert() {
     local description=${1:-"Key is being revoked"}
     echo "Creating a revocation certificate."
     get_my_key
-    revoke_cert="${GNUPGHOME}/${MY_KEY}-revoke.gpg.asc"
+    revoke_cert="${GNUPGHOME}/${MY_KEY}.revoke"
     get_passphrase
     local commands=$(echo "$PASSPHRASE|y|1|$description||y" | tr '|' "\n")
     script -c "gpg --yes --command-fd=0 --passphrase-fd=0 --output \"$revoke_cert\" --gen-revoke $MY_KEY <<< \"$commands\" " /dev/null >/dev/null
@@ -274,7 +275,7 @@ cmd_fingerprint() {
 cmd_revoke() {
     local revoke_cert="$1"
     get_my_key
-    [[ -n "$revoke_cert" ]] || revoke_cert="${GNUPGHOME}/${MY_KEY}-revoke.gpg.asc"
+    [[ -n "$revoke_cert" ]] || revoke_cert="${GNUPGHOME}/${MY_KEY}.revoke"
     [[ -f "$revoke_cert" ]] || fail "Revocation certificate not found: $revoke_cert"
 
     yesno "
