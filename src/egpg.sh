@@ -66,7 +66,7 @@ get_new_passphrase() {
 }
 
 get_passphrase() {
-    [[ -z "$PASSPHRASE" ]] || return
+    [[ -v PASSPHRASE ]] && return
     read -r -p "Passphrase: " -s PASSPHRASE || return
     [[ -t 0 ]] && echo
 }
@@ -166,8 +166,9 @@ Usage: $0 <command> [<options>]
 EasyGnuPG is a wrapper around GnuPG to simplify its operations.
 Commands and their options are listed below.
 
-    key-gen [<email> <real-name>]
-        Create a new GPG key.
+    key-gen [<email> <name>] [-n,--no-passphrase]
+        Create a new GPG key. If <email> and <name> are not given as
+        arguments, they will be asked interactively.
 
     key-id,fingerprint,fp
         Show the id (fingerprint) of the key.
@@ -207,6 +208,18 @@ _EOF
 }
 
 cmd_key_gen() {
+    local opts pass=1
+    opts="$($GETOPT -o n -l no-passphrase -n "$PROGRAM" -- "$@")"
+    local err=$?
+    eval set -- "$opts"
+    while true; do
+        case $1 in
+            -n|--no-passphrase) pass=0; shift ;;
+            --) shift; break ;;
+        esac
+    done
+    [[ $err -ne 0 ]] && echo "Usage: $COMMAND <email> <name> [-n,--no-passphrase]" && return
+
     local email=$1 real_name=$2
 
     echo -e "\nCreating a new key.\n"
@@ -222,21 +235,27 @@ cmd_key_gen() {
     real_name=${real_name:-anonymous}
 
     haveged_start
-    get_new_passphrase
 
-    gpg --quiet --batch --gen-key <<-_EOF
-Key-Type: RSA
-Key-Length: 4096
-Key-Usage: encrypt,sign
-Name-Real: $real_name
-Name-Email: $email
-Subkey-Type: RSA
-Subkey-Length: 4096
-Subkey-Usage: auth
-Expire-Date: 1y
-Preferences: SHA512 SHA384 SHA256 SHA224 AES256 AES192 AES CAST5 ZLIB BZIP2 ZIP Uncompressed
-Passphrase: $PASSPHRASE
-_EOF
+    local PARAMETERS="
+        Key-Type: RSA
+        Key-Length: 4096
+        Key-Usage: encrypt,sign
+        Name-Real: $real_name
+        Name-Email: $email
+        Subkey-Type: RSA
+        Subkey-Length: 4096
+        Subkey-Usage: auth
+        Expire-Date: 1y
+        Preferences: SHA512 SHA384 SHA256 SHA224 AES256 AES192 AES CAST5 ZLIB BZIP2 ZIP Uncompressed
+        "
+    if [[ $pass -eq 1 ]]; then
+        get_new_passphrase
+        [[ -n "$PASSPHRASE" ]] && PARAMETERS+="Passphrase: $PASSPHRASE"
+    else
+        PASSPHRASE=''
+    fi
+    gpg --quiet --batch --gen-key <<< "$PARAMETERS"
+
     [[ $? -ne 0 ]] && return 1
 
     # set up some sub keys, in order not to use the base key day-to-day
@@ -255,14 +274,19 @@ _EOF
 }
 
 cmd_key_rev_cert() {
-    local description=${1:-"Key is being revoked"}
     echo "Creating a revocation certificate."
+    local description=${1:-"Key is being revoked"}
+
     get_my_key
     revoke_cert="${GNUPGHOME}/${MY_KEY}.revoke"
+    rm -f "$revoke_cert"
+
     get_passphrase
-    local commands=$(echo "$PASSPHRASE|y|1|$description||y" | tr '|' "\n")
-    script -c "gpg --yes --command-fd=0 --passphrase-fd=0 --output \"$revoke_cert\" --gen-revoke $MY_KEY <<< \"$commands\" " /dev/null >/dev/null
-    if [[ -f "$revoke_cert" ]]; then  echo -e "Revocation certificate saved at: \n    \"$revoke_cert\"" ; fi
+    local commands="y|1|$description||y"
+    [[ -n "$PASSPHRASE" ]] && commands+="|$PASSPHRASE"
+    commands=$(echo "$commands" | tr '|' "\n")
+    script -c "gpg --yes --command-fd=0 --output \"$revoke_cert\" --gen-revoke $MY_KEY <<< \"$commands\" " /dev/null > /dev/null
+    [[ -f "$revoke_cert" ]] &&  echo -e "Revocation certificate saved at: \n    \"$revoke_cert\""
 }
 
 cmd_fingerprint() {
