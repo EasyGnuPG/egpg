@@ -12,7 +12,7 @@ all: install
 install:
 	@install -v -d "$(BINDIR)/"
 	@install -v -m 0755 src/egpg.sh "$(EGPG)"
-	@sed -i $(EGPG) -e "s#^LIBDIR=.*#LIBDIR=\"$(LIB)\"#"
+	@sed -i $(EGPG) -e "s#LIBDIR=.*#LIBDIR=\"$(LIB)\"#"
 
 	@install -v -d "$(LIB)/"
 	@cp -v -r src/platform src/ext "$(LIB)"
