@@ -63,7 +63,7 @@ yesno() {
 }
 
 fail() {
-    echo "$@" >&2
+    echo -e "$@" >&2
     exit 1
 }
 
@@ -152,6 +152,10 @@ Usage: $0 <command> [<options>]
 EasyGnuPG is a wrapper around GnuPG to simplify its operations.
 Commands and their options are listed below.
 
+    init [<egpg-dir>]
+        Initialize egpg. Optionally give the directory to be used.
+        If not given, the default directory will be $HOME/.egpg/
+
     key-gen [<email> <name>] [-n,--no-passphrase]
         Create a new GPG key. If <email> and <name> are not given as
         arguments, they will be asked interactively.
@@ -194,7 +198,62 @@ _EOF
 }
 
 cmd_init() {
-    mkdir -p $GNUPGHOME
+    # make sure that dependencies are installed
+    test $(which haveged) || fail "You should install haveged:\n    sudo apt-get install haveged"
+    test $(which parcimonie) || fail "You should install parcimonie:\n    sudo apt-get install parcimonie"
+
+    # check for an existing directory
+    if [[ -d $EGPG_DIR ]]; then
+        ls -al "$EGPG_DIR" ; echo
+        yesno "Directory '$EGPG_DIR' exists, do you want to erase it?" \
+            || { echo 'Canceled' ; return ; }
+    fi
+
+    # stop the gpg-agent if it is running
+    if [[ -f "$EGPG_DIR/.gpg-agent-info" ]]; then
+        kill -9 $(cut -d: -f 2 "$EGPG_DIR/.gpg-agent-info") 2>/dev/null
+        rm -rf $(dirname $(cut -d: -f 1 "$EGPG_DIR/.gpg-agent-info")) 2>/dev/null
+        rm "$EGPG_DIR/.gpg-agent-info"
+    fi
+    [[ -d "$EGPG_DIR" ]] && rm -rfv "$EGPG_DIR"
+
+    # create the new $EGPG_DIR
+    export EGPG_DIR="$HOME/.egpg"
+    [[ -n "$2" ]] && export EGPG_DIR="$2"
+    mkdir -pv "$EGPG_DIR"
+
+    # setup $GNUPGHOME
+    GNUPGHOME="$EGPG_DIR/.gnupg"
+    mkdir -v "$GNUPGHOME"
+    cat <<_EOF > "$GNUPGHOME/gpg-agent.conf"
+default-cache-ttl 300
+max-cache-ttl 999999
+_EOF
+
+    # setup environment variables
+    env_setup ~/.bashrc
+}
+
+env_setup() {
+    local env_file=$1
+    sed -i $env_file -e '/^### start egpg config/,/^### end egpg config/d'
+    cat <<_EOF >> $env_file
+### start egpg config
+export EGPG_DIR="$EGPG_DIR"
+_EOF
+    cat <<'_EOF' >> $env_file
+# Does ".gpg-agent-info" exist and points to gpg-agent process accepting signals?
+if ! test -f "$EGPG_DIR/.gpg-agent-info" || ! kill -0 $(cut -d: -f 2 "$EGPG_DIR/.gpg-agent-info") 2>/dev/null ; then
+    gpg-agent --daemon --no-grab --write-env-file "$EGPG_DIR/.gpg-agent-info" > /dev/null
+fi
+### end egpg config
+_EOF
+    echo -e "\nAppended these lines to '$env_file':\n"
+    sed $env_file -n -e '/^### start egpg config/,/^### end egpg config/p'
+    echo "
+Please realod $env_file like this:
+    source $env_file
+"
 }
 
 cmd_key_gen() {
@@ -373,8 +432,6 @@ run_cmd() {
 
     local cmd="$1" ; shift
     case "$cmd" in
-        ''|v|-v|version|--version)  cmd_version "$@" ;;
-        help|-h|--help)             cmd_help "$@" ;;
         key-gen)                    cmd_key_gen "$@" ;;
         key-id|fp|fingerprint)      cmd_fingerprint "$@" ;;
         revoke)                     cmd_revoke "$@" ;;
@@ -420,6 +477,10 @@ try_ext_cmd() {
 }
 
 config() {
+    export GNUPGHOME="$EGPG_DIR/.gnupg"
+    export GPG_AGENT_INFO=$(cat "$EGPG_DIR/.gpg-agent-info" | cut -c 16-)
+    export GPG_TTY=$(tty)
+
     # read the config file
     local config_file="$EGPG_DIR/config.sh"
     [[ -f "$config_file" ]] || cat <<-_EOF > "$config_file"
@@ -442,10 +503,16 @@ _EOF
 }
 
 main() {
-    EGPG_DIR="${EGPG_DIR:-$HOME/.egpg}"
-    #GNUPGHOME="${GNUPGHOME:-$(gpgconf --list-dirs | grep ^homedir | sed 's/^[^:]*://')}"
-    export GNUPGHOME="$EGPG_DIR/.gnupg"
-    [[ ! -d "$EGPG_DIR" ]] && cmd_init
+    # handle some basic commands
+    case "$1" in
+        v|-v|version|--version)  cmd_version "$@" ; exit 0 ;;
+        help|-h|--help)          cmd_help "$@" ; exit 0 ;;
+        init)                    cmd_init "$@" ; exit 0 ;;
+    esac
+
+    # set config variables
+    export EGPG_DIR="${EGPG_DIR:-$HOME/.egpg}"
+    [[ -d "$EGPG_DIR" ]] || fail "No directory '$EGPG_DIR'\nTry first: $0 init"
     config
 
     # customize platform dependent functions
