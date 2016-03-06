@@ -29,9 +29,9 @@ colon_field(){
   echo $2 | cut -d: -f${1}
 }
 
-get_my_key(){
-  MY_KEY=$(colon_field 3 $(gpg --gpgconf-list | grep ^default-key))
-  [[ -z $MY_KEY ]] && MY_KEY=$(colon_field 5 $(gpg --list-secret-keys --with-colons | grep ^sec | head -n 1))
+get_gpg_key(){
+  GPG_KEY=$(colon_field 3 $(gpg --gpgconf-list | grep ^default-key))
+  [[ -z $GPG_KEY ]] && GPG_KEY=$(colon_field 5 $(gpg --list-secret-keys --with-colons | grep ^sec | head -n 1))
 }
 
 get_new_passphrase() {
@@ -260,36 +260,36 @@ cmd_key_gen() {
     cmd_key_rev_cert "This revocation certificate was generated when the key was created."
 
     # send the key to keyserver
-    [[ -n $KEYSERVER ]] && gpg --keyserver $KEYSERVER --send-keys $MY_KEY
+    [[ -n $KEYSERVER ]] && gpg --keyserver $KEYSERVER --send-keys $GPG_KEY
 }
 
 cmd_key_rev_cert() {
     echo "Creating a revocation certificate."
     local description=${1:-"Key is being revoked"}
 
-    get_my_key
-    revoke_cert="${GNUPGHOME}/${MY_KEY}.revoke"
+    get_gpg_key
+    revoke_cert="$GNUPGHOME/$GPG_KEY.revoke"
     rm -f "$revoke_cert"
 
     get_passphrase
     local commands="y|1|$description||y"
     [[ -n "$PASSPHRASE" ]] && commands+="|$PASSPHRASE"
     commands=$(echo "$commands" | tr '|' "\n")
-    script -c "gpg --yes --command-fd=0 --output \"$revoke_cert\" --gen-revoke $MY_KEY <<< \"$commands\" " /dev/null > /dev/null
+    script -c "gpg --yes --command-fd=0 --output \"$revoke_cert\" --gen-revoke $GPG_KEY <<< \"$commands\" " /dev/null > /dev/null
     [[ -f "$revoke_cert" ]] &&  echo -e "Revocation certificate saved at: \n    \"$revoke_cert\""
 }
 
 cmd_fingerprint() {
-    get_my_key
-    [[ -z $MY_KEY ]] && echo "No key found." && return 1
+    get_gpg_key
+    [[ -z $GPG_KEY ]] && echo "No key found." && return 1
     echo "The fingerprint of your key is:"
-    colon_field 10 $(gpg --with-colons --fingerprint $MY_KEY | grep '^fpr') | sed 's/..../\0 /g'
+    colon_field 10 $(gpg --with-colons --fingerprint $GPG_KEY | grep '^fpr') | sed 's/..../\0 /g'
 }
 
 cmd_revoke() {
     local revoke_cert="$1"
-    get_my_key
-    [[ -n "$revoke_cert" ]] || revoke_cert="${GNUPGHOME}/${MY_KEY}.revoke"
+    get_gpg_key
+    [[ -n "$revoke_cert" ]] || revoke_cert="$GNUPGHOME/$GPG_KEY.revoke"
     [[ -f "$revoke_cert" ]] || fail "Revocation certificate not found: $revoke_cert"
 
     yesno "
@@ -297,7 +297,7 @@ Revocation will make your current key useless. You'll need
 to generate a new one. Are you sure about this?" || return 1
 
     gpg --import "$revoke_cert"
-    [[ -n $KEYSERVER ]] && gpg --keyserver $KEYSERVER --send-keys $MY_KEY
+    [[ -n $KEYSERVER ]] && gpg --keyserver $KEYSERVER --send-keys $GPG_KEY
 }
 
 cmd_seal() {
@@ -311,8 +311,8 @@ cmd_seal() {
     fi
 
     # get recipients
-    get_my_key
-    local recipients="--recipient $MY_KEY"
+    get_gpg_key
+    local recipients="--recipient $GPG_KEY"
     while [[ -n "$1" ]]; do
         recipients="$recipients --recipient $1"
         shift
