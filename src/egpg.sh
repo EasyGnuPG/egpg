@@ -19,26 +19,11 @@
 umask 077
 set -o pipefail
 
-GNUPGHOME="${GNUPGHOME:-$(gpgconf --list-dirs | grep ^homedir | sed 's/^[^:]*://')}"
-EGPG_DIR="${EGPG_DIR:-$HOME/.egpg}"
-
-### dev
-export GNUPGHOME="$EGPG_DIR/.gnupg"
-[[ ! -d $GNUPGHOME ]] && mkdir -p $GNUPGHOME
-
-LIBDIR="$(dirname "$0")"
-PLATFORM="$(uname | cut -d _ -f 1 | tr '[:upper:]' '[:lower:]')"
-
+VERSION="v0.6"
 
 #
 # BEGIN helper functions
 #
-
-GPG="gpg" ; which gpg2 &>/dev/null && GPG="gpg2"
-
-gpg() {
-    $GPG "$@"
-}
 
 colon_field(){
   echo $2 | cut -d: -f${1}
@@ -95,6 +80,27 @@ debug() {
 # BEGIN platform definable
 #
 
+gpg() { "$(which gpg2)" $GPG_OPTS "$@" ; }
+
+getopt() { "$(which getopt)" "$@" ; }
+
+shred() { "$(which shred)" -f -z -u "$@" ; }
+
+haveged_start() {
+    [[ -z "$(ps ax | grep -v grep | grep haveged)" ]] || return
+    echo "
+Starting haveged which will greatly improve the speed of creating
+a new key, by improving the entropy generation of the system."
+    sudo haveged -w 1024
+    echo
+    HAVEGED_STARTED="true"
+}
+
+haveged_stop() {
+    [[ -z $HAVEGED_STARTED ]] && return
+    sudo killall haveged
+}
+
 make_workdir() {
     local warn=1
     [[ $1 == "nowarn" ]] && warn=0
@@ -125,26 +131,6 @@ _EOF
     fi
 }
 
-haveged_start() {
-    [[ -z "$(ps ax | grep -v grep | grep haveged)" ]] || return
-    echo "
-Starting haveged which will greatly improve the speed of creating
-a new key, by improving the entropy generation of the system."
-    sudo haveged -w 1024
-    echo
-    HAVEGED_STARTED="true"
-}
-haveged_stop() {
-    [[ -z $HAVEGED_STARTED ]] && return
-    sudo killall haveged
-}
-
-GETOPT="getopt"
-shred() { $(which shred) -f -z -u "$@" ; }
-
-platform_file="$LIBDIR/platform/$PLATFORM.sh"
-[[ -f "$platform_file" ]] && source "$platform_file"
-
 #
 # END platform definable
 #
@@ -155,7 +141,7 @@ platform_file="$LIBDIR/platform/$PLATFORM.sh"
 #
 
 cmd_version() {
-    echo "egpg:  EasyGnuPG  v0.6    (hosted at: https://github.com/dashohoxha/egpg) "
+    echo "egpg:  EasyGnuPG  $VERSION    (hosted at: https://github.com/dashohoxha/egpg) "
 }
 
 cmd_help() {
@@ -207,9 +193,13 @@ More information may be found in the egpg(1) man page.
 _EOF
 }
 
+cmd_init() {
+    mkdir -p $GNUPGHOME
+}
+
 cmd_key_gen() {
     local opts pass=1
-    opts="$($GETOPT -o n -l no-passphrase -n "$PROGRAM" -- "$@")"
+    opts="$(getopt -o n -l no-passphrase -n "$PROGRAM" -- "$@")"
     local err=$?
     eval set -- "$opts"
     while true; do
@@ -377,25 +367,23 @@ cmd_verify() {
 #
 
 
-# The file 'customize.sh' can be used to redefine
-# and customize some functions, without having to
-# touch the code of the main script.
-customize_file="$EGPG_DIR/customize.sh"
-[[ -f "$customize_file" ]] && source "$customize_file"
-
-
 run_cmd() {
+    PROGRAM="${0##*/}"
+    COMMAND="$PROGRAM $1"
+
     local cmd="$1" ; shift
     case "$cmd" in
-        key-gen)                cmd_key_gen "$@" ;;
-        key-id|fp|fingerprint)  cmd_fingerprint "$@" ;;
-        revoke)                 cmd_revoke "$@" ;;
-        seal)                   cmd_seal "$@" ;;
-        open)                   cmd_open "$@" ;;
-        sign)                   cmd_sign "$@" ;;
-        verify)                 cmd_verify "$@" ;;
-        key-rev-cert)           cmd_key_rev_cert "$@" ;;
-        *)                      try_ext_cmd $cmd "$@" ;;
+        ''|v|-v|version|--version)  cmd_version "$@" ;;
+        help|-h|--help)             cmd_help "$@" ;;
+        key-gen)                    cmd_key_gen "$@" ;;
+        key-id|fp|fingerprint)      cmd_fingerprint "$@" ;;
+        revoke)                     cmd_revoke "$@" ;;
+        seal)                       cmd_seal "$@" ;;
+        open)                       cmd_open "$@" ;;
+        sign)                       cmd_sign "$@" ;;
+        verify)                     cmd_verify "$@" ;;
+        key-rev-cert)               cmd_key_rev_cert "$@" ;;
+        *)                          try_ext_cmd $cmd "$@" ;;
     esac
 }
 
@@ -432,8 +420,6 @@ try_ext_cmd() {
 }
 
 config() {
-    [[ -d "$EGPG_DIR" ]] || mkdir -p "$EGPG_DIR"
-
     # read the config file
     local config_file="$EGPG_DIR/config.sh"
     [[ -f "$config_file" ]] || cat <<-_EOF > "$config_file"
@@ -456,16 +442,25 @@ _EOF
 }
 
 main() {
-    case "$1" in
-        ''|v|-v|version|--version)  cmd_version "$@" ; exit 0 ;;
-        help|-h|--help)             cmd_help "$@" ; exit 0 ;;
-    esac
-
+    EGPG_DIR="${EGPG_DIR:-$HOME/.egpg}"
+    #GNUPGHOME="${GNUPGHOME:-$(gpgconf --list-dirs | grep ^homedir | sed 's/^[^:]*://')}"
+    export GNUPGHOME="$EGPG_DIR/.gnupg"
+    [[ ! -d "$EGPG_DIR" ]] && cmd_init
     config
 
-    PROGRAM="${0##*/}"
-    COMMAND="$PROGRAM $1"
+    # customize platform dependent functions
+    LIBDIR="$(dirname "$0")"
+    PLATFORM="$(uname | cut -d _ -f 1 | tr '[:upper:]' '[:lower:]')"
+    platform_file="$LIBDIR/platform/$PLATFORM.sh"
+    [[ -f "$platform_file" ]] && source "$platform_file"
 
+    # The file 'customize.sh' can be used to redefine
+    # and customize some functions, without having to
+    # touch the code of the main script.
+    customize_file="$EGPG_DIR/customize.sh"
+    [[ -f "$customize_file" ]] && source "$customize_file"
+
+    # run the command
     run_cmd "$@"
 }
 
