@@ -172,27 +172,19 @@ Usage: $0 <command> [<options>]
 EasyGnuPG is a wrapper around GnuPG to simplify its operations.
 Commands and their options are listed below.
 
-    init [<egpg-dir>]
+    init [<dir>]
         Initialize egpg. Optionally give the directory to be used.
         If not given, the default directory will be $HOME/.egpg/
 
     [info]
         Display info about the current configuration and settings.
 
-    key-gen [<email> <name>] [-n,--no-passphrase]
-        Create a new GPG key. If <email> and <name> are not given as
-        arguments, they will be asked interactively.
+    key <command> [<options>]
+        Commands for handling the key. For more details see 'key help'.
 
-    key-id,fingerprint,fp
-        Show the id (fingerprint) of the key.
-
-    key-rev-cert ["description"]
-        Generate a revocation certificate for the key.
-
-    seal <file> [<recipient>+]
-        Sign and encrypt a file to at least one recipient.
-        The resulting file will have the extension '.sealed'
-        The original file will be erased.
+    seal <file> [<recipient>...]
+        Sign and encrypt a file. The resulting file will have the
+        extension '.sealed' The original file will be erased.
 
     open <file.sealed>
         Decrypt and verify the signature of the given file.
@@ -206,9 +198,6 @@ Commands and their options are listed below.
         Verify the signature of the given file.  The signature file
         <file.signature> must be present as well.
 
-    revoke [<revocation-certificate>]
-        Cancel the key by publishing the given revocation certificate.
-
     help
         Show this help text.
 
@@ -216,6 +205,29 @@ Commands and their options are listed below.
         Show version information.
 
 More information may be found in the egpg(1) man page.
+
+_EOF
+}
+
+cmd_key_help() {
+    cat <<-_EOF
+
+Usage: $0 key <command> [<options>]
+
+Commands to manage the key. They are listed below.
+
+    gen,generate [<email> <name>] [-n,--no-passphrase]
+        Create a new GPG key. If <email> and <name> are not given as
+        arguments, they will be asked interactively.
+
+    fp,fingerprint
+        Show the fingerprint of the key.
+
+    rev-cert ["description"]
+        Generate a revocation certificate for the key.
+
+    rev,revoke [<revocation-certificate>]
+        Cancel the key by publishing the given revocation certificate.
 
 _EOF
 }
@@ -276,6 +288,18 @@ _EOF
 Please realod it to enable the new config:
     source $env_file
 "
+}
+
+cmd_key() {
+    COMMAND+=" $1"
+    local keycmd="$1" ; shift
+    case "$keycmd" in
+        gen|generate)     cmd_key_gen "$@" ;;
+        rev-cert)         cmd_key_rev_cert "$@" ;;
+        fp|fingerprint)   cmd_key_fp "$@" ;;
+        rev|revoke)       cmd_key_rev "$@" ;;
+        *)                cmd_key_help "$@" ;;
+    esac
 }
 
 cmd_key_gen() {
@@ -360,14 +384,14 @@ cmd_key_rev_cert() {
     [[ -f "$revoke_cert" ]] &&  echo -e "Revocation certificate saved at: \n    \"$revoke_cert\""
 }
 
-cmd_fingerprint() {
+cmd_key_fp() {
     get_gpg_key
     [[ -z $GPG_KEY ]] && echo "No key found." && return 1
     echo "The fingerprint of your key is:"
     colon_field 10 $(gpg --with-colons --fingerprint $GPG_KEY | grep '^fpr') | sed 's/..../\0 /g'
 }
 
-cmd_revoke() {
+cmd_key_rev() {
     local revoke_cert="$1"
     get_gpg_key
     [[ -n "$revoke_cert" ]] || revoke_cert="$GNUPGHOME/$GPG_KEY.revoke"
@@ -454,16 +478,13 @@ run_cmd() {
 
     local cmd="$1" ; shift
     case "$cmd" in
-        ''|info)                    cmd_info "$@" ;;
-        key-gen)                    cmd_key_gen "$@" ;;
-        key-id|fp|fingerprint)      cmd_fingerprint "$@" ;;
-        revoke)                     cmd_revoke "$@" ;;
-        seal)                       cmd_seal "$@" ;;
-        open)                       cmd_open "$@" ;;
-        sign)                       cmd_sign "$@" ;;
-        verify)                     cmd_verify "$@" ;;
-        key-rev-cert)               cmd_key_rev_cert "$@" ;;
-        *)                          try_ext_cmd $cmd "$@" ;;
+        ''|info)  cmd_info "$@" ;;
+        key)      cmd_key "$@" ;;
+        seal)     cmd_seal "$@" ;;
+        open)     cmd_open "$@" ;;
+        sign)     cmd_sign "$@" ;;
+        verify)   cmd_verify "$@" ;;
+        *)        try_ext_cmd $cmd "$@" ;;
     esac
 }
 
