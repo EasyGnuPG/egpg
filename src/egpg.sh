@@ -155,6 +155,12 @@ GPG_OPTS="$GPG_OPTS"
 KEYSERVER="$KEYSERVER"
 DEBUG="$DEBUG"
 _EOF
+
+    local platform_file="$LIBDIR/platform/$PLATFORM.sh"
+    [[ -f "$platform_file" ]] && echo "platform_file='$platform_file'"
+    local customize_file="$EGPG_DIR/customize.sh"
+    [[ -f "$customize_file" ]] && echo "customize_file='$customize_file'"
+
     cmd_fingerprint
 }
 
@@ -169,6 +175,9 @@ Commands and their options are listed below.
     init [<egpg-dir>]
         Initialize egpg. Optionally give the directory to be used.
         If not given, the default directory will be $HOME/.egpg/
+
+    [info]
+        Display info about the current configuration and settings.
 
     key-gen [<email> <name>] [-n,--no-passphrase]
         Create a new GPG key. If <email> and <name> are not given as
