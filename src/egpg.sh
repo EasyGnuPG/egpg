@@ -198,6 +198,9 @@ Commands and their options are listed below.
         Verify the signature of the given file.  The signature file
         <file.signature> must be present as well.
 
+    --,gpg ...
+        Run any gpg command (but using the configuration settings of egpg).
+
     help
         Show this help text.
 
@@ -467,6 +470,8 @@ cmd_verify() {
     gpg --verify "$file.signature" "$file"
 }
 
+cmd_gpg() { gpg "$@"; }
+
 #
 # END subcommand functions
 #
@@ -484,6 +489,7 @@ run_cmd() {
         open)     cmd_open "$@" ;;
         sign)     cmd_sign "$@" ;;
         verify)   cmd_verify "$@" ;;
+        --|gpg)      cmd_gpg "$@" ;;
         *)        try_ext_cmd $cmd "$@" ;;
     esac
 }
