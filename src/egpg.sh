@@ -204,18 +204,17 @@ cmd_init() {
 
     # check for an existing directory
     if [[ -d $EGPG_DIR ]]; then
-        ls -al "$EGPG_DIR" ; echo
-        yesno "Directory '$EGPG_DIR' exists, do you want to erase it?" \
-            || { echo 'Canceled' ; return ; }
+        if yesno "There is an old directory '$EGPG_DIR'. Do you want to erase it?"; then
+            # stop the gpg-agent if it is running
+            if [[ -f "$EGPG_DIR/.gpg-agent-info" ]]; then
+                kill -9 $(cut -d: -f 2 "$EGPG_DIR/.gpg-agent-info") 2>/dev/null
+                rm -rf $(dirname $(cut -d: -f 1 "$EGPG_DIR/.gpg-agent-info")) 2>/dev/null
+                rm "$EGPG_DIR/.gpg-agent-info"
+            fi
+            # erase the old directory
+            [[ -d "$EGPG_DIR" ]] && rm -rfv "$EGPG_DIR"
+        fi
     fi
-
-    # stop the gpg-agent if it is running
-    if [[ -f "$EGPG_DIR/.gpg-agent-info" ]]; then
-        kill -9 $(cut -d: -f 2 "$EGPG_DIR/.gpg-agent-info") 2>/dev/null
-        rm -rf $(dirname $(cut -d: -f 1 "$EGPG_DIR/.gpg-agent-info")) 2>/dev/null
-        rm "$EGPG_DIR/.gpg-agent-info"
-    fi
-    [[ -d "$EGPG_DIR" ]] && rm -rfv "$EGPG_DIR"
 
     # create the new $EGPG_DIR
     export EGPG_DIR="$HOME/.egpg"
@@ -224,8 +223,8 @@ cmd_init() {
 
     # setup $GNUPGHOME
     GNUPGHOME="$EGPG_DIR/.gnupg"
-    mkdir -v "$GNUPGHOME"
-    cat <<_EOF > "$GNUPGHOME/gpg-agent.conf"
+    mkdir -pv "$GNUPGHOME"
+    [[ -f "$GNUPGHOME/gpg-agent.conf" ]] || cat <<_EOF > "$GNUPGHOME/gpg-agent.conf"
 default-cache-ttl 300
 max-cache-ttl 999999
 _EOF
