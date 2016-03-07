@@ -161,7 +161,7 @@ _EOF
     local customize_file="$EGPG_DIR/customize.sh"
     [[ -f "$customize_file" ]] && echo "customize_file='$customize_file'"
 
-    cmd_fingerprint
+    cmd_key_fp
 }
 
 cmd_help() {
@@ -263,6 +263,7 @@ cmd_init() {
     GNUPGHOME="$EGPG_DIR/.gnupg"
     mkdir -pv "$GNUPGHOME"
     [[ -f "$GNUPGHOME/gpg-agent.conf" ]] || cat <<_EOF > "$GNUPGHOME/gpg-agent.conf"
+pinentry-program /usr/bin/pinentry-curses
 default-cache-ttl 300
 max-cache-ttl 999999
 _EOF
@@ -280,8 +281,13 @@ export EGPG_DIR="$EGPG_DIR"
 _EOF
     cat <<'_EOF' >> $env_file
 # Does ".gpg-agent-info" exist and points to gpg-agent process accepting signals?
-if ! test -f "$EGPG_DIR/.gpg-agent-info" || ! kill -0 $(cut -d: -f 2 "$EGPG_DIR/.gpg-agent-info") 2>/dev/null ; then
-    gpg-agent --daemon --no-grab --write-env-file "$EGPG_DIR/.gpg-agent-info" > /dev/null
+if ! test -f "$EGPG_DIR/.gpg-agent-info" \
+|| ! kill -0 $(cut -d: -f 2 "$EGPG_DIR/.gpg-agent-info") 2>/dev/null
+then
+    gpg-agent --daemon --no-grab \
+        --options "$EGPG_DIR/.gnupg/gpg-agent.conf" \
+        --pinentry-program /usr/bin/pinentry-curses \
+        --write-env-file "$EGPG_DIR/.gpg-agent-info" > /dev/null
 fi
 ### end egpg config
 _EOF
