@@ -144,6 +144,20 @@ cmd_version() {
     echo "egpg:  EasyGnuPG  $VERSION    (hosted at: https://github.com/dashohoxha/egpg) "
 }
 
+cmd_info() {
+    cmd_version
+    cat <<-_EOF
+EGPG_DIR="$EGPG_DIR"
+GNUPGHOME="$GNUPGHOME"
+GPG_AGENT_INFO="$GPG_AGENT_INFO"
+GPG_TTY="$GPG_TTY"
+GPG_OPTS="$GPG_OPTS"
+KEYSERVER="$KEYSERVER"
+DEBUG="$DEBUG"
+_EOF
+    cmd_fingerprint
+}
+
 cmd_help() {
     cat <<-_EOF
 
@@ -431,6 +445,7 @@ run_cmd() {
 
     local cmd="$1" ; shift
     case "$cmd" in
+        ''|info)                    cmd_info "$@" ;;
         key-gen)                    cmd_key_gen "$@" ;;
         key-id|fp|fingerprint)      cmd_fingerprint "$@" ;;
         revoke)                     cmd_revoke "$@" ;;
@@ -517,13 +532,13 @@ main() {
     # customize platform dependent functions
     LIBDIR="$(dirname "$0")"
     PLATFORM="$(uname | cut -d _ -f 1 | tr '[:upper:]' '[:lower:]')"
-    platform_file="$LIBDIR/platform/$PLATFORM.sh"
+    local platform_file="$LIBDIR/platform/$PLATFORM.sh"
     [[ -f "$platform_file" ]] && source "$platform_file"
 
     # The file 'customize.sh' can be used to redefine
     # and customize some functions, without having to
     # touch the code of the main script.
-    customize_file="$EGPG_DIR/customize.sh"
+    local customize_file="$EGPG_DIR/customize.sh"
     [[ -f "$customize_file" ]] && source "$customize_file"
 
     # run the command
