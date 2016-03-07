@@ -247,10 +247,10 @@ if ! test -f "$EGPG_DIR/.gpg-agent-info" || ! kill -0 $(cut -d: -f 2 "$EGPG_DIR/
 fi
 ### end egpg config
 _EOF
-    echo -e "\nAppended these lines to '$env_file':\n"
+    echo -e "\nAppended the following lines to '$env_file':\n---------------8<---------------"
     sed $env_file -n -e '/^### start egpg config/,/^### end egpg config/p'
-    echo "
-Please realod $env_file like this:
+    echo "--------------->8---------------
+Please realod it to enable the new config:
     source $env_file
 "
 }
