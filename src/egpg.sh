@@ -81,10 +81,13 @@ debug() {
 #
 
 gpg() { "$(which gpg2)" $GPG_OPTS "$@" ; }
+export -f gpg
 
 getopt() { "$(which getopt)" "$@" ; }
+export -f getopt
 
 shred() { "$(which shred)" -f -z -u "$@" ; }
+export -f shred
 
 haveged_start() {
     [[ -z "$(ps ax | grep -v grep | grep haveged)" ]] || return
@@ -223,11 +226,19 @@ Commands to manage the key. They are listed below.
         Create a new GPG key. If <email> and <name> are not given as
         arguments, they will be asked interactively.
 
+    [ls,list,show]
+        Show the details of the key.
+
     fp,fingerprint
         Show the fingerprint of the key.
 
     rev-cert ["description"]
         Generate a revocation certificate for the key.
+
+    renew [<time-length>]
+        Renew the key, set the expiration time (by default) 1 year from now.
+        The renewal time length can be given like this:
+        <n> (days), <n>w (weeks), <n>m (months), <n>y (years)
 
     rev,revoke [<revocation-certificate>]
         Cancel the key by publishing the given revocation certificate.
@@ -304,10 +315,12 @@ cmd_key() {
     local keycmd="$1" ; shift
     case "$keycmd" in
         gen|generate)     cmd_key_gen "$@" ;;
+        ''|ls|list|show)  cmd_key_list "$@" ;;
         rev-cert)         cmd_key_rev_cert "$@" ;;
         fp|fingerprint)   cmd_key_fp "$@" ;;
         rev|revoke)       cmd_key_rev "$@" ;;
-        *)                cmd_key_help "$@" ;;
+        renew)            cmd_key_renew "$@" ;;
+        help|*)           cmd_key_help "$@" ;;
     esac
 }
 
@@ -412,6 +425,39 @@ to generate a new one. Are you sure about this?" || return 1
 
     gpg --import "$revoke_cert"
     [[ -n $KEYSERVER ]] && gpg --keyserver $KEYSERVER --send-keys $GPG_KEY
+}
+
+cmd_key_list() {
+    get_gpg_key
+    gpg --list-keys --fingerprint $GPG_KEY
+}
+
+cmd_key_renew() {
+    local period=${1:-1y}
+    get_gpg_key
+    local commands="
+expire
+$period
+y
+key 1
+expire
+$period
+y
+key 1
+key 2
+expire
+$period
+y
+key 2
+key 3
+expire
+$period
+y
+key 3
+save
+"
+    script -c "gpg --command-fd=0 --key-edit $GPG_KEY <<< \"$commands\" " /dev/null > /dev/null
+    cmd_key_list
 }
 
 cmd_seal() {
