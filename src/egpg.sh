@@ -365,7 +365,7 @@ cmd_key_gen() {
         Subkey-Type: RSA
         Subkey-Length: 4096
         Subkey-Usage: auth
-        Expire-Date: 1y
+        Expire-Date: 1m
         Preferences: SHA512 SHA384 SHA256 SHA224 AES256 AES192 AES CAST5 ZLIB BZIP2 ZIP Uncompressed
         "
     if [[ $pass -eq 1 ]]; then
@@ -379,7 +379,7 @@ cmd_key_gen() {
     [[ $? -ne 0 ]] && return 1
 
     # set up some sub keys, in order not to use the base key day-to-day
-    local COMMANDS=$(echo "addkey|4|4096|1y|addkey|6|4096|1y|save" | tr '|' "\n")
+    local COMMANDS=$(echo "addkey|4|4096|1m|addkey|6|4096|1m|save" | tr '|' "\n")
     script -c "echo -e \"$PASSPHRASE\n$COMMANDS\" | gpg --batch --passphrase-fd=0 --command-fd=0 --edit-key $email" /dev/null >/dev/null
     haveged_stop
 
@@ -453,7 +453,7 @@ cmd_key_renew() {
     [ $cert == 0 ] && [ $auth == 0 ] && [ $sign == 0 ] && [ $encrypt == 0 ] \
         && cert=1
 
-    local time=${1:-1y}
+    local time=${1:-1m}
     local commands=''
     [ $cert == 1 ] && commands+=";expire;$time;y"
     [ $auth == 1 ] && commands+=";key 1;expire;$time;y;key 1"
