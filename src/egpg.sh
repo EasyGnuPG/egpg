@@ -235,10 +235,13 @@ Commands to manage the key. They are listed below.
     rev-cert ["description"]
         Generate a revocation certificate for the key.
 
-    renew [<time-length>]
+    renew [<time-length>] [-c,--cert] [-a,--auth] [-s,--sign] [-e,--encrypt]
         Renew the key, set the expiration time (by default) 1 year from now.
         The renewal time length can be given like this:
         <n> (days), <n>w (weeks), <n>m (months), <n>y (years)
+        The rest of the options specify which subkey will be renewed
+        (certifying, authenticating, signing or encrypting).
+        If no options are given, then the certifying (main) key will be renewed.
 
     rev,revoke [<revocation-certificate>]
         Cancel the key by publishing the given revocation certificate.
@@ -274,7 +277,7 @@ cmd_init() {
     GNUPGHOME="$EGPG_DIR/.gnupg"
     mkdir -pv "$GNUPGHOME"
     [[ -f "$GNUPGHOME/gpg-agent.conf" ]] || cat <<_EOF > "$GNUPGHOME/gpg-agent.conf"
-pinentry-program /usr/bin/pinentry-curses
+pinentry-program /usr/bin/pinentry
 default-cache-ttl 300
 max-cache-ttl 999999
 _EOF
@@ -297,7 +300,7 @@ if ! test -f "$EGPG_DIR/.gpg-agent-info" \
 then
     gpg-agent --daemon --no-grab \
         --options "$EGPG_DIR/.gnupg/gpg-agent.conf" \
-        --pinentry-program /usr/bin/pinentry-curses \
+        --pinentry-program /usr/bin/pinentry \
         --write-env-file "$EGPG_DIR/.gpg-agent-info" > /dev/null
 fi
 ### end egpg config
@@ -433,30 +436,35 @@ cmd_key_list() {
 }
 
 cmd_key_renew() {
-    local period=${1:-1y}
+    local opts cert=0 auth=0 sign=0 encrypt=0
+    opts="$(getopt -o case -l cert,auth,sign,encrypt -n "$PROGRAM" -- "$@")"
+    local err=$?
+    eval set -- "$opts"
+    while true; do
+        case $1 in
+            -c|--cert) cert=1; shift ;;
+            -a|--auth) auth=1; shift ;;
+            -s|--sign) sign=1; shift ;;
+            -e|--encrypt) encrypt=1; shift ;;
+            --) shift; break ;;
+        esac
+    done
+    [[ $err -ne 0 ]] && echo "Usage: $COMMAND [<time-length>] [-c,--cert] [-a,--auth] [-s,--sign] [-e,--encrypt]" && return
+    [ $cert == 0 ] && [ $auth == 0 ] && [ $sign == 0 ] && [ $encrypt == 0 ] \
+        && cert=1
+
+    local time=${1:-1y}
+    local commands=''
+    [ $cert == 1 ] && commands+=";expire;$time;y"
+    [ $auth == 1 ] && commands+=";key 1;expire;$time;y;key 1"
+    [ $sign == 1 ] && commands+=";key 2;expire;$time;y;key 2"
+    [ $encrypt == 1 ] && commands+=";key 3;expire;$time;y;key 3"
+    commands+=";save"
+    commands=$(echo "$commands" | tr ';' "\n")
+
     get_gpg_key
-    local commands="
-expire
-$period
-y
-key 1
-expire
-$period
-y
-key 1
-key 2
-expire
-$period
-y
-key 2
-key 3
-expire
-$period
-y
-key 3
-save
-"
     script -c "gpg --command-fd=0 --key-edit $GPG_KEY <<< \"$commands\" " /dev/null > /dev/null
+
     cmd_key_list
 }
 
