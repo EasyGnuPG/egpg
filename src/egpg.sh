@@ -431,8 +431,45 @@ to generate a new one. Are you sure about this?" || return 1
 }
 
 cmd_key_list() {
+    local keyinfo fpr uid line
+    declare -A keys
+
     get_gpg_key
-    gpg --list-keys --fingerprint $GPG_KEY
+    keyinfo=$(gpg --list-keys --fingerprint --with-colons $GPG_KEY)
+    #echo "$keyinfo" ; echo
+
+    fpr=$(colon_field 10 $(echo "$keyinfo" | grep '^fpr:') | sed 's/..../\0 /g')
+    uid=$(colon_field 10 "$(echo "$keyinfo" | grep '^uid:')")
+
+    line=$(echo "$keyinfo" | grep '^pub:')
+    keys['c-id']=$(colon_field 5 $line)
+    keys['c-time']=$(date -d @"$(colon_field 6 $line)" +%F)
+    keys['c-exp']=$(date -d @"$(colon_field 7 $line)" +%F)
+
+    line=$(echo "$keyinfo" | grep '^sub:' | grep ':a:')
+    keys['a-id']=$(colon_field 5 $line)
+    keys['a-time']=$(date -d @"$(colon_field 6 $line)" +%F)
+    keys['a-exp']=$(date -d @"$(colon_field 7 $line)" +%F)
+
+    line=$(echo "$keyinfo" | grep '^sub:' | grep ':s:')
+    keys['s-id']=$(colon_field 5 $line)
+    keys['s-time']=$(date -d @"$(colon_field 6 $line)" +%F)
+    keys['s-exp']=$(date -d @"$(colon_field 7 $line)" +%F)
+
+    line=$(echo "$keyinfo" | grep '^sub:' | grep ':e:')
+    keys['e-id']=$(colon_field 5 $line)
+    keys['e-time']=$(date -d @"$(colon_field 6 $line)" +%F)
+    keys['e-exp']=$(date -d @"$(colon_field 7 $line)" +%F)
+
+    echo "
+$uid
+$fpr
+
+${keys['c-id']} [cert]    (${keys['c-time']}, ${keys['c-exp']})
+${keys['a-id']} [auth]    (${keys['a-time']}, ${keys['a-exp']})
+${keys['s-id']} [sign]    (${keys['s-time']}, ${keys['s-exp']})
+${keys['e-id']} [encrypt] (${keys['e-time']}, ${keys['e-exp']})
+"
 }
 
 cmd_key_renew() {
