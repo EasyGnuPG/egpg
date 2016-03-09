@@ -36,6 +36,10 @@ get_gpg_key(){
     local secret_keys
     secret_keys=$(gpg --list-secret-keys --with-colons | grep '^sec' | cut -d: -f5)
     GPG_KEY=$(gpg --list-keys --with-colons $secret_keys | grep '^pub:u:' | cut -d: -f5)
+
+    local dont_check=$1
+    [[ -n $dont_check ]] && return
+
     [[ -z $GPG_KEY ]] && fail "No valid key found.\nTry first:  $0 key gen"
 
     # check for key expiration
@@ -349,6 +353,10 @@ cmd_key() {
 }
 
 cmd_key_gen() {
+    get_gpg_key 'dont-check'
+    [[ -z $GPG_KEY ]] \
+        || fail "There is already a valid key.\nRevoke it first, or wait until it expires."
+
     local opts pass=1
     opts="$(getopt -o n -l no-passphrase -n "$PROGRAM" -- "$@")"
     local err=$?
@@ -369,8 +377,6 @@ cmd_key_gen() {
     [[ -n "$email" ]] || read -e -p "Email to be associated with the key: " email
     [[ -z "$(echo $email | grep '@.*\.')" ]] \
         && fail "This email address ($email) does not appear to be valid (needs an @ and then a .)"
-    [[ -n "$(gpg -K "$email" 2>/dev/null | grep '^sec')" ]] \
-        && fail "There is already a key for '$email'"
 
     [[ -n "$real_name" ]] || read -e -p "Real Name to be associated with the key: " real_name
     real_name=${real_name:-anonymous}
@@ -400,12 +406,13 @@ cmd_key_gen() {
     [[ $? -ne 0 ]] && return 1
 
     # set up some sub keys, in order not to use the base key day-to-day
+    get_gpg_key
     local COMMANDS=$(echo "addkey|4|4096|1m|addkey|6|4096|1m|save" | tr '|' "\n")
-    script -c "echo -e \"$PASSPHRASE\n$COMMANDS\" | gpg --batch --passphrase-fd=0 --command-fd=0 --edit-key $email" /dev/null >/dev/null
+    script -c "echo -e \"$PASSPHRASE\n$COMMANDS\" | gpg --batch --passphrase-fd=0 --command-fd=0 --edit-key $GPG_KEY" /dev/null >/dev/null
     haveged_stop
 
     echo -e "\nExcellent! You created a fresh GPG key. Here's what it looks like:"
-    gpg -K "$email"
+    cmd_key_list
 
     # generate a revokation certificate
     cmd_key_rev_cert "This revocation certificate was generated when the key was created."
@@ -422,9 +429,7 @@ cmd_key_rev_cert() {
     revoke_cert="$GNUPGHOME/$GPG_KEY.revoke"
     rm -f "$revoke_cert"
 
-    get_passphrase
     local commands="y|1|$description||y"
-    [[ -n "$PASSPHRASE" ]] && commands+="|$PASSPHRASE"
     commands=$(echo "$commands" | tr '|' "\n")
     script -c "gpg --yes --command-fd=0 --output \"$revoke_cert\" --gen-revoke $GPG_KEY <<< \"$commands\" " /dev/null > /dev/null
     [[ -f "$revoke_cert" ]] &&  echo -e "Revocation certificate saved at: \n    \"$revoke_cert\""
@@ -602,7 +607,9 @@ cmd_sign() {
     [[ -f "$file" ]] || fail "Cannot find file '$file'"
 
     # sign
-    gpg --detach-sign --armor --output "$file.signature" "$file"
+    get_gpg_key
+    gpg --local-user $GPG_KEY \
+        --detach-sign --armor --output "$file.signature" "$file"
 }
 
 cmd_verify() {
