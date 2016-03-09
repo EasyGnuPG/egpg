@@ -30,8 +30,28 @@ colon_field(){
 }
 
 get_gpg_key(){
-  GPG_KEY=$(colon_field 3 $(gpg --gpgconf-list | grep ^default-key))
-  [[ -z $GPG_KEY ]] && GPG_KEY=$(colon_field 5 $(gpg --list-secret-keys --with-colons | grep ^sec | head -n 1))
+    [[ -z $GPG_KEY ]] || return
+
+    # find the id of the key
+    local secret_keys
+    secret_keys=$(gpg --list-secret-keys --with-colons | grep '^sec' | cut -d: -f5)
+    GPG_KEY=$(gpg --list-keys --with-colons $secret_keys | grep '^pub:u:' | cut -d: -f5)
+    [[ -z $GPG_KEY ]] && fail "No valid key found.\nTry first:  $0 key gen"
+
+    # check for key expiration
+    local key_details exp
+    key_details=$(gpg --list-keys --with-colons $GPG_KEY)
+    key_ids=$(echo "$key_details" | grep -E '^pub|^sub' | cut -d: -f5)
+    for key_id in $key_ids; do
+        exp=$(echo "$key_details" | grep -E ":$key_id:" | cut -d: -f7)
+        if [[ $exp -lt $(date +%s) ]]; then
+            echo -e "\nThe key $key_id has expired on $(date -d @$exp +%F).\nPlease renew it with:  $0 key renew\n"
+            break
+        elif [[ $(($exp - $(date +%s))) -lt $((2*24*60*60)) ]]; then
+            echo -e "\nThe key $key_id is expiring soon.\nPlease renew it with:  $0 key renew\n"
+            break
+        fi
+    done
 }
 
 get_new_passphrase() {
@@ -412,7 +432,6 @@ cmd_key_rev_cert() {
 
 cmd_key_fp() {
     get_gpg_key
-    [[ -z $GPG_KEY ]] && echo "No key found." && return 1
     echo "The fingerprint of your key is:"
     colon_field 10 $(gpg --with-colons --fingerprint $GPG_KEY | grep '^fpr') | sed 's/..../\0 /g'
 }
@@ -464,36 +483,40 @@ cmd_key_list() {
     # get the details of the main (cert) key
     line=$(echo "$keyinfo" | grep '^pub:')
     keys['c-id']=$(colon_field 5 $line)
-    keys['c-time']=$(date -d @"$(colon_field 6 $line)" +%F)
-    keys['c-exp']=$(date -d @"$(colon_field 7 $line)" +%F)
+    keys['c-start']=$(date -d @"$(colon_field 6 $line)" +%F)
+    keys['c-end']=$(date -d @"$(colon_field 7 $line)" +%F)
+    keys['c-exp']=''; [ $(date +%s) -gt $(colon_field 7 $line) ] && keys['c-exp']='expired'
 
     # get the details of the auth key
     line=$(echo "$keyinfo" | grep '^sub:' | grep ':a:')
     keys['a-id']=$(colon_field 5 $line)
-    keys['a-time']=$(date -d @"$(colon_field 6 $line)" +%F)
-    keys['a-exp']=$(date -d @"$(colon_field 7 $line)" +%F)
+    keys['a-start']=$(date -d @"$(colon_field 6 $line)" +%F)
+    keys['a-end']=$(date -d @"$(colon_field 7 $line)" +%F)
+    keys['a-exp']=''; [ $(date +%s) -gt $(colon_field 7 $line) ] && keys['c-exp']='expired'
 
     # get the details of the sign key
     line=$(echo "$keyinfo" | grep '^sub:' | grep ':s:')
     keys['s-id']=$(colon_field 5 $line)
-    keys['s-time']=$(date -d @"$(colon_field 6 $line)" +%F)
-    keys['s-exp']=$(date -d @"$(colon_field 7 $line)" +%F)
+    keys['s-start']=$(date -d @"$(colon_field 6 $line)" +%F)
+    keys['s-end']=$(date -d @"$(colon_field 7 $line)" +%F)
+    keys['s-exp']=''; [ $(date +%s) -gt $(colon_field 7 $line) ] && keys['c-exp']='expired'
 
     # get the details of the encrypt key
     line=$(echo "$keyinfo" | grep '^sub:' | grep ':e:')
     keys['e-id']=$(colon_field 5 $line)
-    keys['e-time']=$(date -d @"$(colon_field 6 $line)" +%F)
-    keys['e-exp']=$(date -d @"$(colon_field 7 $line)" +%F)
+    keys['e-start']=$(date -d @"$(colon_field 6 $line)" +%F)
+    keys['e-end']=$(date -d @"$(colon_field 7 $line)" +%F)
+    keys['e-exp']=''; [ $(date +%s) -gt $(colon_field 7 $line) ] && keys['c-exp']='expired'
 
     # output key details
     echo "
 $uid
 $fpr
 
-${keys['c-id']} [cert]    (${keys['c-time']}, ${keys['c-exp']})
-${keys['a-id']} [auth]    (${keys['a-time']}, ${keys['a-exp']})
-${keys['s-id']} [sign]    (${keys['s-time']}, ${keys['s-exp']})
-${keys['e-id']} [encrypt] (${keys['e-time']}, ${keys['e-exp']})
+${keys['c-id']} cert ${keys['c-start']} ${keys['c-end']} ${keys['c-exp']}
+${keys['a-id']} auth ${keys['a-start']} ${keys['a-end']} ${keys['a-exp']}
+${keys['s-id']} sign ${keys['s-start']} ${keys['s-end']} ${keys['s-exp']}
+${keys['e-id']} encr ${keys['e-start']} ${keys['e-end']} ${keys['e-exp']}
 "
 }
 
