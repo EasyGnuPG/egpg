@@ -25,10 +25,6 @@ VERSION="v0.6"
 # BEGIN helper functions
 #
 
-colon_field(){
-  echo $2 | cut -d: -f${1}
-}
-
 get_gpg_key(){
     [[ -z $GPG_KEY ]] || return
 
@@ -437,8 +433,7 @@ cmd_key_rev_cert() {
 
 cmd_key_fp() {
     get_gpg_key
-    echo "The fingerprint of your key is:"
-    colon_field 10 $(gpg --with-colons --fingerprint $GPG_KEY | grep '^fpr') | sed 's/..../\0 /g'
+    gpg --with-colons --fingerprint $GPG_KEY | grep '^fpr' | cut -d: -f 10 | sed 's/..../\0 /g'
 }
 
 cmd_key_rev() {
@@ -480,38 +475,42 @@ cmd_key_list() {
 
     # get fingerprint and user identity
     local fpr uid
-    fpr=$(colon_field 10 $(echo "$keyinfo" | grep '^fpr:') | sed 's/..../\0 /g')
-    uid=$(colon_field 10 "$(echo "$keyinfo" | grep '^uid:')")
+    fpr=$(echo "$keyinfo" | grep '^fpr:' | cut -d: -f 10 | sed 's/..../\0 /g')
+    uid=$(echo "$keyinfo" | grep '^uid:' | cut -d: -f 10)
 
-    local line
+    local line end
     declare -A keys
     # get the details of the main (cert) key
     line=$(echo "$keyinfo" | grep '^pub:')
-    keys['c-id']=$(colon_field 5 $line)
-    keys['c-start']=$(date -d @"$(colon_field 6 $line)" +%F)
-    keys['c-end']=$(date -d @"$(colon_field 7 $line)" +%F)
-    keys['c-exp']=''; [ $(date +%s) -gt $(colon_field 7 $line) ] && keys['c-exp']='expired'
+    keys['c-id']=$(echo $line | cut -d: -f 5)
+    keys['c-start']=$(date -d @"$(echo $line | cut -d: -f6)" +%F)
+    end=$(echo $line | cut -d: -f7)
+    keys['c-end']=$(date -d @$end +%F)
+    keys['c-exp']=''; [ $(date +%s) -gt $end ] && keys['c-exp']='expired'
 
     # get the details of the auth key
     line=$(echo "$keyinfo" | grep '^sub:' | grep ':a:')
-    keys['a-id']=$(colon_field 5 $line)
-    keys['a-start']=$(date -d @"$(colon_field 6 $line)" +%F)
-    keys['a-end']=$(date -d @"$(colon_field 7 $line)" +%F)
-    keys['a-exp']=''; [ $(date +%s) -gt $(colon_field 7 $line) ] && keys['c-exp']='expired'
+    keys['a-id']=$(echo $line | cut -d: -f 5)
+    keys['a-start']=$(date -d @"$(echo $line | cut -d: -f6)" +%F)
+    end=$(echo $line | cut -d: -f7)
+    keys['a-end']=$(date -d @$end +%F)
+    keys['a-exp']=''; [ $(date +%s) -gt $end ] && keys['c-exp']='expired'
 
     # get the details of the sign key
     line=$(echo "$keyinfo" | grep '^sub:' | grep ':s:')
-    keys['s-id']=$(colon_field 5 $line)
-    keys['s-start']=$(date -d @"$(colon_field 6 $line)" +%F)
-    keys['s-end']=$(date -d @"$(colon_field 7 $line)" +%F)
-    keys['s-exp']=''; [ $(date +%s) -gt $(colon_field 7 $line) ] && keys['c-exp']='expired'
+    keys['s-id']=$(echo $line | cut -d: -f 5)
+    keys['s-start']=$(date -d @"$(echo $line | cut -d: -f6)" +%F)
+    end=$(echo $line | cut -d: -f7)
+    keys['s-end']=$(date -d @$end +%F)
+    keys['s-exp']=''; [ $(date +%s) -gt $end ] && keys['c-exp']='expired'
 
     # get the details of the encrypt key
     line=$(echo "$keyinfo" | grep '^sub:' | grep ':e:')
-    keys['e-id']=$(colon_field 5 $line)
-    keys['e-start']=$(date -d @"$(colon_field 6 $line)" +%F)
-    keys['e-end']=$(date -d @"$(colon_field 7 $line)" +%F)
-    keys['e-exp']=''; [ $(date +%s) -gt $(colon_field 7 $line) ] && keys['c-exp']='expired'
+    keys['e-id']=$(echo $line | cut -d: -f 5)
+    keys['e-start']=$(date -d @"$(echo $line | cut -d: -f6)" +%F)
+    end=$(echo $line | cut -d: -f7)
+    keys['e-end']=$(date -d @$end +%F)
+    keys['e-exp']=''; [ $(date +%s) -gt $end ] && keys['c-exp']='expired'
 
     # output key details
     echo "
