@@ -226,8 +226,9 @@ Commands to manage the key. They are listed below.
         Create a new GPG key. If <email> and <name> are not given as
         arguments, they will be asked interactively.
 
-    [ls,list,show]
-        Show the details of the key.
+    [ls,list,show] [-r,--raw | -c,--colons]
+        Show the details of the key
+        (optionally in raw format or with colons).
 
     fp,fingerprint
         Show the fingerprint of the key.
@@ -431,36 +432,60 @@ to generate a new one. Are you sure about this?" || return 1
 }
 
 cmd_key_list() {
-    local keyinfo fpr uid line
-    declare -A keys
+    local opts raw=0 colons=0
+    opts="$(getopt -o rc -l raw,colons -n "$PROGRAM" -- "$@")"
+    local err=$?
+    eval set -- "$opts"
+    while true; do
+        case $1 in
+            -r|--raw) raw=1; shift ;;
+            -c|--colons) colons=1; shift ;;
+            --) shift; break ;;
+        esac
+    done
+    [[ $err -ne 0 ]] && echo "Usage: $COMMAND [-r,--raw | -c,--colons]" && return
+    [[ $raw == 1 ]] && [[ $colons == 1 ]] && echo "Usage: $COMMAND [-r,--raw | -c,--colons]" && return
 
     get_gpg_key
-    keyinfo=$(gpg --list-keys --fingerprint --with-colons $GPG_KEY)
-    #echo "$keyinfo" ; echo
+    [[ $raw == 1 ]] && gpg --list-keys $GPG_KEY && return
 
+    # get key details in colons format
+    local keyinfo
+    keyinfo=$(gpg --list-keys --fingerprint --with-colons $GPG_KEY)
+    [[ $colons == 1 ]] && echo "$keyinfo" && return
+
+    # get fingerprint and user identity
+    local fpr uid
     fpr=$(colon_field 10 $(echo "$keyinfo" | grep '^fpr:') | sed 's/..../\0 /g')
     uid=$(colon_field 10 "$(echo "$keyinfo" | grep '^uid:')")
 
+    local line
+    declare -A keys
+    # get the details of the main (cert) key
     line=$(echo "$keyinfo" | grep '^pub:')
     keys['c-id']=$(colon_field 5 $line)
     keys['c-time']=$(date -d @"$(colon_field 6 $line)" +%F)
     keys['c-exp']=$(date -d @"$(colon_field 7 $line)" +%F)
 
+    # get the details of the auth key
     line=$(echo "$keyinfo" | grep '^sub:' | grep ':a:')
     keys['a-id']=$(colon_field 5 $line)
     keys['a-time']=$(date -d @"$(colon_field 6 $line)" +%F)
     keys['a-exp']=$(date -d @"$(colon_field 7 $line)" +%F)
 
+    # get the details of the sign key
     line=$(echo "$keyinfo" | grep '^sub:' | grep ':s:')
     keys['s-id']=$(colon_field 5 $line)
     keys['s-time']=$(date -d @"$(colon_field 6 $line)" +%F)
     keys['s-exp']=$(date -d @"$(colon_field 7 $line)" +%F)
 
+    # get the details of the encrypt key
     line=$(echo "$keyinfo" | grep '^sub:' | grep ':e:')
     keys['e-id']=$(colon_field 5 $line)
     keys['e-time']=$(date -d @"$(colon_field 6 $line)" +%F)
     keys['e-exp']=$(date -d @"$(colon_field 7 $line)" +%F)
 
+    # output key details
     echo "
 $uid
 $fpr
