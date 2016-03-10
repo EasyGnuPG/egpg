@@ -254,16 +254,22 @@ Commands to manage the key. They are listed below.
     fp,fingerprint
         Show the fingerprint of the key.
 
-    rev-cert ["description"]
-        Generate a revocation certificate for the key.
+    exp,export
+        Export key to a file.
+
+    imp,import [-d,--dir <gnupghome> | -f,--file <export-file>]
+        Import a key, either from another gpg dir, or from a file.
 
     renew [<time-length>] [-c,--cert] [-a,--auth] [-s,--sign] [-e,--encrypt]
-        Renew the key, set the expiration time (by default) 1 year from now.
+        Renew the key, set the expiration time (by default) 1 month from now.
         The renewal time length can be given like this:
         <n> (days), <n>w (weeks), <n>m (months), <n>y (years)
         The rest of the options specify which subkey will be renewed
         (certifying, authenticating, signing or encrypting).
         If no options are given, then the certifying (main) key will be renewed.
+
+    rev-cert ["description"]
+        Generate a revocation certificate for the key.
 
     rev,revoke [<revocation-certificate>]
         Cancel the key by publishing the given revocation certificate.
@@ -341,10 +347,12 @@ cmd_key() {
     case "$keycmd" in
         gen|generate)     cmd_key_gen "$@" ;;
         ''|ls|list|show)  cmd_key_list "$@" ;;
-        rev-cert)         cmd_key_rev_cert "$@" ;;
         fp|fingerprint)   cmd_key_fp "$@" ;;
-        rev|revoke)       cmd_key_rev "$@" ;;
+        exp|export)       cmd_key_export "$@" ;;
+        imp|import)       cmd_key_import "$@" ;;
         renew)            cmd_key_renew "$@" ;;
+        rev-cert)         cmd_key_rev_cert "$@" ;;
+        rev|revoke)       cmd_key_rev "$@" ;;
         help|*)           cmd_key_help "$@" ;;
     esac
 }
@@ -435,6 +443,30 @@ cmd_key_rev_cert() {
 cmd_key_fp() {
     get_gpg_key
     gpg --with-colons --fingerprint $GPG_KEY | grep '^fpr' | cut -d: -f 10 | sed 's/..../\0 /g'
+}
+
+cmd_key_export() {
+    get_gpg_key
+    gpg --armor --export $GPG_KEY > $GPG_KEY.key
+    gpg --armor --export-secret-keys $GPG_KEY >> $GPG_KEY.key
+    echo "Key exported to: $GPG_KEY.key"
+}
+
+cmd_key_import() {
+    local opts dir file
+    opts="$(getopt -o df -l dir,file -n "$PROGRAM" -- "$@")"
+    local err=$?
+    eval set -- "$opts"
+    while true; do
+        case $1 in
+            -d|--dir) dir="$2"; shift 2 ;;
+            -f|--file) file="$2"; shift 2 ;;
+            --) shift; break ;;
+        esac
+    done
+    local usage="Usage: $COMMAND [-d,--dir <gnupghome> | -f,--file <export-file>]"
+    [[ $err -ne 0 ]] && echo $usage && return
+    [[ -n $dir ]] && [[ -n $file ]] && echo $usage && return
 }
 
 cmd_key_rev() {
