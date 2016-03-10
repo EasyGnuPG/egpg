@@ -254,11 +254,17 @@ Commands to manage the key. They are listed below.
     fp,fingerprint
         Show the fingerprint of the key.
 
-    exp,export
-        Export key to a file.
+    rm,del,delete [<key-id>]
+        Delete the key.
 
-    imp,import [-d,--dir <gnupghome> | -f,--file <export-file>]
-        Import a key, either from another gpg dir, or from a file.
+    exp,export [<key-id>]
+        Export key to file.
+
+    imp,import <file>
+        Import key from file.
+
+    get,pull [-d,--dir <gnupghome>] [-i,--key-id <key-id>]
+        Get a key from another gpg directory (by default from $GNUPGHOME).
 
     renew [<time-length>] [-c,--cert] [-a,--auth] [-s,--sign] [-e,--encrypt]
         Renew the key, set the expiration time (by default) 1 month from now.
@@ -348,8 +354,10 @@ cmd_key() {
         gen|generate)     cmd_key_gen "$@" ;;
         ''|ls|list|show)  cmd_key_list "$@" ;;
         fp|fingerprint)   cmd_key_fp "$@" ;;
+        rm|del|delete)    cmd_key_delete "$@" ;;
         exp|export)       cmd_key_export "$@" ;;
         imp|import)       cmd_key_import "$@" ;;
+        get|pull)         cmd_key_get "$@" ;;
         renew)            cmd_key_renew "$@" ;;
         rev-cert)         cmd_key_rev_cert "$@" ;;
         rev|revoke)       cmd_key_rev "$@" ;;
@@ -445,28 +453,93 @@ cmd_key_fp() {
     gpg --with-colons --fingerprint $GPG_KEY | grep '^fpr' | cut -d: -f 10 | sed 's/..../\0 /g'
 }
 
+cmd_key_delete() {
+    local key_id="$1"
+    [[ -z $key_id ]] && get_gpg_key && key_id=$GPG_KEY
+
+    local fingerprint
+    fingerprint=$(gpg --with-colons --fingerprint $key_id | grep '^fpr' | cut -d: -f10)
+    gpg --batch --delete-secret-and-public-keys "$fingerprint"
+}
+
 cmd_key_export() {
-    get_gpg_key
-    gpg --armor --export $GPG_KEY > $GPG_KEY.key
-    gpg --armor --export-secret-keys $GPG_KEY >> $GPG_KEY.key
-    echo "Key exported to: $GPG_KEY.key"
+    local key_id="$1"
+    [[ -z $key_id ]] && get_gpg_key && key_id=$GPG_KEY
+
+    gpg --armor --export $key_id > $key_id.key
+    gpg --armor --export-secret-keys $key_id >> $key_id.key
+    echo "Key exported to: $key_id.key"
 }
 
 cmd_key_import() {
-    local opts dir file
-    opts="$(getopt -o df -l dir,file -n "$PROGRAM" -- "$@")"
+    get_gpg_key 'dont-check'
+    [[ -z $GPG_KEY ]] \
+        || fail "There is already a valid key.\nRevoke it first, or wait until it expires."
+
+    local file="$1"
+    [[ -n "$file" ]] || fail "Usage: $COMMAND  <file>"
+    [[ -f "$file" ]] || fail "Cannot find file: $file"
+
+    # import
+    echo "Importing key from file: $file"
+    gpg --import "$file"
+
+    # set trust to 'ultimate'
+    get_gpg_key
+    local commands=$(echo "trust|5|y|quit" | tr '|' "\n")
+    script -c "gpg --batch --command-fd=0 --key-edit $GPG_KEY <<< \"$commands\" " /dev/null > /dev/null
+}
+
+cmd_key_get() {
+    get_gpg_key 'dont-check'
+    [[ -z $GPG_KEY ]] \
+        || fail "There is already a valid key.\nRevoke it first, or wait until it expires."
+
+    local opts homedir key_id
+    opts="$(getopt -o di -l homedir,key-id -n "$PROGRAM" -- "$@")"
     local err=$?
     eval set -- "$opts"
     while true; do
         case $1 in
-            -d|--dir) dir="$2"; shift 2 ;;
-            -f|--file) file="$2"; shift 2 ;;
+            -d|--homedir) homedir="$2"; shift 2 ;;
+            -i|--key-id) key_id="$2"; shift 2 ;;
             --) shift; break ;;
         esac
     done
-    local usage="Usage: $COMMAND [-d,--dir <gnupghome> | -f,--file <export-file>]"
-    [[ $err -ne 0 ]] && echo $usage && return
-    [[ -n $dir ]] && [[ -n $file ]] && echo $usage && return
+    [[ $err -eq 0 ]] || fail "Usage: $COMMAND [-d,--dir <gnupghome>] [-i,--key-id <key-id>]"
+
+    echo "Importing key from: $homedir"
+    [[ -n "$homedir" ]] || homedir="$ENV_GNUPGHOME"
+    [[ -n "$key_id" ]] || key_id=$(_find_key_to_import $homedir)
+
+    make_workdir
+    local file="$WORKDIR/$key_id.key"
+    gpg --homedir="$homedir" --armor --export $key_id > "$file"
+    gpg --homedir="$homedir" --armor --export-secret-keys $key_id >> "$file"
+
+    gpg --import "$file"
+    rm -rf $WORKDIR
+
+    local commands=$(echo "trust|5|y|quit" | tr '|' "\n")
+    script -c "gpg --command-fd=0 --key-edit $key_id <<< \"$commands\" " /dev/null > /dev/null
+}
+
+_find_key_to_import() {
+    local homedir="$1"
+    [[ -n "$homedir" ]] || fail "No gnupg directory to import from."
+    [[ -d "$homedir" ]] || fail "Cannot find gnupg directory: $homedir"
+
+    local secret_keys key_id expiration
+    secret_keys=$(gpg --homedir="$homedir" --list-secret-keys --with-colons | grep '^sec' | cut -d: -f5)
+    [[ -n $secret_keys ]] || fail "No valid key found."
+    for key_id in $secret_keys; do
+        expiration=$(gpg --homedir="$homedir" --list-keys --with-colons $key_id | grep '^pub:u:' | cut -d: -f7)
+        [[ -z $expiration ]] && continue
+        [[ $expiration -lt $(date +%s) ]] && continue
+        echo $key_id
+        return
+    done
+    fail "No valid key found."
 }
 
 cmd_key_rev() {
@@ -743,6 +816,7 @@ try_ext_cmd() {
 }
 
 config() {
+    ENV_GNUPGHOME="$GNUPGHOME"
     export GNUPGHOME="$EGPG_DIR/.gnupg"
     export GPG_AGENT_INFO=$(cat "$EGPG_DIR/.gpg-agent-info" | cut -c 16-)
     export GPG_TTY=$(tty)
