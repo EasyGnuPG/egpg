@@ -246,9 +246,10 @@ Commands to manage the key. They are listed below.
         Create a new GPG key. If <email> and <name> are not given as
         arguments, they will be asked interactively.
 
-    [ls,list,show] [-r,--raw | -c,--colons]
-        Show the details of the key
-        (optionally in raw format or with colons).
+    [ls,list,show] [-r,--raw | -c,--colons] [-a,--all]
+        Show the details of the key (optionally in raw format or with
+        colons). A list of all the keys can be displayed as well
+        (including the revoked ones).
 
     fp,fingerprint
         Show the fingerprint of the key.
@@ -451,77 +452,109 @@ to generate a new one. Are you sure about this?" || return 1
 }
 
 cmd_key_list() {
-    local opts raw=0 colons=0
-    opts="$(getopt -o rc -l raw,colons -n "$PROGRAM" -- "$@")"
+    local opts raw=0 colons=0 all=0
+    opts="$(getopt -o rca -l raw,colons,all -n "$PROGRAM" -- "$@")"
     local err=$?
     eval set -- "$opts"
     while true; do
         case $1 in
             -r|--raw) raw=1; shift ;;
             -c|--colons) colons=1; shift ;;
+            -a|--all) all=1; shift ;;
             --) shift; break ;;
         esac
     done
-    [[ $err -ne 0 ]] && echo "Usage: $COMMAND [-r,--raw | -c,--colons]" && return
+    [[ $err -ne 0 ]] && echo "Usage: $COMMAND [-r,--raw | -c,--colons] [-a,--all]" && return
     [[ $raw == 1 ]] && [[ $colons == 1 ]] && echo "Usage: $COMMAND [-r,--raw | -c,--colons]" && return
 
-    get_gpg_key
-    [[ $raw == 1 ]] && gpg --list-keys $GPG_KEY && return
+    local secret_keys
+    if [[ $all == 0 ]]; then
+        get_gpg_key
+        secret_keys=$GPG_KEY
+    else
+        secret_keys=$(gpg --list-secret-keys --with-colons | grep '^sec' | cut -d: -f5)
+    fi
 
-    # get key details in colons format
+    [[ $raw == 1 ]] && \
+        gpg --list-keys $secret_keys && \
+        return
+
+    [[ $colons == 1 ]] && \
+        gpg --list-keys --fingerprint --with-colons $secret_keys && \
+        return
+
+    # display the details of each key
+    for gpg_key in $secret_keys; do
+        echo
+        _display_key_details $gpg_key
+        echo
+    done
+}
+
+_display_key_details() {
+    local gpg_key=$1
     local keyinfo
-    keyinfo=$(gpg --list-keys --fingerprint --with-colons $GPG_KEY)
-    [[ $colons == 1 ]] && echo "$keyinfo" && return
+    keyinfo=$(gpg --list-keys --fingerprint --with-colons $gpg_key)
 
     # get fingerprint and user identity
     local fpr uid
     fpr=$(echo "$keyinfo" | grep '^fpr:' | cut -d: -f 10 | sed 's/..../\0 /g')
     uid=$(echo "$keyinfo" | grep '^uid:' | cut -d: -f 10)
+    echo -e "uid: $uid\nfpr: $fpr"
 
-    local line end
+    local line time1 time2 id start end exp rev
     declare -A keys
     # get the details of the main (cert) key
     line=$(echo "$keyinfo" | grep '^pub:')
-    keys['c-id']=$(echo $line | cut -d: -f 5)
-    keys['c-start']=$(date -d @"$(echo $line | cut -d: -f6)" +%F)
-    end=$(echo $line | cut -d: -f7)
-    keys['c-end']=$(date -d @$end +%F)
-    keys['c-exp']=''; [ $(date +%s) -gt $end ] && keys['c-exp']='expired'
+    if [[ -n "$line" ]]; then
+        id=$(echo $line | cut -d: -f5)
+        time1=$(echo $line | cut -d: -f6)
+        time2=$(echo $line | cut -d: -f7)
+        start=$(date -d @$time1 +%F)
+        end=$(date -d @$time2 +%F)
+        exp=''; [ $(date +%s) -gt $time2 ] && exp='expired'
+        rev=''; [[ $(echo $line | grep '^pub:r:') ]] && rev='revoked'
+        echo "cert: $id $start $end $exp $rev"
+    fi
 
     # get the details of the auth key
     line=$(echo "$keyinfo" | grep '^sub:' | grep ':a:')
-    keys['a-id']=$(echo $line | cut -d: -f 5)
-    keys['a-start']=$(date -d @"$(echo $line | cut -d: -f6)" +%F)
-    end=$(echo $line | cut -d: -f7)
-    keys['a-end']=$(date -d @$end +%F)
-    keys['a-exp']=''; [ $(date +%s) -gt $end ] && keys['c-exp']='expired'
+    if [[ -n "$line" ]]; then
+        id=$(echo $line | cut -d: -f5)
+        time1=$(echo $line | cut -d: -f6)
+        time2=$(echo $line | cut -d: -f7)
+        start=$(date -d @$time1 +%F)
+        end=$(date -d @$time2 +%F)
+        exp=''; [ $(date +%s) -gt $time2 ] && exp='expired'
+        rev=''; [[ $(echo $line | grep '^sub:r:') ]] && rev='revoked'
+        echo "auth: $id $start $end $exp $rev"
+    fi
 
     # get the details of the sign key
     line=$(echo "$keyinfo" | grep '^sub:' | grep ':s:')
-    keys['s-id']=$(echo $line | cut -d: -f 5)
-    keys['s-start']=$(date -d @"$(echo $line | cut -d: -f6)" +%F)
-    end=$(echo $line | cut -d: -f7)
-    keys['s-end']=$(date -d @$end +%F)
-    keys['s-exp']=''; [ $(date +%s) -gt $end ] && keys['c-exp']='expired'
+    if [[ -n "$line" ]]; then
+        id=$(echo $line | cut -d: -f5)
+        time1=$(echo $line | cut -d: -f6)
+        time2=$(echo $line | cut -d: -f7)
+        start=$(date -d @$time1 +%F)
+        end=$(date -d @$time2 +%F)
+        exp=''; [ $(date +%s) -gt $time2 ] && exp='expired'
+        rev=''; [[ $(echo $line | grep '^sub:r:') ]] && rev='revoked'
+        echo "sign: $id $start $end $exp $rev"
+    fi
 
     # get the details of the encrypt key
     line=$(echo "$keyinfo" | grep '^sub:' | grep ':e:')
-    keys['e-id']=$(echo $line | cut -d: -f 5)
-    keys['e-start']=$(date -d @"$(echo $line | cut -d: -f6)" +%F)
-    end=$(echo $line | cut -d: -f7)
-    keys['e-end']=$(date -d @$end +%F)
-    keys['e-exp']=''; [ $(date +%s) -gt $end ] && keys['c-exp']='expired'
-
-    # output key details
-    echo "
-$uid
-$fpr
-
-${keys['c-id']} cert ${keys['c-start']} ${keys['c-end']} ${keys['c-exp']}
-${keys['a-id']} auth ${keys['a-start']} ${keys['a-end']} ${keys['a-exp']}
-${keys['s-id']} sign ${keys['s-start']} ${keys['s-end']} ${keys['s-exp']}
-${keys['e-id']} encr ${keys['e-start']} ${keys['e-end']} ${keys['e-exp']}
-"
+    if [[ -n "$line" ]]; then
+        id=$(echo $line | cut -d: -f5)
+        time1=$(echo $line | cut -d: -f6)
+        time2=$(echo $line | cut -d: -f7)
+        start=$(date -d @$time1 +%F)
+        end=$(date -d @$time2 +%F)
+        exp=''; [ $(date +%s) -gt $time2 ] && exp='expired'
+        rev=''; [[ $(echo $line | grep '^sub:r:') ]] && rev='revoked'
+        echo "encr: $id $start $end $exp $rev"
+    fi
 }
 
 cmd_key_renew() {
