@@ -28,7 +28,6 @@ VERSION="v0.6"
 # Return the ids of the keys that are not revoked and not expired.
 get_valid_keys(){
     local homedir="${1:-$GNUPGHOME}"
-    echo "homedir=$homedir" 1>&2
     local valid_keys=''
     local secret_keys key_id keyinfo expiration
     secret_keys=$(gpg --homedir="$homedir" --list-secret-keys --with-colons | grep '^sec' | cut -d: -f5)
@@ -608,7 +607,7 @@ _display_key_details() {
     local fpr uid
     fpr=$(echo "$keyinfo" | grep '^fpr:' | cut -d: -f 10 | sed 's/..../\0 /g')
     uid=$(echo "$keyinfo" | grep '^uid:' | cut -d: -f 10)
-    echo -e "uid: $uid\nfpr: $fpr"
+    echo -e "id: $gpg_key\nuid: $uid\nfpr: $fpr"
 
     local line time1 time2 id start end exp rev
     declare -A keys
