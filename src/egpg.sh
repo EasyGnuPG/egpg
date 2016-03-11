@@ -71,6 +71,11 @@ assert_no_valid_key(){
     [[ -z $gpg_key ]] || fail "There is already a valid key.\nRevoke or delete it first."
 }
 
+gpg_send_keys() {
+    [[ -z $SHARE ]] && return
+    gpg --keyserver "$KEYSERVER" --send-keys "$@"
+}
+
 get_new_passphrase() {
     local passphrase passphrase_again
     while true; do
@@ -192,8 +197,9 @@ GNUPGHOME="$GNUPGHOME"
 GPG_AGENT_INFO="$GPG_AGENT_INFO"
 GPG_TTY="$GPG_TTY"
 GPG_OPTS="$GPG_OPTS"
-KEYSERVER="$KEYSERVER"
-DEBUG="$DEBUG"
+SHARE=$SHARE
+KEYSERVER=$KEYSERVER
+DEBUG=$DEBUG
 _EOF
 
     local platform_file="$LIBDIR/platform/$PLATFORM.sh"
@@ -378,7 +384,8 @@ cmd_key() {
         renew)            cmd_key_renew "$@" ;;
         rev-cert)         cmd_key_rev_cert "$@" ;;
         rev|revoke)       cmd_key_rev "$@" ;;
-        help|*)           cmd_key_help "$@" ;;
+        help)             cmd_key_help "$@" ;;
+        *)                try_ext_cmd "key_$keycmd" "$@" ;;
     esac
 }
 
@@ -446,7 +453,7 @@ cmd_key_gen() {
     cmd_key_rev_cert "This revocation certificate was generated when the key was created."
 
     # send the key to keyserver
-    [[ -n $KEYSERVER ]] && gpg --keyserver $KEYSERVER --send-keys $GPG_KEY
+    gpg_send_keys $GPG_KEY
 }
 
 cmd_key_rev_cert() {
@@ -555,7 +562,7 @@ Revocation will make your current key useless. You'll need
 to generate a new one. Are you sure about this?" || return 1
 
     gpg --import "$revoke_cert"
-    [[ -n $KEYSERVER ]] && gpg --keyserver $KEYSERVER --send-keys $GPG_KEY
+    gpg_send_keys $GPG_KEY
 }
 
 cmd_key_list() {
@@ -716,9 +723,8 @@ cmd_seal() {
     done
 
     # sign and encrypt
-    local keyserver=${KEYSERVER:-hkp://keys.gnupg.net}
     gpg --auto-key-locate=local,cert,keyserver,pka \
-        --keyserver $keyserver $recipients \
+        --keyserver "$KEYSERVER" $recipients \
         --sign --encrypt --armor \
         --output "$file.sealed" "$file"
 
@@ -734,8 +740,7 @@ cmd_open() {
     [[ "$output" != "$file" ]] || fail "The given file does not end in '.sealed'."
 
     # decrypt and verify
-    local keyserver=${KEYSERVER:-hkp://keys.gnupg.net}
-    gpg --keyserver $keyserver \
+    gpg --keyserver "$KEYSERVER" \
         --keyserver-options auto-key-retrieve,verbose,honor-keyserver-url \
         --decrypt --output "$output" "$file"
 }
@@ -761,6 +766,22 @@ cmd_verify() {
     gpg --verify "$file.signature" "$file"
 }
 
+cmd_set() {
+    local option=$1 ; shift
+    case ${option,,} in
+        share)
+            local value=$1
+            SHARE=$value
+            sed -i "$EGPG_DIR/config.sh" -e "/SHARE=/c SHARE=$value"
+            gpg_send_keys
+            ;;
+        *)
+            echo "Unknown option '$option'"
+            ;;
+    esac
+    sed -i $config_file
+}
+
 cmd_gpg() { gpg "$@"; }
 
 #
@@ -780,7 +801,8 @@ run_cmd() {
         open)     cmd_open "$@" ;;
         sign)     cmd_sign "$@" ;;
         verify)   cmd_verify "$@" ;;
-        --|gpg)      cmd_gpg "$@" ;;
+        set)      cmd_set "$@" ;;
+        --|gpg)   cmd_gpg "$@" ;;
         *)        try_ext_cmd $cmd "$@" ;;
     esac
 }
@@ -829,8 +851,9 @@ config() {
 # GnuPG options
 GPG_OPTS=
 
-# Push local changes to the keyserver.
-# Leave it empty (or comment out) to disable sending.
+# Push local changes to the keyserver network.
+# Leave it empty (or comment out) to disable.
+SHARE=
 #KEYSERVER=hkp://keys.gnupg.net
 
 # Enable debug output
@@ -840,7 +863,7 @@ _EOF
 
     # set defaults, if some configurations are missing
     GPG_OPTS=${GPG_OPTS:-}
-    #KEYSERVER=${KEYSERVER:-hkp://keys.gnupg.net}
+    KEYSERVER=${KEYSERVER:-hkp://keys.gnupg.net}
     DEBUG=${DEBUG:-}
 }
 
