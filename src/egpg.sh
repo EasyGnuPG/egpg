@@ -25,20 +25,30 @@ VERSION="v0.6"
 # BEGIN helper functions
 #
 
+# Return the ids of the keys that are not revoked and not expired.
+get_valid_keys(){
+    local homedir="${1:-$GNUPGHOME}"
+    echo "homedir=$homedir" 1>&2
+    local valid_keys=''
+    local secret_keys key_id keyinfo expiration
+    secret_keys=$(gpg --homedir="$homedir" --list-secret-keys --with-colons | grep '^sec' | cut -d: -f5)
+    for key_id in $secret_keys; do
+        keyinfo=$(gpg --homedir="$homedir" --list-keys --with-colons $key_id | grep '^pub:u:')
+        [[ -z $keyinfo ]] && continue
+        expiration=$(echo "$keyinfo" | cut -d: -f7)
+        [[ -n $expiration ]] && [[ $expiration -lt $(date +%s) ]] && continue
+        valid_keys+=" $key_id"
+    done
+    echo $valid_keys
+}
+
 get_gpg_key(){
     [[ -z $GPG_KEY ]] || return
-
-    # find the id of the key
-    local secret_keys
-    secret_keys=$(gpg --list-secret-keys --with-colons | grep '^sec' | cut -d: -f5)
-    GPG_KEY=$(gpg --list-keys --with-colons $secret_keys | grep '^pub:u:' | cut -d: -f5)
-
-    local dont_check=$1
-    [[ -n $dont_check ]] && return
-
+    GPG_KEY=$(get_valid_keys | cut -d' ' -f1)
     [[ -z $GPG_KEY ]] && fail "No valid key found.\nTry first:  $0 key gen"
 
     # check for key expiration
+    # an expired key can be renewed at any time, so only a warning is issued
     local key_details exp
     key_details=$(gpg --list-keys --with-colons $GPG_KEY)
     key_ids=$(echo "$key_details" | grep -E '^pub|^sub' | cut -d: -f5)
@@ -52,6 +62,14 @@ get_gpg_key(){
             break
         fi
     done
+}
+
+# Fail with a suitable message if there is any valid key.
+# This is called before generating or importing a new key,
+# to make sure that there is no more than one valid key.
+assert_no_valid_key(){
+    local gpg_key=$(get_valid_keys | cut -d' ' -f1)
+    [[ -z $gpg_key ]] || fail "There is already a valid key.\nRevoke or delete it first."
 }
 
 get_new_passphrase() {
@@ -263,7 +281,7 @@ Commands to manage the key. They are listed below.
     imp,import <file>
         Import key from file.
 
-    get,pull [-d,--dir <gnupghome>] [-i,--key-id <key-id>]
+    get,pull [-d,--dir <gnupghome>] [-k,--key-id <key-id>]
         Get a key from another gpg directory (by default from $GNUPGHOME).
 
     renew [<time-length>] [-c,--cert] [-a,--auth] [-s,--sign] [-e,--encrypt]
@@ -366,9 +384,7 @@ cmd_key() {
 }
 
 cmd_key_gen() {
-    get_gpg_key 'dont-check'
-    [[ -z $GPG_KEY ]] \
-        || fail "There is already a valid key.\nRevoke it first, or wait until it expires."
+    assert_no_valid_key
 
     local opts pass=1
     opts="$(getopt -o n -l no-passphrase -n "$PROGRAM" -- "$@")"
@@ -472,9 +488,7 @@ cmd_key_export() {
 }
 
 cmd_key_import() {
-    get_gpg_key 'dont-check'
-    [[ -z $GPG_KEY ]] \
-        || fail "There is already a valid key.\nRevoke it first, or wait until it expires."
+    assert_no_valid_key
 
     local file="$1"
     [[ -n "$file" ]] || fail "Usage: $COMMAND  <file>"
@@ -491,55 +505,44 @@ cmd_key_import() {
 }
 
 cmd_key_get() {
-    get_gpg_key 'dont-check'
-    [[ -z $GPG_KEY ]] \
-        || fail "There is already a valid key.\nRevoke it first, or wait until it expires."
+    assert_no_valid_key
 
     local opts homedir key_id
-    opts="$(getopt -o di -l homedir,key-id -n "$PROGRAM" -- "$@")"
+    opts="$(getopt -o d:k: -l homedir:,key-id: -n "$PROGRAM" -- "$@")"
     local err=$?
     eval set -- "$opts"
     while true; do
         case $1 in
             -d|--homedir) homedir="$2"; shift 2 ;;
-            -i|--key-id) key_id="$2"; shift 2 ;;
+            -k|--key-id) key_id="$2"; shift 2 ;;
             --) shift; break ;;
         esac
     done
-    [[ $err -eq 0 ]] || fail "Usage: $COMMAND [-d,--dir <gnupghome>] [-i,--key-id <key-id>]"
+    [[ $err -eq 0 ]] || fail "Usage: $COMMAND [-d,--dir <gnupghome>] [-k,--key-id <key-id>]"
 
-    echo "Importing key from: $homedir"
+    # get the gnupg dir
     [[ -n "$homedir" ]] || homedir="$ENV_GNUPGHOME"
-    [[ -n "$key_id" ]] || key_id=$(_find_key_to_import $homedir)
+    [[ -n "$homedir" ]] || fail "No gnupg directory to import from."
+    [[ -d "$homedir" ]] || fail "Cannot find gnupg directory: $homedir"
+    echo "Importing key from: $homedir"
 
+    # get id of the key to be imported
+    [[ -n "$key_id" ]] || key_id=$(get_valid_keys $homedir | cut -d' ' -f1)
+    [[ -n "$key_id" ]] || fail "No valid key found."
+
+    # export to tmp file
     make_workdir
     local file="$WORKDIR/$key_id.key"
     gpg --homedir="$homedir" --armor --export $key_id > "$file"
     gpg --homedir="$homedir" --armor --export-secret-keys $key_id >> "$file"
 
+    # import from the tmp file
     gpg --import "$file"
     rm -rf $WORKDIR
 
+    # set trust to ultimate
     local commands=$(echo "trust|5|y|quit" | tr '|' "\n")
     script -c "gpg --command-fd=0 --key-edit $key_id <<< \"$commands\" " /dev/null > /dev/null
-}
-
-_find_key_to_import() {
-    local homedir="$1"
-    [[ -n "$homedir" ]] || fail "No gnupg directory to import from."
-    [[ -d "$homedir" ]] || fail "Cannot find gnupg directory: $homedir"
-
-    local secret_keys key_id expiration
-    secret_keys=$(gpg --homedir="$homedir" --list-secret-keys --with-colons | grep '^sec' | cut -d: -f5)
-    [[ -n $secret_keys ]] || fail "No valid key found."
-    for key_id in $secret_keys; do
-        expiration=$(gpg --homedir="$homedir" --list-keys --with-colons $key_id | grep '^pub:u:' | cut -d: -f7)
-        [[ -z $expiration ]] && continue
-        [[ $expiration -lt $(date +%s) ]] && continue
-        echo $key_id
-        return
-    done
-    fail "No valid key found."
 }
 
 cmd_key_rev() {
