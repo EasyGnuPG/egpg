@@ -1,7 +1,6 @@
-#!/usr/bin/env bash
 #
-# EasyGnuPG is a wrapper around GnuPG to simplify its operations.
-# Copyright (C) 2016  Dashamir Hoxha
+# This file is part of EasyGnuPG.  EasyGnuPG is a wrapper around GnuPG
+# to simplify its operations.  Copyright (C) 2016 Dashamir Hoxha
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,10 +14,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see http://www.gnu.org/licenses/
-
-#
-# BEGIN platform definable
-#
 
 gpg() { "$(which gpg2)" $GPG_OPTS "$@" ; }
 export -f gpg
@@ -73,7 +68,3 @@ _EOF
         trap shred_tmpfile INT TERM EXIT
     fi
 }
-
-#
-# END platform definable
-#

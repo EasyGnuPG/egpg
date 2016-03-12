@@ -1,7 +1,6 @@
-#!/usr/bin/env bash
 #
-# EasyGnuPG is a wrapper around GnuPG to simplify its operations.
-# Copyright (C) 2016  Dashamir Hoxha
+# This file is part of EasyGnuPG.  EasyGnuPG is a wrapper around GnuPG
+# to simplify its operations.  Copyright (C) 2016 Dashamir Hoxha
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,10 +14,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see http://www.gnu.org/licenses/
-
-#
-# BEGIN helper functions
-#
 
 # Return the ids of the keys that are not revoked and not expired.
 get_valid_keys(){
@@ -127,7 +122,3 @@ is_true() {
 is_false() {
     ! is_true "$@"
 }
-
-#
-# END helper functions
-#

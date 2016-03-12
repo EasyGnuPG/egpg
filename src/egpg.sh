@@ -25,13 +25,10 @@ LIBDIR="$(dirname "$0")"
 
 source "$LIBDIR/include/auxiliary.sh"
 source "$LIBDIR/include/platform.sh"
-source "$LIBDIR/include/cmd_key.sh"
 
 cmd_version() {
     echo "egpg:  EasyGnuPG  $VERSION    (hosted at: https://github.com/dashohoxha/egpg) "
 }
-
-cmd_gpg() { gpg "$@"; }
 
 cmd() {
     PROGRAM="${0##*/}"
@@ -46,9 +43,32 @@ cmd() {
         verify)   run_cmd verify "$@" ;;
         set)      run_cmd set "$@" ;;
 
-        key)      cmd_key "$@" ;;
         --|gpg)   cmd_gpg "$@" ;;
+        key)      cmd_key "$@" ;;
+
         *)        run_ext_cmd $cmd "$@" ;;
+    esac
+}
+
+cmd_gpg() { gpg "$@"; }
+
+cmd_key() {
+    COMMAND+=" $1"
+    local keycmd="$1" ; shift
+    case "$keycmd" in
+        gen|generate)     run_cmd key_gen "$@" ;;
+        ''|ls|list|show)  run_cmd key_list "$@" ;;
+        fp|fingerprint)   run_cmd key_fp "$@" ;;
+        rm|del|delete)    run_cmd key_delete "$@" ;;
+        exp|export)       run_cmd key_export "$@" ;;
+        imp|import)       run_cmd key_import "$@" ;;
+        fetch)            run_cmd key_fetch "$@" ;;
+        renew)            run_cmd key_renew "$@" ;;
+        share)            run_cmd key_share "$@" ;;
+        rev-cert)         run_cmd key_rev_cert "$@" ;;
+        rev|revoke)       run_cmd key_rev "$@" ;;
+        help)             run_cmd key_help "$@" ;;
+        *)                run_ext_cmd "key_$keycmd" "$@" ;;
     esac
 }
 
