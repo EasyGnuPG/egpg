@@ -48,7 +48,7 @@ Commands to manage the key. They are listed below.
     imp,import <file>
         Import key from file.
 
-    get,pull [-d,--dir <gnupghome>] [-k,--key-id <key-id>]
+    fetch [-d,--dir <gnupghome>] [-k,--key-id <key-id>]
         Get a key from another gpg directory (by default from $GNUPGHOME).
 
     renew [<time-length>] [-c,--cert] [-a,--auth] [-s,--sign] [-e,--encrypt]
@@ -81,7 +81,7 @@ cmd_key() {
         rm|del|delete)    cmd_key_delete "$@" ;;
         exp|export)       cmd_key_export "$@" ;;
         imp|import)       cmd_key_import "$@" ;;
-        get|pull)         cmd_key_get "$@" ;;
+        fetch)            cmd_key_fetch "$@" ;;
         renew)            cmd_key_renew "$@" ;;
         share)            cmd_key_share "$@" ;;
         rev-cert)         cmd_key_rev_cert "$@" ;;
@@ -212,7 +212,7 @@ cmd_key_import() {
     script -c "gpg --batch --command-fd=0 --key-edit $GPG_KEY <<< \"$commands\" " /dev/null > /dev/null
 }
 
-cmd_key_get() {
+cmd_key_fetch() {
     assert_no_valid_key
 
     local opts homedir key_id
