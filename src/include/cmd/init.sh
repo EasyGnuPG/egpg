@@ -65,7 +65,7 @@ _EOF
 if ! test -f "$EGPG_DIR/.gpg-agent-info" \
 || ! kill -0 $(cut -d: -f 2 "$EGPG_DIR/.gpg-agent-info") 2>/dev/null
 then
-    gpg-agent --daemon --no-grab \
+    gpg-agent --daemon --no-grab --quiet \
         --options "$EGPG_DIR/.gnupg/gpg-agent.conf" \
         --pinentry-program /usr/bin/pinentry \
         --write-env-file "$EGPG_DIR/.gpg-agent-info" > /dev/null
