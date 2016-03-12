@@ -38,8 +38,15 @@ get_valid_keys(){
 
 get_gpg_key(){
     [[ -z $GPG_KEY ]] || return
+
     GPG_KEY=$(get_valid_keys | cut -d' ' -f1)
-    [[ -z $GPG_KEY ]] && fail "No valid key found.\nTry first:  $0 key gen"
+    [[ -z $GPG_KEY ]] && \
+        fail "
+No valid key found.
+
+Try first:  $0 key gen
+       or:  $0 key fetch
+"
 
     # check for key expiration
     # an expired key can be renewed at any time, so only a warning is issued
