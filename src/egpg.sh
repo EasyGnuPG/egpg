@@ -25,28 +25,42 @@ LIBDIR="$(dirname "$0")"
 
 source "$LIBDIR/include/auxiliary.sh"
 source "$LIBDIR/include/platform.sh"
-source "$LIBDIR/include/cmd.sh"
 source "$LIBDIR/include/cmd_key.sh"
 
-run_cmd() {
+cmd_version() {
+    echo "egpg:  EasyGnuPG  $VERSION    (hosted at: https://github.com/dashohoxha/egpg) "
+}
+
+cmd_gpg() { gpg "$@"; }
+
+cmd() {
     PROGRAM="${0##*/}"
     COMMAND="$PROGRAM $1"
 
     local cmd="$1" ; shift
     case "$cmd" in
-        ''|info)  cmd_info "$@" ;;
+        ''|info)  run_cmd info "$@" ;;
+        seal)     run_cmd seal "$@" ;;
+        open)     run_cmd open "$@" ;;
+        sign)     run_cmd sign "$@" ;;
+        verify)   run_cmd verify "$@" ;;
+        set)      run_cmd set "$@" ;;
+
         key)      cmd_key "$@" ;;
-        seal)     cmd_seal "$@" ;;
-        open)     cmd_open "$@" ;;
-        sign)     cmd_sign "$@" ;;
-        verify)   cmd_verify "$@" ;;
-        set)      cmd_set "$@" ;;
         --|gpg)   cmd_gpg "$@" ;;
-        *)        try_ext_cmd $cmd "$@" ;;
+        *)        run_ext_cmd $cmd "$@" ;;
     esac
 }
 
-try_ext_cmd() {
+run_cmd() {
+    local cmd=$1; shift
+    local file="$LIBDIR/include/cmd/$cmd.sh"
+    [[ -f "$file" ]] || fail "Cannot find command file: $file"
+    source "$file"
+    cmd_$cmd "$@"
+}
+
+run_ext_cmd() {
     local cmd=$1; shift
 
     # try '~/.egpg/cmd_xyz.sh'
@@ -110,8 +124,8 @@ main() {
     # handle some basic commands
     case "$1" in
         v|-v|version|--version)  cmd_version "$@" ; exit 0 ;;
-        help|-h|--help)          cmd_help "$@" ; exit 0 ;;
-        init)                    cmd_init "$@" ; exit 0 ;;
+        help|-h|--help)          run_cmd help "$@" ; exit 0 ;;
+        init)                    run_cmd init "$@" ; exit 0 ;;
     esac
 
     # set config variables
@@ -131,7 +145,7 @@ main() {
     [[ -f "$customize_file" ]] && source "$customize_file"
 
     # run the command
-    run_cmd "$@"
+    cmd "$@"
 }
 
 main "$@"
