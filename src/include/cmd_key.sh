@@ -65,6 +65,9 @@ Commands to manage the key. They are listed below.
     rev,revoke [<revocation-certificate>]
         Cancel the key by publishing the given revocation certificate.
 
+    share
+        Publish the key to the keyserver network.
+
 _EOF
 }
 
@@ -80,6 +83,7 @@ cmd_key() {
         imp|import)       cmd_key_import "$@" ;;
         get|pull)         cmd_key_get "$@" ;;
         renew)            cmd_key_renew "$@" ;;
+        share)            cmd_key_share "$@" ;;
         rev-cert)         cmd_key_rev_cert "$@" ;;
         rev|revoke)       cmd_key_rev "$@" ;;
         help)             cmd_key_help "$@" ;;
@@ -398,8 +402,15 @@ cmd_key_renew() {
 
     get_gpg_key
     script -c "gpg --command-fd=0 --key-edit $GPG_KEY <<< \"$commands\" " /dev/null > /dev/null
+    gpg_send_keys $GPG_KEY
 
     cmd_key_list
+}
+
+cmd_key_share() {
+    get_gpg_key
+    is_true $SHARE || fail "You must enable sharing first with:\n  $0 set share yes"
+    gpg_send_keys $GPG_KEY
 }
 
 #

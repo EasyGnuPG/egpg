@@ -67,7 +67,7 @@ assert_no_valid_key(){
 }
 
 gpg_send_keys() {
-    [[ -z $SHARE ]] && return
+    is_true $SHARE || return
     gpg --keyserver "$KEYSERVER" --send-keys "$@"
 }
 
@@ -107,6 +107,18 @@ fail() {
 debug() {
     [[ -z $DEBUG ]] && return
     echo "$@"
+}
+
+is_true() {
+    local var="${1,,}"
+    [[ $var == 1 ]] && return
+    [[ $var == 'yes' ]] && return
+    [[ $var == 'true' ]] && return
+    [[ $var == 'enabled' ]] && return
+}
+
+is_false() {
+    ! is_true "$@"
 }
 
 #

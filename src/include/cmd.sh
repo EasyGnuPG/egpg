@@ -54,6 +54,9 @@ Commands and their options are listed below.
         Verify the signature of the given file.  The signature file
         <file.signature> must be present as well.
 
+    set <option> <value>
+        Change the settings.
+
     --,gpg ...
         Run any gpg command (but using the configuration settings of egpg).
 
