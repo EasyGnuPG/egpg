@@ -36,17 +36,18 @@ cmd() {
 
     local cmd="$1" ; shift
     case "$cmd" in
-        ''|info)  run_cmd info "$@" ;;
-        seal)     run_cmd seal "$@" ;;
-        open)     run_cmd open "$@" ;;
-        sign)     run_cmd sign "$@" ;;
-        verify)   run_cmd verify "$@" ;;
-        set)      run_cmd set "$@" ;;
+        ''|info)      run_cmd info "$@" ;;
+        seal)         run_cmd seal "$@" ;;
+        open)         run_cmd open "$@" ;;
+        sign)         run_cmd sign "$@" ;;
+        verify)       run_cmd verify "$@" ;;
+        set)          run_cmd set "$@" ;;
 
-        --|gpg)   cmd_gpg "$@" ;;
-        key)      cmd_key "$@" ;;
+        --|gpg)       cmd_gpg "$@" ;;
+        key)          cmd_key "$@" ;;
+        c|contact)    cmd_contact "$@" ;;
 
-        *)        run_ext_cmd $cmd "$@" ;;
+        *)            run_ext_cmd $cmd "$@" ;;
     esac
 }
 
@@ -54,8 +55,9 @@ cmd_gpg() { gpg "$@"; }
 
 cmd_key() {
     COMMAND+=" $1"
-    local keycmd="$1" ; shift
-    case "$keycmd" in
+    local subcmd="$1" ; shift
+    case "$subcmd" in
+        help)             run_cmd key_help "$@" ;;
         gen|generate)     run_cmd key_gen "$@" ;;
         ''|ls|list|show)  run_cmd key_list "$@" ;;
         fp|fingerprint)   run_cmd key_fp "$@" ;;
@@ -69,7 +71,26 @@ cmd_key() {
         rev|revoke)       run_cmd key_rev "$@" ;;
         pass)             run_cmd key_pass "$@" ;;
         help)             run_cmd key_help "$@" ;;
-        *)                run_ext_cmd "key_$keycmd" "$@" ;;
+        *)                run_ext_cmd "key_$subcmd" "$@" ;;
+    esac
+}
+
+cmd_contact() {
+    COMMAND+=" $1"
+    local subcmd="$1" ; shift
+    case "$subcmd" in
+        ''|help)          run_cmd contact_help "$@" ;;
+        exp|export)       run_cmd contact_export "$@" ;;
+        imp|import)       run_cmd contact_import "$@" ;;
+        fetch)            run_cmd contact_fetch "$@" ;;
+        ls|list|show)     run_cmd contact_list "$@" ;;
+        search|find)      run_cmd contact_search "$@" ;;
+        rm|del|delete)    run_cmd contact_delete "$@" ;;
+        sync)             run_cmd contact_sync "$@" ;;
+        confirm)          run_cmd contact_confirm "$@" ;;
+        vouch)            run_cmd contact_vouch "$@" ;;
+        trust)            run_cmd contact_trust "$@" ;;
+        *)                run_ext_cmd "contact_$subcmd" "$@" ;;
     esac
 }
 
