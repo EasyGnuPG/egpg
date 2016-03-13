@@ -32,8 +32,8 @@ They are listed below.
     search,find <pattern>
         List only the matching contacts.
 
-    rm,del,delete <contact>
-        Delete the given contact.
+    rm,del,delete <contact>... [-f,--force]
+        Delete the given contact(s).
 
     exp,export [<contact>...] [-o,--output <file>]
         Export contact(s) to file.

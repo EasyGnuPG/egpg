@@ -16,12 +16,24 @@
 # along with this program.  If not, see http://www.gnu.org/licenses/
 #
 
-cmd_contact_import() {
-    local file="$1"
-    [[ -n "$file" ]] || fail "Usage: $COMMAND <file>"
-    [[ -f "$file" ]] || fail "Cannot find file: $file"
+cmd_contact_delete() {
+    local opts force=0
+    opts="$(getopt -o f -l force -n "$PROGRAM" -- "$@")"
+    local err=$?
+    eval set -- "$opts"
+    while true; do
+        case $1 in
+            -f|--force) force=1; shift ;;
+            --) shift; break ;;
+        esac
+    done
+    local usage="Usage: $COMMAND <contact>... [-f,--force]"
+    [[ $err != 0 ]] && fail $usage
+    [[ -z $1 ]] && fail $usage
 
-    # import
-    echo "Importing contacts from file: $file"
-    gpg --import "$file"
+    if [[ $force == 0 ]]; then
+        gpg --delete-keys "$@"
+    else
+        gpg --batch --yes --delete-keys "$@"
+    fi
 }
