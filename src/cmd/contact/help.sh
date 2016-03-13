@@ -35,7 +35,7 @@ They are listed below.
     rm,del,delete <contact>
         Delete the given contact.
 
-    exp,export [<contact>]
+    exp,export [<contact>...] [-o,--output <file>]
         Export contact(s) to file.
 
     imp,import <file>
