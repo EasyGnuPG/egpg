@@ -36,18 +36,18 @@ cmd() {
 
     local cmd="$1" ; shift
     case "$cmd" in
-        ''|info)      call cmd_info "$@" ;;
-        seal)         call cmd_seal "$@" ;;
-        open)         call cmd_open "$@" ;;
-        sign)         call cmd_sign "$@" ;;
-        verify)       call cmd_verify "$@" ;;
-        set)          call cmd_set "$@" ;;
+        ''|info)          call cmd_info "$@" ;;
+        seal)             call cmd_seal "$@" ;;
+        open)             call cmd_open "$@" ;;
+        sign)             call cmd_sign "$@" ;;
+        verify)           call cmd_verify "$@" ;;
+        set)              call cmd_set "$@" ;;
 
-        --|gpg)       cmd_gpg "$@" ;;
-        key)          cmd_key "$@" ;;
-        c|contact)    cmd_contact "$@" ;;
+        --|gpg)           cmd_gpg "$@" ;;
+        key)              cmd_key "$@" ;;
+        c|contact)        cmd_contact "$@" ;;
 
-        *)            call_ext cmd_$cmd "$@" ;;
+        *)                call_ext cmd_$cmd "$@" ;;
     esac
 }
 
