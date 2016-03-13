@@ -81,7 +81,7 @@ cmd_contact() {
     case "$cmd" in
         ''|help)          call cmd_contact_help "$@" ;;
         exp|export)       call cmd_contact_export "$@" ;;
-        imp|import)       call cmd_contact_import "$@" ;;
+        imp|import|add)   call cmd_contact_import "$@" ;;
         fetch)            call cmd_contact_fetch "$@" ;;
         ls|list|show)     call cmd_contact_list "$@" ;;
         search|find)      call cmd_contact_search "$@" ;;

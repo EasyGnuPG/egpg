@@ -38,8 +38,8 @@ They are listed below.
     exp,export [<contact>...] [-o,--output <file>]
         Export contact(s) to file.
 
-    imp,import <file>
-        Import contact(s) from file.
+    imp,import,add <file>
+        Import (add) contact(s) from file.
 
     fetch [<contact>] [-d,--dir <gnupghome>]
         Get a contact from another gpg directory (by default from $GNUPGHOME).
