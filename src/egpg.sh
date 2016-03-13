@@ -67,6 +67,7 @@ cmd_key() {
         share)            run_cmd key_share "$@" ;;
         rev-cert)         run_cmd key_rev_cert "$@" ;;
         rev|revoke)       run_cmd key_rev "$@" ;;
+        pass)             run_cmd key_pass "$@" ;;
         help)             run_cmd key_help "$@" ;;
         *)                run_ext_cmd "key_$keycmd" "$@" ;;
     esac

@@ -61,6 +61,9 @@ Commands to manage the key. They are listed below.
     rev,revoke [<revocation-certificate>]
         Cancel the key by publishing the given revocation certificate.
 
+    pass
+        Change the passphrase.
+
     share
         Publish the key to the keyserver network.
 
