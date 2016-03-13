@@ -23,8 +23,8 @@ VERSION="v0.6"
 
 LIBDIR="$(dirname "$0")"
 
-source "$LIBDIR/include/auxiliary.sh"
-source "$LIBDIR/include/platform.sh"
+source "$LIBDIR/auxiliary.sh"
+source "$LIBDIR/platform.sh"
 
 cmd_version() {
     echo "egpg:  EasyGnuPG  $VERSION    (hosted at: https://github.com/dashohoxha/egpg) "
@@ -36,18 +36,18 @@ cmd() {
 
     local cmd="$1" ; shift
     case "$cmd" in
-        ''|info)      run_cmd info "$@" ;;
-        seal)         run_cmd seal "$@" ;;
-        open)         run_cmd open "$@" ;;
-        sign)         run_cmd sign "$@" ;;
-        verify)       run_cmd verify "$@" ;;
-        set)          run_cmd set "$@" ;;
+        ''|info)      call cmd_info "$@" ;;
+        seal)         call cmd_seal "$@" ;;
+        open)         call cmd_open "$@" ;;
+        sign)         call cmd_sign "$@" ;;
+        verify)       call cmd_verify "$@" ;;
+        set)          call cmd_set "$@" ;;
 
         --|gpg)       cmd_gpg "$@" ;;
         key)          cmd_key "$@" ;;
         c|contact)    cmd_contact "$@" ;;
 
-        *)            run_ext_cmd $cmd "$@" ;;
+        *)            call_ext cmd_$cmd "$@" ;;
     esac
 }
 
@@ -55,80 +55,80 @@ cmd_gpg() { gpg "$@"; }
 
 cmd_key() {
     COMMAND+=" $1"
-    local subcmd="$1" ; shift
-    case "$subcmd" in
-        help)             run_cmd key_help "$@" ;;
-        gen|generate)     run_cmd key_gen "$@" ;;
-        ''|ls|list|show)  run_cmd key_list "$@" ;;
-        fp|fingerprint)   run_cmd key_fp "$@" ;;
-        rm|del|delete)    run_cmd key_delete "$@" ;;
-        exp|export)       run_cmd key_export "$@" ;;
-        imp|import)       run_cmd key_import "$@" ;;
-        fetch)            run_cmd key_fetch "$@" ;;
-        renew)            run_cmd key_renew "$@" ;;
-        share)            run_cmd key_share "$@" ;;
-        rev-cert)         run_cmd key_rev_cert "$@" ;;
-        rev|revoke)       run_cmd key_rev "$@" ;;
-        pass)             run_cmd key_pass "$@" ;;
-        help)             run_cmd key_help "$@" ;;
-        *)                run_ext_cmd "key_$subcmd" "$@" ;;
+    local cmd="$1" ; shift
+    case "$cmd" in
+        help)             call cmd_key_help "$@" ;;
+        gen|generate)     call cmd_key_gen "$@" ;;
+        ''|ls|list|show)  call cmd_key_list "$@" ;;
+        fp|fingerprint)   call cmd_key_fp "$@" ;;
+        rm|del|delete)    call cmd_key_delete "$@" ;;
+        exp|export)       call cmd_key_export "$@" ;;
+        imp|import)       call cmd_key_import "$@" ;;
+        fetch)            call cmd_key_fetch "$@" ;;
+        renew)            call cmd_key_renew "$@" ;;
+        share)            call cmd_key_share "$@" ;;
+        revcert)          call cmd_key_revcert "$@" ;;
+        rev|revoke)       call cmd_key_rev "$@" ;;
+        pass)             call cmd_key_pass "$@" ;;
+        help)             call cmd_key_help "$@" ;;
+        *)                call_ext cmd_key_$cmd "$@" ;;
     esac
 }
 
 cmd_contact() {
     COMMAND+=" $1"
-    local subcmd="$1" ; shift
-    case "$subcmd" in
-        ''|help)          run_cmd contact_help "$@" ;;
-        exp|export)       run_cmd contact_export "$@" ;;
-        imp|import)       run_cmd contact_import "$@" ;;
-        fetch)            run_cmd contact_fetch "$@" ;;
-        ls|list|show)     run_cmd contact_list "$@" ;;
-        search|find)      run_cmd contact_search "$@" ;;
-        rm|del|delete)    run_cmd contact_delete "$@" ;;
-        sync)             run_cmd contact_sync "$@" ;;
-        confirm)          run_cmd contact_confirm "$@" ;;
-        vouch)            run_cmd contact_vouch "$@" ;;
-        trust)            run_cmd contact_trust "$@" ;;
-        *)                run_ext_cmd "contact_$subcmd" "$@" ;;
+    local cmd="$1" ; shift
+    case "$cmd" in
+        ''|help)          call cmd_contact_help "$@" ;;
+        exp|export)       call cmd_contact_export "$@" ;;
+        imp|import)       call cmd_contact_import "$@" ;;
+        fetch)            call cmd_contact_fetch "$@" ;;
+        ls|list|show)     call cmd_contact_list "$@" ;;
+        search|find)      call cmd_contact_search "$@" ;;
+        rm|del|delete)    call cmd_contact_delete "$@" ;;
+        sync)             call cmd_contact_sync "$@" ;;
+        confirm)          call cmd_contact_confirm "$@" ;;
+        vouch)            call cmd_contact_vouch "$@" ;;
+        trust)            call cmd_contact_trust "$@" ;;
+        *)                call_ext cmd_contact_$cmd "$@" ;;
     esac
 }
 
-run_cmd() {
+call() {
     local cmd=$1; shift
-    local file="$LIBDIR/include/cmd/$cmd.sh"
+    local file="$LIBDIR/${cmd//_/\/}.sh"
     [[ -f "$file" ]] || fail "Cannot find command file: $file"
     source "$file"
-    cmd_$cmd "$@"
+    $cmd "$@"
 }
 
-run_ext_cmd() {
+call_ext() {
     local cmd=$1; shift
 
-    # try '~/.egpg/cmd_xyz.sh'
-    if [[ -f "$EGPG_DIR/cmd_$cmd.sh" ]]; then
-        debug loading: "$EGPG_DIR/cmd_$cmd.sh"
-        source "$EGPG_DIR/cmd_$cmd.sh"
-        debug running: cmd_$cmd "$@"
-        cmd_$cmd "$@"
+    # try '~/.egpg/cmd.sh'
+    if [[ -f "$EGPG_DIR/$cmd.sh" ]]; then
+        debug loading: "$EGPG_DIR/$cmd.sh"
+        source "$EGPG_DIR/$cmd.sh"
+        debug running: $cmd "$@"
+        $cmd "$@"
         return
     fi
 
-    # try 'src/ext/platform/cmd_xyz.sh'
-    if [[ -f "$LIBDIR/ext/$PLATFORM/cmd_$cmd.sh" ]]; then
-        debug loading: "$LIBDIR/ext/$PLATFORM/cmd_$cmd.sh"
-        source "$LIBDIR/ext/$PLATFORM/cmd_$cmd.sh"
-        debug running: cmd_$cmd "$@"
-        cmd_$cmd "$@"
+    # try 'src/ext/platform/cmd.sh'
+    if [[ -f "$LIBDIR/ext/$PLATFORM/$cmd.sh" ]]; then
+        debug loading: "$LIBDIR/ext/$PLATFORM/$cmd.sh"
+        source "$LIBDIR/ext/$PLATFORM/$cmd.sh"
+        debug running: $cmd "$@"
+        $cmd "$@"
         return
     fi
 
-    # try 'src/ext/cmd_xyz.sh'
-    if [[ -f "$LIBDIR/ext/cmd_$cmd.sh" ]]; then
-        debug loading: "$LIBDIR/ext/cmd_$cmd.sh"
-        source "$LIBDIR/ext/cmd_$cmd.sh"
-        debug running: cmd_$cmd "$@"
-        cmd_$cmd "$@"
+    # try 'src/ext/xyz.sh'
+    if [[ -f "$LIBDIR/ext/$cmd.sh" ]]; then
+        debug loading: "$LIBDIR/ext/$cmd.sh"
+        source "$LIBDIR/ext/$cmd.sh"
+        debug running: $cmd "$@"
+        $cmd "$@"
         return
     fi
     echo -e "Unknown command '$cmd'.\nTry:  $0 help"
@@ -166,8 +166,8 @@ main() {
     # handle some basic commands
     case "$1" in
         v|-v|version|--version)  cmd_version "$@" ; exit 0 ;;
-        help|-h|--help)          run_cmd help "$@" ; exit 0 ;;
-        init)                    run_cmd init "$@" ; exit 0 ;;
+        help|-h|--help)          call cmd_help "$@" ; exit 0 ;;
+        init)                    call cmd_init "$@" ; exit 0 ;;
     esac
 
     # set config variables

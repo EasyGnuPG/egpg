@@ -24,10 +24,6 @@ Usage: $0 contact <command> [<options>]
 Commands to manage the contacts (correspondents, partners).
 They are listed below.
 
-        confirm)          run_cmd contact_confirm "$@" ;;
-        vouch)            run_cmd contact_vouch "$@" ;;
-        trust)            run_cmd contact_trust "$@" ;;
-
     ls,list,show [<contact>] [-r,--raw | -c,--colons]
         Show the details of the contact (optionally in raw format or
         with colons). A list of all the contacts will be displayed if

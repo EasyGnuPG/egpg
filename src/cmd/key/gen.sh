@@ -74,10 +74,10 @@ cmd_key_gen() {
     haveged_stop
 
     echo -e "\nExcellent! You created a fresh GPG key. Here's what it looks like:"
-    cmd_key_list
+    call cmd_key_list
 
     # generate a revokation certificate
-    cmd_key_rev_cert "This revocation certificate was generated when the key was created."
+    call cmd_key_revcert "This revocation certificate was generated when the key was created."
 
     # send the key to keyserver
     gpg_send_keys $GPG_KEY

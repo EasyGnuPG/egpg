@@ -47,5 +47,5 @@ cmd_key_renew() {
     script -c "gpg --command-fd=0 --key-edit $GPG_KEY <<< \"$commands\" " /dev/null > /dev/null
     gpg_send_keys $GPG_KEY
 
-    cmd_key_list
+    call cmd_key_list
 }

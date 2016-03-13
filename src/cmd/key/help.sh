@@ -55,7 +55,7 @@ Commands to manage the key. They are listed below.
         (certifying, authenticating, signing or encrypting).
         If no options are given, then the certifying (main) key will be renewed.
 
-    rev-cert ["description"]
+    revcert ["description"]
         Generate a revocation certificate for the key.
 
     rev,revoke [<revocation-certificate>]

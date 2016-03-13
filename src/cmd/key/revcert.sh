@@ -16,7 +16,7 @@
 # along with this program.  If not, see http://www.gnu.org/licenses/
 #
 
-cmd_key_rev_cert() {
+cmd_key_revcert() {
     echo "Creating a revocation certificate."
     local description=${1:-"Key is being revoked"}
 
