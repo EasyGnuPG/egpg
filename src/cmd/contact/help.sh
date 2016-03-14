@@ -27,7 +27,8 @@ They are listed below.
     ls,list,show [<contact>] [-r,--raw | -c,--colons]
         Show the details of the contact (optionally in raw format or
         with colons). A list of all the contacts will be displayed if
-        no one is specified.
+        no one is selected. A contact can be selected by name, email,
+        id, etc.
 
     search,find <pattern>
         List only the matching contacts.
@@ -41,8 +42,8 @@ They are listed below.
     imp,import,add <file>
         Import (add) contact(s) from file.
 
-    fetch [<contact>] [-d,--dir <gnupghome>]
-        Get a contact from another gpg directory (by default from $GNUPGHOME).
+    fetch [<contact>...] [-d,--dir <gnupghome>]
+        Get contacts from another gpg directory (by default from $GNUPGHOME).
 
     confirm <contact> [-u,--undo]
         You have verified the identity of the contact (the details of
