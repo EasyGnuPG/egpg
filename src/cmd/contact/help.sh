@@ -24,14 +24,11 @@ Usage: $0 contact <command> [<options>]
 Commands to manage the contacts (correspondents, partners).
 They are listed below.
 
-    ls,list,show [<contact>] [-r,--raw | -c,--colons]
-        Show the details of the contact (optionally in raw format or
+    ls,list,show,find [<contact>...] [-r,--raw | -c,--colons]
+        Show the details of the contacts (optionally in raw format or
         with colons). A list of all the contacts will be displayed if
         no one is selected. A contact can be selected by name, email,
         id, etc.
-
-    search,find <pattern>
-        List only the matching contacts.
 
     rm,del,delete <contact>... [-f,--force]
         Delete the given contact(s).

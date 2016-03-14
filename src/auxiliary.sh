@@ -176,7 +176,7 @@ print_subkey() {
         a) usage='auth' ;;
         s) usage='sign' ;;
         e) usage='encr' ;;
-        *) usage='main' ;;
+        *) usage='cert' ;;
     esac
 
     # print
