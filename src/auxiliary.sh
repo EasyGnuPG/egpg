@@ -122,3 +122,63 @@ is_true() {
 is_false() {
     ! is_true "$@"
 }
+
+print_key() {
+    local id info line fpr uid r rev
+    id=$1
+    info=$(gpg --list-keys --fingerprint --with-colons $id)
+    fpr=$(echo "$info" | grep '^fpr:' | cut -d: -f 10 | sed 's/..../\0 /g')
+
+    echo "id: $id"
+    echo "$info" | grep '^uid:' | while read line; do
+        r=$(echo "$line" | cut -d: -f2)
+        rev=''; [[ $r == 'r' ]] && rev='(revoked)'
+        uid=$(echo "$line" | cut -d: -f10)
+        echo "uid: $uid $rev"
+    done
+    echo "fpr: $fpr"
+
+    echo "$info" | grep -E '^(pub|sub):' | while read line; do
+        print_subkey "$line"
+    done
+}
+
+print_subkey() {
+    local line id time1 time2 start end exp r rev u usage
+
+    line="$1"
+    [[ -n $line ]] || return
+
+    # id
+    id=$(echo $line | cut -d: -f5)
+
+    # creation time
+    time1=$(echo $line | cut -d: -f6)
+    start=$(date -d @$time1 +%F)
+
+    # expiration time
+    time2=$(echo $line | cut -d: -f7)
+    end='never'
+    [[ -n $time2 ]] && end=$(date -d @$time2 +%F)
+
+    # expired
+    exp=''
+    [[ -n $time2 ]] && [ $(date +%s) -gt $time2 ] && \
+        exp='expired'
+
+    # revoked
+    r=$(echo $line | cut -d: -f2)
+    [[ $r == 'r' ]] && rev='revoked'
+
+    # usage
+    u=$(echo $line | cut -d: -f12)
+    case "$u" in
+        a) usage='auth' ;;
+        s) usage='sign' ;;
+        e) usage='encr' ;;
+        *) usage='main' ;;
+    esac
+
+    # print
+    echo "$usage: $id $start $end $exp $rev"
+}
