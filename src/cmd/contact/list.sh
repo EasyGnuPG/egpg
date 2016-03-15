@@ -33,11 +33,11 @@ cmd_contact_list() {
     [[ $raw == 1 ]] && [[ $colons == 1 ]] && echo $usage && return
 
     [[ $raw == 1 ]] && \
-        gpg --list-keys "$@" && \
+        gpg --list-keys --with-sig-check "$@" && \
         return
 
     [[ $colons == 1 ]] && \
-        gpg --list-keys --fingerprint --with-colons "$@" && \
+        gpg --list-keys --fingerprint --with-sig-check --with-colons "$@" && \
         return
 
     # display the details of each key

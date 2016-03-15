@@ -124,9 +124,9 @@ is_false() {
 }
 
 print_key() {
-    local id info line fpr uid r rev
+    local id info line fpr uid r rev user
     id=$1
-    info=$(gpg --list-keys --fingerprint --with-colons $id)
+    info=$(gpg --list-keys --fingerprint --with-sig-check --with-colons $id)
     fpr=$(echo "$info" | grep '^fpr:' | cut -d: -f 10 | sed 's/..../\0 /g')
 
     echo "id: $id"
@@ -140,6 +140,10 @@ print_key() {
 
     echo "$info" | grep -E '^(pub|sub):' | while read line; do
         print_subkey "$line"
+    done
+
+    echo "$info" | grep '^sig:!:' | grep -v "$id" | cut -d: -f5,10 | uniq | while IFS=: read id email; do
+        echo "certified by: $email ($id)"
     done
 }
 

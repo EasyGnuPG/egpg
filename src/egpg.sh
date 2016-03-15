@@ -86,8 +86,8 @@ cmd_contact() {
         ls|list|show|find)call cmd_contact_list "$@" ;;
         rm|del|delete)    call cmd_contact_delete "$@" ;;
         sync)             call cmd_contact_sync "$@" ;;
-        confirm)          call cmd_contact_confirm "$@" ;;
-        vouch)            call cmd_contact_vouch "$@" ;;
+        certify)          call cmd_contact_certify "$@" ;;
+        uncertify)        call cmd_contact_uncertify "$@" ;;
         trust)            call cmd_contact_trust "$@" ;;
         *)                call_ext cmd_contact_$cmd "$@" ;;
     esac

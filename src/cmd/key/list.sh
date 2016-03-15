@@ -41,11 +41,11 @@ cmd_key_list() {
     fi
 
     [[ $raw == 1 ]] && \
-        gpg --list-keys $secret_keys && \
+        gpg --list-keys --with-sig-check $secret_keys && \
         return
 
     [[ $colons == 1 ]] && \
-        gpg --list-keys --fingerprint --with-colons $secret_keys && \
+        gpg --list-keys --fingerprint --with-sig-check --with-colons $secret_keys && \
         return
 
     # display the details of each key
