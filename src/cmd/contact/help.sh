@@ -42,15 +42,21 @@ They are listed below.
     fetch [<contact>...] [-d,--dir <gnupghome>]
         Get contacts from another gpg directory (by default from $GNUPGHOME).
 
-    confirm <contact> [-u,--undo]
+    receive,pull <contact-id>
+        Download contact from the keyserver network.
+
+    certify <contact> [-p,--publish] [-l,--level <level>] [-t,--time <time>]
         You have verified the identity of the contact (the details of
         the contact, name, email, etc. are correct and belong to a
-        real person). With option --undo the confirmation is removed.
+        real person).  With the --publish option you also share your
+        certification with the world, so that your friends may rely on
+        it if they wish.  The levels of certification are: 0
+        (unknown), 1 (onfaith), 2 (casual), 3 (extensive).  The time
+        of certification can be: 0 (unlimited), <n>d (<n> days), <n>w
+        (<n> weeks), <n>m (<n> months), <n>y (<n> years).
 
-    vouch <contact> [-u,--undo]
-        You have verified the identity of the contact and you also let
-        your friends know that you have confirmed it. With option
-        --undo the vouching is removed.
+    uncertify <contact>
+        Revoke the certification of a contact.
 
     trust <contact> [-l,--level <trust-level>]
         You have verified the identity of the contact and you also
