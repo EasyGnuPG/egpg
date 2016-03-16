@@ -89,7 +89,6 @@ cmd_contact() {
         receive|pull)     call cmd_contact_receive "$@" ;;
         ls|list|show|find)call cmd_contact_list "$@" ;;
         rm|del|delete)    call cmd_contact_delete "$@" ;;
-        sync)             call cmd_contact_sync "$@" ;;
         certify)          call cmd_contact_certify "$@" ;;
         uncertify)        call cmd_contact_uncertify "$@" ;;
         trust)            call cmd_contact_trust "$@" ;;
