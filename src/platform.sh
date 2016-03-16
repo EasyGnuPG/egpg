@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see http://www.gnu.org/licenses/
 
-gpg() { "$(which gpg2)" $GPG_OPTS "$@" ; }
+gpg() { "$(which gpg2)" $GPG_OPTS "$@" 2>/dev/null ; }
 export -f gpg
 
 getopt() { "$(which getopt)" "$@" ; }
