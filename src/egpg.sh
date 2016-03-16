@@ -83,6 +83,8 @@ cmd_contact() {
         exp|export)       call cmd_contact_export "$@" ;;
         imp|import|add)   call cmd_contact_import "$@" ;;
         fetch)            call cmd_contact_fetch "$@" ;;
+        fetch-uri)        call cmd_contact_fetchuri "$@" ;;
+        receive|pull)     call cmd_contact_receive "$@" ;;
         ls|list|show|find)call cmd_contact_list "$@" ;;
         rm|del|delete)    call cmd_contact_delete "$@" ;;
         sync)             call cmd_contact_sync "$@" ;;

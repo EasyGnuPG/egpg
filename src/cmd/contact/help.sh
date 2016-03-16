@@ -42,6 +42,9 @@ They are listed below.
     fetch [<contact>...] [-d,--dir <gnupghome>]
         Get contacts from another gpg directory (by default from $GNUPGHOME).
 
+    fetch-uri <uri>...
+        Retrieve contacts located at the specified URIs.
+
     receive,pull <contact-id>
         Download contact from the keyserver network.
 
