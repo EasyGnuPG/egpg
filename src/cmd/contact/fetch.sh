@@ -33,7 +33,7 @@ cmd_contact_fetch() {
     [[ -n "$homedir" ]] || homedir="$ENV_GNUPGHOME"
     [[ -n "$homedir" ]] || fail "No gnupg directory to import from."
     [[ -d "$homedir" ]] || fail "Cannot find gnupg directory: $homedir"
-    echo "Importing key from: $homedir"
+    echo "Importing contacts from: $homedir"
 
     # export to tmp file
     make_workdir

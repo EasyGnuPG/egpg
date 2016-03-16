@@ -45,9 +45,9 @@ cmd_contact_certify() {
 
     local cert_opts="--default-cert-level=$level --default-cert-expire=$time"
     if [[ $publish == 0 ]]; then
-        gpg --lsign-key $cert_opts "$contact" # <<< "y\ny\nq"
+        gpg --lsign-key $cert_opts "$contact"
     else
-        gpg --sign-key $cert_opts "$contact"  #<<< "y\ny\nq"
+        gpg --sign-key $cert_opts "$contact"
         gpg_send_keys "$contact"
     fi
 }
