@@ -130,12 +130,21 @@ print_key() {
     info=$(gpg --list-keys --fingerprint --with-sig-check --with-colons $id)
 
     echo "id: $id"
+
+    # uid
     echo "$info" | grep -E '^uid:[^r]:' | cut -d: -f10 | \
         while read uid; do echo "uid: $uid"; done
 
-    fpr=$(echo "$info" | grep '^fpr:' | cut -d: -f 10 | sed 's/..../\0 /g')
+    # fpr
+    fpr=$(echo "$info" | grep '^fpr:' | cut -d: -f10 | sed 's/..../\0 /g')
     echo "fpr: $fpr"
 
+    # trust
+    t=$(echo "$info" | grep '^pub:' | cut -d: -f9)
+    case "$t" in u) t='ultimate';; f) t='full';; m) t='marginal';; n) t='none';; *) t='unknown';; esac
+    [[ $t == 'unknown' ]] || echo "trust: $t"
+
+    # keys
     echo "$info" | grep -E '^(pub|sub):[^r]:' | cut -d: -f5,6,7,12 | while IFS=: read id time1 time2 u; do
         start=$(date -d @$time1 +%F)
         end='never'; [[ -n $time2 ]] && end=$(date -d @$time2 +%F)
@@ -144,6 +153,7 @@ print_key() {
         echo "$u: $id $start $end $exp"
     done
 
+    # verifications
     echo "$info" | grep '^sig:!:' | grep -v "$id" | cut -d: -f5,10 | uniq | \
         while IFS=: read id uid; do echo "certified by: $uid ($id)"; done
 }
