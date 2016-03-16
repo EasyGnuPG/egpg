@@ -124,65 +124,26 @@ is_false() {
 }
 
 print_key() {
-    local id info line fpr uid r rev user
+    local id info fpr uid time1 time2 u start end exp
+
     id=$1
     info=$(gpg --list-keys --fingerprint --with-sig-check --with-colons $id)
-    fpr=$(echo "$info" | grep '^fpr:' | cut -d: -f 10 | sed 's/..../\0 /g')
 
     echo "id: $id"
-    echo "$info" | grep '^uid:' | while read line; do
-        r=$(echo "$line" | cut -d: -f2)
-        rev=''; [[ $r == 'r' ]] && rev='(revoked)'
-        uid=$(echo "$line" | cut -d: -f10)
-        echo "uid: $uid $rev"
-    done
+    echo "$info" | grep -E '^uid:[^r]:' | cut -d: -f10 | \
+        while read uid; do echo "uid: $uid"; done
+
+    fpr=$(echo "$info" | grep '^fpr:' | cut -d: -f 10 | sed 's/..../\0 /g')
     echo "fpr: $fpr"
 
-    echo "$info" | grep -E '^(pub|sub):' | while read line; do
-        print_subkey "$line"
+    echo "$info" | grep -E '^(pub|sub):[^r]:' | cut -d: -f5,6,7,12 | while IFS=: read id time1 time2 u; do
+        start=$(date -d @$time1 +%F)
+        end='never'; [[ -n $time2 ]] && end=$(date -d @$time2 +%F)
+        exp=''; [[ -n $time2 ]] && [ $(date +%s) -gt $time2 ] && exp='expired'
+        case "$u" in a) u='auth';; s) u='sign';; e) u='encr';; *) u='cert';; esac
+        echo "$u: $id $start $end $exp"
     done
 
-    echo "$info" | grep '^sig:!:' | grep -v "$id" | cut -d: -f5,10 | uniq | while IFS=: read id email; do
-        echo "certified by: $email ($id)"
-    done
-}
-
-print_subkey() {
-    local line id time1 time2 start end exp r rev u usage
-
-    line="$1"
-    [[ -n $line ]] || return
-
-    # id
-    id=$(echo $line | cut -d: -f5)
-
-    # creation time
-    time1=$(echo $line | cut -d: -f6)
-    start=$(date -d @$time1 +%F)
-
-    # expiration time
-    time2=$(echo $line | cut -d: -f7)
-    end='never'
-    [[ -n $time2 ]] && end=$(date -d @$time2 +%F)
-
-    # expired
-    exp=''
-    [[ -n $time2 ]] && [ $(date +%s) -gt $time2 ] && \
-        exp='expired'
-
-    # revoked
-    r=$(echo $line | cut -d: -f2)
-    [[ $r == 'r' ]] && rev='revoked'
-
-    # usage
-    u=$(echo $line | cut -d: -f12)
-    case "$u" in
-        a) usage='auth' ;;
-        s) usage='sign' ;;
-        e) usage='encr' ;;
-        *) usage='cert' ;;
-    esac
-
-    # print
-    echo "$usage: $id $start $end $exp $rev"
+    echo "$info" | grep '^sig:!:' | grep -v "$id" | cut -d: -f5,10 | uniq | \
+        while IFS=: read id uid; do echo "certified by: $uid ($id)"; done
 }
