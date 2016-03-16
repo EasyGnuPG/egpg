@@ -44,7 +44,7 @@ Commands to manage the key. They are listed below.
     imp,import <file>
         Import key from file.
 
-    fetch [-d,--dir <gnupghome>] [-k,--key-id <key-id>]
+    fetch [-d,--homedir <gnupghome>] [-k,--key-id <key-id>]
         Get a key from another gpg directory (by default from $GNUPGHOME).
 
     renew [<time-length>] [-c,--cert] [-a,--auth] [-s,--sign] [-e,--encrypt]

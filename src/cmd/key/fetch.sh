@@ -30,7 +30,7 @@ cmd_key_fetch() {
             --) shift; break ;;
         esac
     done
-    [[ $err -eq 0 ]] || fail "Usage: $COMMAND [-d,--dir <gnupghome>] [-k,--key-id <key-id>]"
+    [[ $err -eq 0 ]] || fail "Usage: $COMMAND [-d,--homedir <gnupghome>] [-k,--key-id <key-id>]"
 
     # get the gnupg dir
     [[ -n "$homedir" ]] || homedir="$ENV_GNUPGHOME"

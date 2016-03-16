@@ -39,7 +39,7 @@ They are listed below.
     imp,import,add <file>
         Import (add) contact(s) from file.
 
-    fetch [<contact>...] [-d,--dir <gnupghome>]
+    fetch [<contact>...] [-d,--homedir <gnupghome>]
         Get contacts from another gpg directory (by default from $GNUPGHOME).
 
     fetch-uri <uri>...

@@ -36,6 +36,7 @@ cmd() {
 
     local cmd="$1" ; shift
     case "$cmd" in
+        migrate)          call cmd_migrate "$@" ;;
         ''|info)          call cmd_info "$@" ;;
         seal)             call cmd_seal "$@" ;;
         open)             call cmd_open "$@" ;;

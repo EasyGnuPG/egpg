@@ -28,6 +28,10 @@ Commands and their options are listed below.
         Initialize egpg. Optionally give the directory to be used.
         If not given, the default directory will be $HOME/.egpg/
 
+    migrate [-d,--homedir <gnupghome>]
+        Get keys and contacts from another gpg directory (by default
+        from $GNUPGHOME).
+
     [info]
         Display info about the current configuration and settings.
 

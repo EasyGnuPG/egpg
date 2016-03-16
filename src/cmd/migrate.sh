@@ -16,7 +16,7 @@
 # along with this program.  If not, see http://www.gnu.org/licenses/
 #
 
-cmd_contact_fetch() {
+cmd_migrate() {
     local opts homedir
     opts="$(getopt -o d: -l homedir: -n "$PROGRAM" -- "$@")"
     local err=$?
@@ -27,7 +27,7 @@ cmd_contact_fetch() {
             --) shift; break ;;
         esac
     done
-    [[ $err == 0 ]] || fail "Usage: $COMMAND [<contact>...] [-d,--homedir <gnupghome>]"
+    [[ $err == 0 ]] || fail "Usage: $COMMAND [-d,--dir <gnupghome>]"
 
     # get the gnupg dir
     [[ -n "$homedir" ]] || homedir="$ENV_GNUPGHOME"
@@ -35,12 +35,6 @@ cmd_contact_fetch() {
     [[ -d "$homedir" ]] || fail "Cannot find gnupg directory: $homedir"
     echo "Importing key from: $homedir"
 
-    # export to tmp file
-    make_workdir
-    local file="$WORKDIR/contacts.asc"
-    gpg --homedir="$homedir" --armor --export "$@" > "$file"
-
-    # import from the tmp file
-    gpg --import "$file"
-    rm -rf $WORKDIR
+    call cmd_key_fetch
+    call cmd_contact_fetch
 }
