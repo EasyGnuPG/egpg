@@ -35,6 +35,6 @@ cmd_migrate() {
     [[ -d "$homedir" ]] || fail "Cannot find gnupg directory: $homedir"
     echo "Importing key from: $homedir"
 
-    call cmd_key_fetch
-    call cmd_contact_fetch
+    call cmd_key_fetch --homedir="$homedir"
+    call cmd_contact_fetch --homedir="$homedir"
 }
