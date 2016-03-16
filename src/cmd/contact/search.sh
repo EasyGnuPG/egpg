@@ -16,8 +16,8 @@
 # along with this program.  If not, see http://www.gnu.org/licenses/
 #
 
-cmd_contact_receive() {
-    local usage="Usage: $COMMAND <contact-id>... [-s,--keyserver <server>]"
+cmd_contact_search() {
+    local usage="Usage: $COMMAND <name> [-s,--keyserver <server>]"
     local opts keyserver="$KEYSERVER"
     opts="$(getopt -o s: -l keyserver: -n "$PROGRAM" -- "$@")"
     local err=$?
@@ -31,5 +31,5 @@ cmd_contact_receive() {
     [[ $err != 0 ]] && fail $usage
     [[ -z $1 ]] && fail $usage
 
-    gpg --keyserver "$keyserver" --recv-keys "$@"
+    gpg --keyserver="$keyserver" --search-keys "$@"
 }

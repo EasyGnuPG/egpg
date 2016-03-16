@@ -45,7 +45,10 @@ They are listed below.
     fetch-uri <uri>...
         Retrieve contacts located at the specified URIs.
 
-    receive,pull <contact-id>
+    search <name> [-s,--keyserver <server>]
+        Search the keyserver network for a person.
+
+    receive,pull <contact-id> [-s,--keyserver <server>]
         Download contact from the keyserver network.
 
     certify <contact> [-p,--publish] [-l,--level <level>] [-t,--time <time>]
