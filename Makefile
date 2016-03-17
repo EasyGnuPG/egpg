@@ -15,7 +15,8 @@ install:
 	@sed -i $(EGPG) -e "s#LIBDIR=.*#LIBDIR=\"$(LIB)\"#"
 
 	@install -v -d "$(LIB)/"
-	@cp -v -r src/include src/platform src/ext "$(LIB)"
+	@cp -v -r src/* "$(LIB)"
+	@rm "$(LIB)/egpg.sh"
 
 	@install -v -d "$(MANDIR)/"
 	@install -v -m 0644 man/egpg.1 "$(MANDIR)/egpg.1"
