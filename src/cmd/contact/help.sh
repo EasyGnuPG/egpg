@@ -19,7 +19,7 @@
 cmd_contact_help() {
     cat <<-_EOF
 
-Usage: $0 contact <command> [<options>]
+Usage: $(basename $0) contact <command> [<options>]
 
 Commands to manage the contacts (correspondents, partners).
 They are listed below.

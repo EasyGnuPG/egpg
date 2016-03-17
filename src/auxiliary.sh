@@ -39,8 +39,8 @@ get_gpg_key(){
         fail "
 No valid key found.
 
-Try first:  $0 key gen
-       or:  $0 key fetch
+Try first:  $(basename $0) key gen
+       or:  $(basename $0) key fetch
 "
 
     # check for key expiration
@@ -51,10 +51,10 @@ Try first:  $0 key gen
     for key_id in $key_ids; do
         exp=$(echo "$key_details" | grep -E ":$key_id:" | cut -d: -f7)
         if [[ $exp -lt $(date +%s) ]]; then
-            echo -e "\nThe key $key_id has expired on $(date -d @$exp +%F).\nPlease renew it with:  $0 key renew\n"
+            echo -e "\nThe key $key_id has expired on $(date -d @$exp +%F).\nPlease renew it with:  $(basename $0) key renew\n"
             break
         elif [[ $(($exp - $(date +%s))) -lt $((2*24*60*60)) ]]; then
-            echo -e "\nThe key $key_id is expiring soon.\nPlease renew it with:  $0 key renew\n"
+            echo -e "\nThe key $key_id is expiring soon.\nPlease renew it with:  $(basename $0) key renew\n"
             break
         fi
     done

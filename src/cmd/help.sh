@@ -19,7 +19,7 @@
 cmd_help() {
     cat <<-_EOF
 
-Usage: $0 <command> [<options>]
+Usage: $(basename $0) <command> [<options>]
 
 EasyGnuPG is a wrapper around GnuPG to simplify its operations.
 Commands and their options are listed below.
@@ -34,9 +34,6 @@ Commands and their options are listed below.
 
     [info]
         Display info about the current configuration and settings.
-
-    key <command> [<options>]
-        Commands for handling the key. For more details see 'key help'.
 
     seal <file> [<recipient>...]
         Sign and encrypt a file. The resulting file will have the
@@ -53,6 +50,13 @@ Commands and their options are listed below.
     verify <file>
         Verify the signature of the given file.  The signature file
         <file.signature> must be present as well.
+
+    key <command> [<options>]
+        Commands for handling the key. For more details see 'key help'.
+
+    contact <command> [<options>]
+        Commands for handling the contacts. For more details see
+        'contact help'.
 
     set <option> <value>
         Change the settings.

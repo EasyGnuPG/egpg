@@ -19,7 +19,7 @@
 cmd_key_help() {
     cat <<-_EOF
 
-Usage: $0 key <command> [<options>]
+Usage: $(basename $0) key <command> [<options>]
 
 Commands to manage the key. They are listed below.
 
@@ -30,7 +30,7 @@ Commands to manage the key. They are listed below.
     [ls,list,show] [-r,--raw | -c,--colons] [-a,--all]
         Show the details of the key (optionally in raw format or with
         colons). A list of all the keys can be displayed as well
-        (including the revoked ones).
+        (including the revoked and expired ones).
 
     fp,fingerprint
         Show the fingerprint of the key.
