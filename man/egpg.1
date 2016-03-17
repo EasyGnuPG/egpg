@@ -18,34 +18,28 @@ There are scads of options presented by GnuPG, which are all part of making it t
 .SH "COMMANDS"
 .
 .IP "\(bu" 4
-\fBkey\-gen\fR [\fIemail\fR \fIname\fR]
+\fBinit\fR [<dir>]
 .
 .IP
-Create a new GPG key\.
+Initialize egpg\. Optionally give the directory to be used\. If not given, the default directory will be \fI$HOME/\.egpg/\fR
 .
 .IP "\(bu" 4
-\fBkey\-id\fR,\fBfingerprint\fR,\fBfp\fR
+\fBmigrate\fR [\-d,\-\-homedir \fIgnupghome\fR]
 .
 .IP
-Show the id (fingerprint) of the key\.
+Get keys and contacts from another gpg directory (by default from \fI$GNUPGHOME\fR)\.
 .
 .IP "\(bu" 4
-\fBsign\fR \fIfile\fR
+[\fBinfo\fR]
 .
 .IP
-Sign a file\. The signature will be saved to <file\.signature>\.
-.
-.IP "\(bu" 4
-\fBverify\fR \fIfile\fR
-.
-.IP
-Verify the signature of the given file\. The signature file <file\.signature> must be present as well\.
+Display info about the current configuration and settings\.
 .
 .IP "\(bu" 4
 \fBseal\fR \fIfile\fR [\fIrecipient\fR\.\.\.]
 .
 .IP
-Sign and encrypt a file to at least one recipient\. The resulting sealed file will have the extension \fB\.sealed\fR and the orginal file will be erased\.
+Sign and encrypt a file\. The resulting file will have the extension \fB\.sealed\fR The original file will be erased\.
 .
 .IP "\(bu" 4
 \fBopen\fR <file\.sealed>
@@ -54,22 +48,198 @@ Sign and encrypt a file to at least one recipient\. The resulting sealed file wi
 Decrypt and verify the signature of the given file\. The file has to end with \fB\.sealed\fR and the output will have that extension stripped\.
 .
 .IP "\(bu" 4
-\fBrevoke\fR [\fIrevocation\-certificate\fR]
+\fBsign\fR \fIfile\fR
 .
 .IP
-Cancel the key by publishing the given revocation certificate\.
+Sign a file\. The signature will be saved to <file\fB\.signature\fR>\.
+.
+.IP "\(bu" 4
+\fBverify\fR \fIfile\fR
+.
+.IP
+Verify the signature of the given file\. The signature file <file\fB\.signature\fR> must be present as well\.
+.
+.IP "\(bu" 4
+\fBkey\fR \fIcommand\fR [\fIoptions\fR\.\.\.]
+.
+.IP
+Commands for handling the key\. For more details see \fBkey help\fR\.
+.
+.IP "\(bu" 4
+\fBcontact\fR \fIcommand\fR [\fIoptions\fR\.\.\.]
+.
+.IP
+Commands for handling the contacts\. For more details see \fBcontact help\fR\.
+.
+.IP "\(bu" 4
+\fBset\fR <option> \fIvalue\fR
+.
+.IP
+Change the settings\.
+.
+.IP "\(bu" 4
+\fB\-\-\fR,\fBgpg\fR \.\.\.
+.
+.IP
+Run any gpg command (but using the configuration settings of egpg)\.
 .
 .IP "\(bu" 4
 \fBhelp\fR
 .
 .IP
-Show the help text\.
+Show this help text\.
 .
 .IP "\(bu" 4
 \fBversion\fR
 .
 .IP
 Show version information\.
+.
+.IP "" 0
+.
+.SH "KEY COMMANDS"
+.
+.IP "\(bu" 4
+\fBgen\fR,\fBgenerate\fR [\fIemail\fR \fIname\fR] [\-n,\-\-no\-passphrase]
+.
+.IP
+Create a new GPG key\. If \fIemail\fR and \fIname\fR are not given as arguments, they will be asked interactively\.
+.
+.IP "\(bu" 4
+[\fBls\fR,\fBlist\fR,\fBshow\fR] [\-r,\-\-raw | \-c,\-\-colons] [\-a,\-\-all]
+.
+.IP
+Show the details of the key (optionally in raw format or with colons)\. A list of all the keys can be displayed as well (including the revoked and expired ones)\.
+.
+.IP "\(bu" 4
+\fBfp\fR,\fBfingerprint\fR
+.
+.IP
+Show the fingerprint of the key\.
+.
+.IP "\(bu" 4
+\fBrm\fR,\fBdel\fR,\fBdelete\fR [\fIkey\-id\fR]
+.
+.IP
+Delete the key\.
+.
+.IP "\(bu" 4
+\fBexp\fR,\fBexport\fR [\fIkey\-id\fR]
+.
+.IP
+Export key to file\.
+.
+.IP "\(bu" 4
+\fBimp\fR,\fBimport\fR \fIfile\fR
+.
+.IP
+Import key from file\.
+.
+.IP "\(bu" 4
+\fBfetch\fR [\-d,\-\-homedir \fIgnupghome\fR] [\-k,\-\-key\-id \fIkey\-id\fR]
+.
+.IP
+Get a key from another gpg directory (by default from $GNUPGHOME)\.
+.
+.IP "\(bu" 4
+\fBrenew\fR [\fItime\-length\fR] [\-c,\-\-cert] [\-a,\-\-auth] [\-s,\-\-sign] [\-e,\-\-encrypt]
+.
+.IP
+Renew the key, set the expiration time (by default) 1 month from now\. The renewal time length can be given like this: \fIn\fR (days), \fIn\fRw (weeks), \fIn\fRm (months), \fIn\fRy (years)\. The rest of the options specify which subkey will be renewed (certifying, authenticating, signing or encrypting)\. If no options are given, then the certifying (main) key will be renewed\.
+.
+.IP "\(bu" 4
+\fBrevcert\fR ["description"]
+.
+.IP
+Generate a revocation certificate for the key\.
+.
+.IP "\(bu" 4
+\fBrev\fR,\fBrevoke\fR [\fIrevocation\-certificate\fR]
+.
+.IP
+Cancel the key by publishing the given revocation certificate\.
+.
+.IP "\(bu" 4
+\fBpass\fR
+.
+.IP
+Change the passphrase\.
+.
+.IP "\(bu" 4
+\fBshare\fR
+.
+.IP
+Publish the key to the keyserver network\.
+.
+.IP "" 0
+.
+.SH "CONTACT COMMANDS"
+.
+.IP "\(bu" 4
+\fBls\fR,\fBlist\fR,\fBshow\fR,\fBfind\fR [\fIcontact\fR\.\.\.] [\-r,\-\-raw | \-c,\-\-colons]
+.
+.IP
+Show the details of the contacts (optionally in raw format or with colons)\. A list of all the contacts will be displayed if no one is selected\. A contact can be selected by name, email, id, etc\.
+.
+.IP "\(bu" 4
+\fBrm\fR,\fBdel\fR,\fBdelete\fR \fIcontact\fR\.\.\. [\-f,\-\-force]
+.
+.IP
+Delete the given contact(s)\.
+.
+.IP "\(bu" 4
+\fBexp\fR,\fBexport\fR [\fIcontact\fR\.\.\.] [\-o,\-\-output \fIfile\fR]
+.
+.IP
+Export contact(s) to file\.
+.
+.IP "\(bu" 4
+\fBimp\fR,\fBimport\fR,\fBadd\fR \fIfile\fR
+.
+.IP
+Import (add) contact(s) from file\.
+.
+.IP "\(bu" 4
+\fBfetch\fR [\fIcontact\fR\.\.\.] [\-d,\-\-homedir \fIgnupghome\fR]
+.
+.IP
+Get contacts from another gpg directory (by default from $GNUPGHOME)\.
+.
+.IP "\(bu" 4
+\fBfetch\-uri\fR \fIuri\fR\.\.\.
+.
+.IP
+Retrieve contacts located at the specified URIs\.
+.
+.IP "\(bu" 4
+\fBsearch\fR \fIname\fR [\-s,\-\-keyserver \fIserver\fR]
+.
+.IP
+Search the keyserver network for a person\.
+.
+.IP "\(bu" 4
+\fBreceive\fR,\fBpull\fR \fIcontact\-id\fR [\-s,\-\-keyserver \fIserver\fR]
+.
+.IP
+Download contact from the keyserver network\.
+.
+.IP "\(bu" 4
+\fBcertify\fR \fIcontact\fR [\-p,\-\-publish] [\-l,\-\-level \fIlevel\fR] [\-t,\-\-time \fItime\fR]
+.
+.IP
+You have verified the identity of the contact (the details of the contact, name, email, etc\. are correct and belong to a real person)\. With the \-\-publish option you also share your certification with the world, so that your friends may rely on it if they wish\. The levels of certification are: 0 (unknown), 1 (onfaith), 2 (casual), 3 (extensive)\. The time of certification can be: 0 (unlimited), \fIn\fRd (\fIn\fR days), \fIn\fRw (\fIn\fR weeks), \fIn\fRm (\fIn\fR months), \fIn\fRy (\fIn\fR years)\.
+.
+.IP "\(bu" 4
+\fBuncertify\fR \fIcontact\fR
+.
+.IP
+Revoke the certification of a contact\.
+.
+.IP "\(bu" 4
+\fBtrust\fR \fIcontact\fR [\-l,\-\-level \fItrust\-level\fR]
+.
+.IP
+You have verified the identity of the contact and you also trust him to be able to verify correctly and honestly the identities of other people\. The trust levels are: 4 (full), 3 (marginal), 2 (none), 1 (unknown)
 .
 .IP "" 0
 .
@@ -155,13 +325,91 @@ Show version information\.
 The file \fB$EGPG_DIR/customize\.sh\fR can be used to redefine and customize some functions, without having to touch the code of the main script\. Also, external commands can be customized (or new commands can be defined) by adding the file \fB$EGPG_DIR/cmd_command\.sh\fR, which contains the function \fBcmd_command() { \. \. \. }\fR\.
 .
 .P
-In general, for an external command the script will first look for \fB$EGPG_DIR/cmd_command\.sh\fR, then for \fB$LIB/ext/$PLATFORM/cmd_command\.sh\fR, and finally for \fB$LIB/ext/cmd_command\.sh\fR\. The first that is found is loaded and used\.
+In general, for an external command the script will first look for \fB$EGPG_DIR/cmd_command\.sh\fR, then for \fB$LIB/ext/$PLATFORM/cmd_command\.sh\fR, and finally for \fB$LIB/ext/cmd_command\.sh\fR\. The first that is found is loaded and used\. For key commands the name of the file must be \fBcmd_key_command\.sh\fR and for contact commands it must be \fBcmd_contact_command\.sh\fR\.
 .
 .SH "SIMPLE EXAMPLE"
 Some basic usage is demonstrated on the examples below\.
 .
 .P
 user@laptop:~$ \fBrm \-rf ~/\.egpg/\fR
+.
+.P
+user@laptop:~$ \fBegpg\fR
+.
+.IP "" 4
+.
+.nf
+
+No directory \'/home/user/\.egpg\'
+Try first: egpg init
+.
+.fi
+.
+.IP "" 0
+.
+.P
+user@laptop:~$ \fBegpg init\fR
+.
+.IP "" 4
+.
+.nf
+
+mkdir: created directory ‘/home/user/\.egpg’
+mkdir: created directory ‘/home/user/\.egpg/\.gnupg’
+
+Appended the following lines to \'/home/user/\.bashrc\':
+\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-8<\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-
+### start egpg config
+export EGPG_DIR="/home/user/\.egpg"
+# Does "\.gpg\-agent\-info" exist and points to gpg\-agent process accepting signals?
+if ! test \-f "$EGPG_DIR/\.gpg\-agent\-info" \e
+|| ! kill \-0 $(cut \-d: \-f 2 "$EGPG_DIR/\.gpg\-agent\-info") 2>/dev/null
+then
+    gpg\-agent \-\-daemon \-\-no\-grab \-\-quiet \e
+        \-\-options "$EGPG_DIR/\.gnupg/gpg\-agent\.conf" \e
+        \-\-pinentry\-program /usr/bin/pinentry \e
+        \-\-write\-env\-file "$EGPG_DIR/\.gpg\-agent\-info" > /dev/null
+fi
+### end egpg config
+\-\-\-\-\-\-\-\-\-\-\-\-\-\-\->8\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-
+Please realod it to enable the new config:
+    source /home/user/\.bashrc
+.
+.fi
+.
+.IP "" 0
+.
+.P
+user@laptop:~$ \fBsource /home/user/\.bashrc\fR
+.
+.P
+user@laptop:~$ \fBegpg\fR
+.
+.IP "" 4
+.
+.nf
+
+egpg:  EasyGnuPG  v0\.7    (hosted at: https://github\.com/dashohoxha/egpg)
+EGPG_DIR="/home/user/\.egpg"
+GNUPGHOME="/home/user/\.egpg/\.gnupg"
+GPG_AGENT_INFO=""
+GPG_TTY="/dev/pts/8"
+GPG_OPTS=""
+SHARE=
+KEYSERVER=hkp://keys\.gnupg\.net
+DEBUG=
+gpg: keyring `/home/user/\.egpg/\.gnupg/secring\.gpg\' created
+gpg: keyring `/home/user/\.egpg/\.gnupg/pubring\.gpg\' created
+gpg: /home/user/\.egpg/\.gnupg/trustdb\.gpg: trustdb created
+
+No valid key found\.
+
+Try first:  egpg key gen
+       or:  egpg key fetch
+.
+.fi
+.
+.IP "" 0
 .
 .P
 user@laptop:~$ \fBegpg key\-gen test@example\.org "Test User"\fR
@@ -179,31 +427,121 @@ a new key, by improving the entropy generation of the system\.
 
 Enter passphrase for the new key:
 Retype the passphrase of the key:
-gpg: key FE64FE7D marked as ultimately trusted
+gpg: key 71CF0068 marked as ultimately trusted
+gpg: checking the trustdb
+gpg: 3 marginal(s) needed, 1 complete(s) needed, PGP trust model
+gpg: depth: 0  valid:   1  signed:   0  trust: 0\-, 0q, 0n, 0m, 0f, 1u
+gpg: next trustdb check due at 2016\-04\-16
 
 Excellent! You created a fresh GPG key\. Here\'s what it looks like:
-sec   4096R/FE64FE7D 2016\-03\-02
-uid                  Test User <test@example\.org>
-ssb   4096R/C05C59E9 2016\-03\-02 [expires: 2018\-03\-02]
-ssb   4096R/E6AB3C1C 2016\-03\-02 [expires: 2018\-03\-02]
+
+id: 969BD1E171CF0068
+uid: Test User <test@example\.org>
+fpr: 12FB A098 4EAB 502F D8AC E9D0 969B D1E1 71CF 0068
+trust: ultimate
+cert: 969BD1E171CF0068 2016\-03\-17 2016\-04\-16
+auth: 7FFAB0D2C6DC09C9 2016\-03\-17 2016\-04\-16
+sign: 839220600A4DEC7D 2016\-03\-17 2016\-04\-16
+encr: B11469C6A9EAE27E 2016\-03\-17 2016\-04\-16
 
 Creating a revocation certificate\.
 Revocation certificate saved at:
-    /home/user/\.egpg/\.gnupg/B9E3B53BFE64FE7D\-revoke\.gpg\.asc
+    "/home/user/\.egpg/\.gnupg/969BD1E171CF0068\.revoke"
 .
 .fi
 .
 .IP "" 0
 .
 .P
-user@laptop:~$ \fBegpg fingerprint\fR
+user@laptop:~$ \fBegpg info\fR
 .
 .IP "" 4
 .
 .nf
 
-The fingerprint of your key is:
-1088 6787 6658 FD04 4963 8D56 B9E3 B53B FE64 FE7D
+egpg:  EasyGnuPG  v0\.7    (hosted at: https://github\.com/dashohoxha/egpg)
+EGPG_DIR="/home/user/\.egpg"
+GNUPGHOME="/home/user/\.egpg/\.gnupg"
+GPG_AGENT_INFO="/tmp/gpg\-hBW4UD/S\.gpg\-agent:29656:1"
+GPG_TTY="/dev/pts/8"
+GPG_OPTS=""
+SHARE=
+KEYSERVER=hkp://keys\.gnupg\.net
+DEBUG=
+12FB A098 4EAB 502F D8AC E9D0 969B D1E1 71CF 0068
+.
+.fi
+.
+.IP "" 0
+.
+.P
+user@laptop:~$ \fBegpg key\fR
+.
+.IP "" 4
+.
+.nf
+
+id: 969BD1E171CF0068
+uid: Test User <test@example\.org>
+fpr: 12FB A098 4EAB 502F D8AC E9D0 969B D1E1 71CF 0068
+trust: ultimate
+cert: 969BD1E171CF0068 2016\-03\-17 2016\-04\-16
+auth: 7FFAB0D2C6DC09C9 2016\-03\-17 2016\-04\-16
+sign: 839220600A4DEC7D 2016\-03\-17 2016\-04\-16
+encr: B11469C6A9EAE27E 2016\-03\-17 2016\-04\-16
+.
+.fi
+.
+.IP "" 0
+.
+.P
+user@laptop:~$ \fBegpg key fp\fR
+.
+.IP "" 4
+.
+.nf
+
+12FB A098 4EAB 502F D8AC E9D0 969B D1E1 71CF 0068
+.
+.fi
+.
+.IP "" 0
+.
+.P
+user@laptop:~$ \fBegpg key renew 1y\fR
+.
+.IP "" 4
+.
+.nf
+
+id: 969BD1E171CF0068
+uid: Test User <test@example\.org>
+fpr: 12FB A098 4EAB 502F D8AC E9D0 969B D1E1 71CF 0068
+trust: ultimate
+cert: 969BD1E171CF0068 2016\-03\-17 2017\-03\-17
+auth: 7FFAB0D2C6DC09C9 2016\-03\-17 2016\-04\-16
+sign: 839220600A4DEC7D 2016\-03\-17 2016\-04\-16
+encr: B11469C6A9EAE27E 2016\-03\-17 2016\-04\-16
+.
+.fi
+.
+.IP "" 0
+.
+.P
+user@laptop:~$ \fBegpg key renew 1y \-\-auth\fR
+.
+.IP "" 4
+.
+.nf
+
+id: 969BD1E171CF0068
+uid: Test User <test@example\.org>
+fpr: 12FB A098 4EAB 502F D8AC E9D0 969B D1E1 71CF 0068
+trust: ultimate
+cert: 969BD1E171CF0068 2016\-03\-17 2017\-03\-17
+auth: 7FFAB0D2C6DC09C9 2016\-03\-17 2017\-03\-17
+sign: 839220600A4DEC7D 2016\-03\-17 2016\-04\-16
+encr: B11469C6A9EAE27E 2016\-03\-17 2016\-04\-16
 .
 .fi
 .
@@ -213,22 +551,433 @@ The fingerprint of your key is:
 user@laptop:~$ \fBecho "This is a test message\." > test\.txt\fR
 .
 .P
-user@laptop:~$ \fBegpg seal test\.txt test1@example\.org test2@example\.org\fR
+user@laptop:~$ \fBegpg seal test\.txt\fR
+.
+.IP "" 4
+.
+.nf
+
+You need a passphrase to unlock the secret key for
+user: "Test User <test@example\.org>"
+4096\-bit RSA key, ID 0A4DEC7D, created 2016\-03\-17 (main key ID 71CF0068)
+.
+.fi
+.
+.IP "" 0
 .
 .P
 user@laptop:~$ \fBegpg open test\.txt\.sealed\fR
 .
+.IP "" 4
+.
+.nf
+
+user: "Test User <test@example\.org>"
+4096\-bit RSA key, ID A9EAE27E, created 2016\-03\-17 (main key ID 71CF0068)
+
+gpg: encrypted with 4096\-bit RSA key, ID A9EAE27E, created 2016\-03\-17
+      "Test User <test@example\.org>"
+gpg: Signature made Thu 17 Mar 2016 04:00:59 PM CET using RSA key ID 0A4DEC7D
+gpg: Good signature from "Test User <test@example\.org>"
+.
+.fi
+.
+.IP "" 0
+.
 .P
 user@laptop:~$ \fBegpg sign test\.txt\fR
+.
+.IP "" 4
+.
+.nf
+
+You need a passphrase to unlock the secret key for
+user: "Test User <test@example\.org>"
+4096\-bit RSA key, ID 0A4DEC7D, created 2016\-03\-17 (main key ID 71CF0068)
+.
+.fi
+.
+.IP "" 0
 .
 .P
 user@laptop:~$ \fBegpg verify test\.txt\fR
 .
+.IP "" 4
+.
+.nf
+
+gpg: Signature made Thu 17 Mar 2016 04:02:42 PM CET using RSA key ID 0A4DEC7D
+gpg: Good signature from "Test User <test@example\.org>"
+.
+.fi
+.
+.IP "" 0
+.
 .P
-user@laptop:~$ \fBegpg revoke\fR
+user@laptop:~$ \fBegpg contact search Dashamir\fR
+.
+.IP "" 4
+.
+.nf
+
+(1) Dashamir Hoxha <dashohoxha@gmail\.com>
+      2048 bit RSA key C01D2DBD, created: 2015\-12\-27, expires: 2020\-12\-31
+(2) Dashamir Hoxha <dashohoxha@gmail\.com>
+    keybase\.io/dashohoxha <dashohoxha@keybase\.io>
+      4096 bit RSA key 8D6414F9, created: 2015\-05\-27, expires: 2017\-01\-05
+(3) Dashamir Hoxha <dashohoxha@gmail\.com>
+    Dashamir Hoxha <d_hoxha@dogana\.gov\.al>
+      2048 bit RSA key 55D59B28, created: 2010\-12\-12, expires: 2015\-12\-13 (expired)
+Keys 1\-3 of 3 for "Dashamir"\.  Enter number(s), N)ext, or Q)uit > 1
+gpg: requesting key C01D2DBD from hkp server keys\.gnupg\.net
+gpg: key C01D2DBD: public key "Dashamir Hoxha <dashohoxha@gmail\.com>" imported
+gpg: 3 marginal(s) needed, 1 complete(s) needed, PGP trust model
+gpg: depth: 0  valid:   1  signed:   0  trust: 0\-, 0q, 0n, 0m, 0f, 1u
+gpg: next trustdb check due at 2017\-03\-17
+gpg: Total number processed: 1
+gpg:               imported: 1  (RSA: 1)
+.
+.fi
+.
+.IP "" 0
+.
+.P
+user@laptop:~$ \fBegpg contact ls\fR
+.
+.IP "" 4
+.
+.nf
+
+id: 969BD1E171CF0068
+uid: Test User <test@example\.org>
+fpr: 12FB A098 4EAB 502F D8AC E9D0 969B D1E1 71CF 0068
+trust: ultimate
+cert: 969BD1E171CF0068 2016\-03\-17 2017\-03\-17
+auth: 7FFAB0D2C6DC09C9 2016\-03\-17 2017\-03\-17
+sign: 839220600A4DEC7D 2016\-03\-17 2016\-04\-16
+encr: B11469C6A9EAE27E 2016\-03\-17 2016\-04\-16
+
+
+id: 562AC309C01D2DBD
+uid: Dashamir Hoxha <dashohoxha@gmail\.com>
+fpr: 1EC0 8B86 1350 EE19 8053 7941 562A C309 C01D 2DBD
+cert: 562AC309C01D2DBD 2015\-12\-27 2020\-12\-31
+encr: 95B9FAD9DEF9A02A 2015\-12\-27 2020\-12\-31
+.
+.fi
+.
+.IP "" 0
+.
+.P
+user@laptop:~$ \fBegpg contact certify Dashamir\fR
+.
+.P
+user@laptop:~$ \fBegpg contact trust Dashamir\fR
+.
+.P
+user@laptop:~$ \fBegpg contact ls Dashamir\fR
+.
+.IP "" 4
+.
+.nf
+
+id: 562AC309C01D2DBD
+uid: Dashamir Hoxha <dashohoxha@gmail\.com>
+fpr: 1EC0 8B86 1350 EE19 8053 7941 562A C309 C01D 2DBD
+trust: marginal
+cert: 562AC309C01D2DBD 2015\-12\-27 2020\-12\-31
+encr: 95B9FAD9DEF9A02A 2015\-12\-27 2020\-12\-31
+certified by: Test User <test@example\.org> (969BD1E171CF0068)
+.
+.fi
+.
+.IP "" 0
+.
+.P
+user@laptop:~$ \fBegpg contact rm Dashamir\fR
+.
+.IP "" 4
+.
+.nf
+
+pub  2048R/C01D2DBD 2015\-12\-27 Dashamir Hoxha <dashohoxha@gmail\.com>
+
+Delete this key from the keyring? (y/N) y
+.
+.fi
+.
+.IP "" 0
+.
+.P
+user@laptop:~$ \fBegpg key revoke\fR
+.
+.IP "" 4
+.
+.nf
+
+Revocation will make your current key useless\. You\'ll need
+to generate a new one\. Are you sure about this? [y/N] y
+gpg: key 71CF0068: "Test User <test@example\.org>" revocation certificate imported
+gpg: Total number processed: 1
+gpg:    new key revocations: 1
+gpg: 3 marginal(s) needed, 1 complete(s) needed, PGP trust model
+gpg: depth: 0  valid:   1  signed:   0  trust: 0\-, 0q, 0n, 0m, 0f, 1u
+gpg: next trustdb check due at 2017\-03\-17
+dasho@MacBookPro:~/test$ egpg key ls
+
+No valid key found\.
+
+Try first:  egpg key gen
+       or:  egpg key fetch
+.
+.fi
+.
+.IP "" 0
 .
 .P
 user@laptop:~$ \fBrm \-rf ~/\.egpg/\fR
+.
+.SH "ADVANCED EXAMPLE"
+.
+.SS "Get the key and contacts from an existing $GNUPGHOME:"
+user@laptop:~$ \fBrm \-rf ~/\.egpg/\fR
+.
+.P
+user@laptop:~$ \fBegpg init\fR
+.
+.IP "" 4
+.
+.nf
+
+mkdir: created directory ‘/home/user/\.egpg’
+mkdir: created directory ‘/home/user/\.egpg/\.gnupg’
+
+Appended the following lines to \'/home/user/\.bashrc\':
+\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-8<\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-
+### start egpg config
+export EGPG_DIR="/home/user/\.egpg"
+# Does "\.gpg\-agent\-info" exist and points to gpg\-agent process accepting signals?
+if ! test \-f "$EGPG_DIR/\.gpg\-agent\-info" \e
+|| ! kill \-0 $(cut \-d: \-f 2 "$EGPG_DIR/\.gpg\-agent\-info") 2>/dev/null
+then
+    gpg\-agent \-\-daemon \-\-no\-grab \-\-quiet \e
+        \-\-options "$EGPG_DIR/\.gnupg/gpg\-agent\.conf" \e
+        \-\-pinentry\-program /usr/bin/pinentry \e
+        \-\-write\-env\-file "$EGPG_DIR/\.gpg\-agent\-info" > /dev/null
+fi
+### end egpg config
+\-\-\-\-\-\-\-\-\-\-\-\-\-\-\->8\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-
+Please realod it to enable the new config:
+    source /home/user/\.bashrc
+.
+.fi
+.
+.IP "" 0
+.
+.P
+user@laptop:~$ \fBsource /home/user/\.bashrc\fR
+.
+.P
+user@laptop:~$ \fBegpg migrate\fR
+.
+.IP "" 4
+.
+.nf
+
+gpg: keyring `/home/user/\.egpg/\.gnupg/secring\.gpg\' created
+gpg: keyring `/home/user/\.egpg/\.gnupg/pubring\.gpg\' created
+gpg: /home/user/\.egpg/\.gnupg/trustdb\.gpg: trustdb created
+Importing key from: /home/user/\.gnupg
+gpg: key C01D2DBD: public key "Dashamir Hoxha <dashohoxha@gmail\.com>" imported
+gpg: key C01D2DBD: secret key imported
+gpg: key C01D2DBD: "Dashamir Hoxha <dashohoxha@gmail\.com>" not changed
+gpg: Total number processed: 2
+gpg:               imported: 1  (RSA: 1)
+gpg:              unchanged: 1
+gpg:       secret keys read: 1
+gpg:   secret keys imported: 1
+gpg: no ultimately trusted keys found
+Importing contacts from: /home/user/\.gnupg
+gpg: key 61309252: public key "Test 1 <test1@example\.org>" imported
+gpg: key EC8C9493: public key "Test 2 <test2@example\.org>" imported
+gpg: Total number processed: 3
+gpg:               imported: 2  (RSA: 15)
+gpg:              unchanged: 1
+gpg: 3 marginal(s) needed, 1 complete(s) needed, PGP trust model
+gpg: depth: 0  valid:   1  signed:   1  trust: 0\-, 0q, 0n, 0m, 0f, 1u
+gpg: depth: 1  valid:   1  signed:   1  trust: 0\-, 0q, 0n, 0m, 1f, 0u
+gpg: depth: 2  valid:   1  signed:   0  trust: 1\-, 0q, 0n, 0m, 0f, 0u
+gpg: next trustdb check due at 2017\-01\-05
+.
+.fi
+.
+.IP "" 0
+.
+.SS "Change the passphrase of the key:"
+user@laptop:~$ \fBegpg key pass\fR
+.
+.SS "Send key to the keyserver network:"
+user@laptop:~$ \fBegpg key share\fR
+.
+.IP "" 4
+.
+.nf
+
+You must enable sharing first with:
+  egpg set share yes
+.
+.fi
+.
+.IP "" 0
+.
+.P
+user@laptop:~$ \fBegpg set share yes\fR
+.
+.P
+user@laptop:~$ \fBegpg key share\fR
+.
+.SS "Run any gpg command but with the configuration settings of egpg:"
+user@laptop:~$ \fBegpg \-\- \-\-list\-secret\-keys\fR
+.
+.IP "" 4
+.
+.nf
+
+/home/user/\.egpg/\.gnupg/secring\.gpg
+\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-
+sec   2048R/C01D2DBD 2015\-12\-27 [expires: 2020\-12\-31]
+uid                  Dashamir Hoxha <dashohoxha@gmail\.com>
+ssb   2048R/DEF9A02A 2015\-12\-27
+.
+.fi
+.
+.IP "" 0
+.
+.SS "Use more than one private keys:"
+EasyGnuPG does not allow more than one valid key (which is unexpired and unrevoked)\. What can you do if you need to use more than one private key? You can use different home directories for EGPG, one for each key, and they will not mess with each\-other\. Let\'s see an example of doing this\.
+.
+.P
+user@laptop:~$ \fBegpg init ~/\.egpg1 <<< n\fR
+.
+.P
+user@laptop:~$ \fBegpg init ~/\.egpg2 <<< n\fR
+.
+.P
+user@laptop:~$ \fBegpg init ~/\.egpg <<< n\fR
+.
+.P
+Now add these lines to \fB~/\.bashrc\fR:
+.
+.IP "" 4
+.
+.nf
+
+export EGPG_DIR="/home/user/\.egpg1"
+# Does "\.gpg\-agent\-info" exist and points to gpg\-agent process accepting signals?
+if ! test \-f "$EGPG_DIR/\.gpg\-agent\-info" \e
+|| ! kill \-0 $(cut \-d: \-f 2 "$EGPG_DIR/\.gpg\-agent\-info") 2>/dev/null
+then
+    gpg\-agent \-\-daemon \-\-no\-grab \-\-quiet \e
+        \-\-options "$EGPG_DIR/\.gnupg/gpg\-agent\.conf" \e
+        \-\-pinentry\-program /usr/bin/pinentry \e
+        \-\-write\-env\-file "$EGPG_DIR/\.gpg\-agent\-info" > /dev/null
+fi
+
+export EGPG_DIR="/home/user/\.egpg2"
+# Does "\.gpg\-agent\-info" exist and points to gpg\-agent process accepting signals?
+if ! test \-f "$EGPG_DIR/\.gpg\-agent\-info" \e
+|| ! kill \-0 $(cut \-d: \-f 2 "$EGPG_DIR/\.gpg\-agent\-info") 2>/dev/null
+then
+    gpg\-agent \-\-daemon \-\-no\-grab \-\-quiet \e
+        \-\-options "$EGPG_DIR/\.gnupg/gpg\-agent\.conf" \e
+        \-\-pinentry\-program /usr/bin/pinentry \e
+        \-\-write\-env\-file "$EGPG_DIR/\.gpg\-agent\-info" > /dev/null
+fi
+
+alias egpg1=\'EGPG_DIR="/home/user/\.egpg1" egpg\'
+alias egpg1=\'EGPG_DIR="/home/user/\.egpg2" egpg\'
+export EGPG_DIR="/home/user/\.egpg"
+.
+.fi
+.
+.IP "" 0
+.
+.P
+user@laptop:~$ \fBsource ~/\.bashrc\fR
+.
+.P
+user@laptop:~$ \fBegpg\fR
+.
+.IP "" 4
+.
+.nf
+
+egpg:  EasyGnuPG  v0\.7    (hosted at: https://github\.com/dashohoxha/egpg)
+EGPG_DIR="/home/user/\.egpg"
+GNUPGHOME="/home/user/\.egpg/\.gnupg"
+GPG_AGENT_INFO="/tmp/gpg\-O9crSx/S\.gpg\-agent:11361:1"
+GPG_TTY="/dev/pts/4"
+GPG_OPTS=""
+SHARE=
+KEYSERVER=hkp://keys\.gnupg\.net
+DEBUG=
+1EC0 8B86 1350 EE19 8053 7941 562A C309 C01D 2DBD
+.
+.fi
+.
+.IP "" 0
+.
+.P
+user@laptop:~$ \fBegpg1\fR
+.
+.IP "" 4
+.
+.nf
+
+egpg:  EasyGnuPG  v0\.7    (hosted at: https://github\.com/dashohoxha/egpg)
+EGPG_DIR="/home/user/\.egpg1"
+GNUPGHOME="/home/user/\.egpg1/\.gnupg"
+GPG_AGENT_INFO="/tmp/gpg\-hkVMqs/S\.gpg\-agent:12523:1"
+GPG_TTY="/dev/pts/4"
+GPG_OPTS=""
+SHARE=
+KEYSERVER=hkp://keys\.gnupg\.net
+DEBUG=
+
+No valid key found\.
+
+Try first:  egpg key gen
+       or:  egpg key fetch
+.
+.fi
+.
+.IP "" 0
+.
+.P
+user@laptop:~$ \fBegpg2\fR
+.
+.IP "" 4
+.
+.nf
+
+egpg:  EasyGnuPG  v0\.7    (hosted at: https://github\.com/dashohoxha/egpg)
+EGPG_DIR="/home/user/\.egpg2"
+GNUPGHOME="/home/user/\.egpg2/\.gnupg"
+GPG_AGENT_INFO="/tmp/gpg\-YQuucs/S\.gpg\-agent:12525:1"
+GPG_TTY="/dev/pts/4"
+GPG_OPTS=""
+SHARE=
+KEYSERVER=hkp://keys\.gnupg\.net
+DEBUG=
+
+No valid key found\.
+
+Try first:  egpg key gen
+       or:  egpg key fetch
+.
+.fi
+.
+.IP "" 0
 .
 .SH "AUTHOR"
 Copyright (C) 2016 Dashamir Hoxha (dashohoxha@gmail\.com)\. The code is on GitHub at https://github\.com/dashohoxha/egpg\.
