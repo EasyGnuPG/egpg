@@ -30,56 +30,43 @@ The philosophic goals here are these:
 ## Requirements
 
  - You'll need `gpg2` installed. Most Linux distros have some variant
-   of
+   of: `apt-get install gnupg`.
 
-   `apt-get install gnupg`
-
-   Mac OS X users with [homebrew][1] installed can do
-
-   `brew install gnupg2`
-
-   Or else install the full [GPGTools][2] suite.
-
-   Whatever package you install will need to include `gpg` and
-   `gpgconf`.
+   Mac OS X users with [homebrew][1] installed can do: `brew install
+   gnupg2`.  Or else install the full [GPGTools][2] suite.
 
  - You'll also need [haveged][3] which will improve greatly the speed
    of generating new gpg keys. In Debian based distros it can be
-   installed with:
+   installed with: `apt-get install haveged`
 
-   `apt-get install haveged`
+ - It is also nice to have [parcimonie][4] installed (although not
+   required): `apt-get install parcimonie`
 
- - It is also nice to have [parcimonie][4] installed (although not required):
+## Installation
 
-   `apt-get install parcimonie`
-
+`sudo make install`
 
 ## Usage:
 
-**egpg* presents a series of subcommands. At present there are:
+**egpg** presents a series of subcommands:
 
 ```
-./egpg help
+egpg init
+egpg key gen <email> [<name>]
+egpg key ls
 
-./egpg key-gen <email> [<name>]
-./egpg fingerprint
-./egpg revoke [<revocation-certificate>]
+egpg sign <file>
+egpg verify <file>
 
-./egpg sign <file>
-./egpg verify <file>
+egpg seal <file> [<recipient>+]
+egpg open <file.sealed>
 
-./egpg seal <file> [<recipient>+]
-./egpg open <file.sealed>
+egpg help
+egpg key help
+egpg contact help
 ```
 
-See also the manual page: http://dashohoxha.github.io/egpg/man/
-
-Planned are:
-
-```
-./egpg init
-./egpg trust <users key>
-```
+For more details see the manual page: http://dashohoxha.github.io/egpg/man/
 
 These should be the minimal set required to use GPG effectively.
 
