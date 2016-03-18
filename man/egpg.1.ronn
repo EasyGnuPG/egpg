@@ -296,7 +296,7 @@ used. For key commands the name of the file must be
            or:  egpg key fetch
 
 
-   user@laptop:~$ `egpg key-gen test@example.org "Test User"`
+   user@laptop:~$ `egpg key gen test@example.org "Test User"`
 
     Creating a new key.
 
