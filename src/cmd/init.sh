@@ -19,7 +19,7 @@
 cmd_init() {
     # make sure that dependencies are installed
     test $(which haveged) || fail "You should install haveged:\n    sudo apt-get install haveged"
-    test $(which parcimonie) || fail "You should install parcimonie:\n    sudo apt-get install parcimonie"
+    #test $(which parcimonie) || fail "You should install parcimonie:\n    sudo apt-get install parcimonie"
 
     # check for an existing directory
     if [[ -d $EGPG_DIR ]]; then

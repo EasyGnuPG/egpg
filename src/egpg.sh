@@ -98,7 +98,7 @@ cmd_contact() {
 
 call() {
     local cmd=$1; shift
-    local file="$LIBDIR/${cmd//_/\/}.sh"
+    local file="$LIBDIR/$(echo $cmd | tr _ /).sh"
     [[ -f "$file" ]] || fail "Cannot find command file: $file"
     source "$file"
     $cmd "$@"
