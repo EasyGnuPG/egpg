@@ -57,7 +57,7 @@ cmd_key_gen() {
         Expire-Date: 1m
         Preferences: SHA512 SHA384 SHA256 SHA224 AES256 AES192 AES CAST5 ZLIB BZIP2 ZIP Uncompressed
         "
-    if [[ $pass -eq 1 ]]; then
+    if [[ $pass == 1 ]]; then
         get_new_passphrase
         [[ -n "$PASSPHRASE" ]] && PARAMETERS+="Passphrase: $PASSPHRASE"
     else
@@ -69,8 +69,10 @@ cmd_key_gen() {
 
     # set up some sub keys, in order not to use the base key day-to-day
     get_gpg_key
-    local COMMANDS=$(echo "addkey|4|4096|1m|addkey|6|4096|1m|save" | tr '|' "\n")
-    script -c "echo -e \"$PASSPHRASE\n$COMMANDS\" | gpg --batch --passphrase-fd=0 --command-fd=0 --edit-key $GPG_KEY" /dev/null >/dev/null
+    local commands="addkey|4|4096|1m|addkey|6|4096|1m|save"
+    commands=$(echo "$commands" | tr '|' "\n")
+    script -c "gpg --batch --command-fd=0 --edit-key $GPG_KEY <<< \"$commands\"" /dev/null >/dev/null
+    while [[ -n $(ps ax | grep -e '--edit-key' | grep -v grep) ]]; do sleep 0.5; done
     haveged_stop
 
     echo -e "\nExcellent! You created a fresh GPG key. Here's what it looks like:"
