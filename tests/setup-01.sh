@@ -8,11 +8,6 @@ EGPG="$(dirname $SHARNESS_TEST_DIRECTORY)/src/egpg.sh"
 
 egpg() { "$EGPG" "$@" ; }
 
-export EGPG_DIR="$SHARNESS_TRASH_DIRECTORY/.egpg"
-rm -rf "$EGPG_DIR" ; mkdir -p "$EGPG_DIR"
-[[ ! -d "$EGPG_DIR" ]] && echo "Could not create '$EGPG_DIR'" && exit 1
-
-# Set the homedir for GnuPG.
+export HOME="$SHARNESS_TRASH_DIRECTORY"
+export EGPG_DIR="$HOME/.egpg"
 export GNUPGHOME="$SHARNESS_TEST_DIRECTORY/gnupg/"
-mkdir -p "$GNUPGHOME"
-chmod 700 "$GNUPGHOME"
