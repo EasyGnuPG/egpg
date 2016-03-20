@@ -139,7 +139,7 @@ call_ext() {
 config() {
     ENV_GNUPGHOME="$GNUPGHOME"
     export GNUPGHOME="$EGPG_DIR/.gnupg"
-    export GPG_AGENT_INFO=$(cat "$EGPG_DIR/.gpg-agent-info" | cut -c 16-)
+    export GPG_AGENT_INFO=$(cat "$EGPG_DIR/.gpg-agent-info" 2>/dev/null | cut -c 16-)
     export GPG_TTY=$(tty)
 
     # read the config file
