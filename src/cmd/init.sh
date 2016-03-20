@@ -54,13 +54,13 @@ _EOF
 }
 
 _env_setup() {
-    local env_file=$1
-    sed -i $env_file -e '/^### start egpg config/,/^### end egpg config/d'
-    cat <<_EOF >> $env_file
+    local env_file="$1"
+    [[ -f "$env_file" ]] && sed -i "$env_file" -e '/^### start egpg config/,/^### end egpg config/d'
+    cat <<_EOF >> "$env_file"
 ### start egpg config
 export EGPG_DIR="$EGPG_DIR"
 _EOF
-    cat <<'_EOF' >> $env_file
+    cat <<'_EOF' >> "$env_file"
 # Does ".gpg-agent-info" exist and points to gpg-agent process accepting signals?
 if ! test -f "$EGPG_DIR/.gpg-agent-info" \
 || ! kill -0 $(cut -d: -f 2 "$EGPG_DIR/.gpg-agent-info") 2>/dev/null
@@ -73,9 +73,9 @@ fi
 ### end egpg config
 _EOF
     echo -e "\nAppended the following lines to '$env_file':\n---------------8<---------------"
-    sed $env_file -n -e '/^### start egpg config/,/^### end egpg config/p'
+    sed "$env_file" -n -e '/^### start egpg config/,/^### end egpg config/p'
     echo "--------------->8---------------
 Please realod it to enable the new config:
-    source $env_file
+    source \"$env_file\"
 "
 }
