@@ -75,7 +75,7 @@ _EOF
     echo -e "\nAppended the following lines to '$env_file':\n---------------8<---------------"
     sed "$env_file" -n -e '/^### start egpg config/,/^### end egpg config/p'
     echo "--------------->8---------------
-Please realod it to enable the new config:
+Please reload it to enable the new config:
     source \"$env_file\"
 "
 }

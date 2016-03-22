@@ -8,6 +8,8 @@ EGPG="$(dirname $SHARNESS_TEST_DIRECTORY)/src/egpg.sh"
 
 egpg() { "$EGPG" "$@" ; }
 
+unset  EGPG_DIR
+
 export HOME="$SHARNESS_TRASH_DIRECTORY"
-export EGPG_DIR="$HOME/.egpg"
 export GNUPGHOME="$SHARNESS_TEST_DIRECTORY/gnupg/"
+export KEY_ID="D44186C07EA858BD"
