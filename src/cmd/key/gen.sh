@@ -48,7 +48,7 @@ cmd_key_gen() {
     local PARAMETERS="
         Key-Type: RSA
         Key-Length: 4096
-        Key-Usage: encrypt,sign
+        Key-Usage: sign
         Name-Real: $real_name
         Name-Email: $email
         Subkey-Type: RSA
