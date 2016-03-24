@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-test_description='Command: help'
+test_description='Command: init'
 source "$(dirname "$0")"/setup-01.sh
 
 egpg_init() {
