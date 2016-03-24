@@ -1,11 +1,12 @@
-source "$(dirname "$0")"/setup-02.sh
+source "$(dirname "$0")"/setup-01.sh
 
-test_expect_success 'Create a key' '
-    cat <<-_EOF | egpg key gen -n
-test1@example.org
-Test 1
-$PASSPHRASE
-$PASSPHRASE
-_EOF
-    egpg fingerprint
+test_expect_success 'Init and import the test key and contacts' '
+    egpg init &&
+    source "$HOME/.bashrc" &&
+
+    egpg migrate | grep -e "Importing key from: $GNUPGHOME" -e "Importing contacts from: $GNUPGHOME" &&
+    local key_id=$(egpg key | grep "^id: " | cut -d" " -f2) &&
+    [[ $key_id == $KEY_ID ]] &&
+
+    echo "command-fd 0" >> "$HOME/.egpg/.gnupg/gpg.conf"
 '
