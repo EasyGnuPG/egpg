@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-test_description='Command: help'
+test_description='Command: set'
 source "$(dirname "$0")"/setup-01.sh
 
 test_expect_success 'Test `egpg set share yes`' '
