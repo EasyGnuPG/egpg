@@ -14,7 +14,6 @@ test_expect_success 'Test open' '
     egpg open test1.txt.sealed 2>&1 | grep "gpg: Good signature from \"Test 1 <test1@example.org>\"" &&
     [[ -f test1.txt.sealed ]] &&
     [[ -f test1.txt ]] &&
-    cat test1.txt &&
     [[ $(cat test1.txt) == "Test 1" ]]
 '
 
