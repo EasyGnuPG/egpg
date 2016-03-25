@@ -282,7 +282,6 @@ used. For key commands the name of the file must be
     GNUPGHOME="/home/user/.egpg/.gnupg"
     GPG_AGENT_INFO=""
     GPG_TTY="/dev/pts/8"
-    GPG_OPTS=""
     SHARE=
     KEYSERVER=hkp://keys.gnupg.net
     DEBUG=
@@ -335,7 +334,6 @@ used. For key commands the name of the file must be
     GNUPGHOME="/home/user/.egpg/.gnupg"
     GPG_AGENT_INFO="/tmp/gpg-hBW4UD/S.gpg-agent:29656:1"
     GPG_TTY="/dev/pts/8"
-    GPG_OPTS=""
     SHARE=
     KEYSERVER=hkp://keys.gnupg.net
     DEBUG=
@@ -624,7 +622,6 @@ used. For key commands the name of the file must be
     GNUPGHOME="/home/user/.egpg/.gnupg"
     GPG_AGENT_INFO="/tmp/gpg-O9crSx/S.gpg-agent:11361:1"
     GPG_TTY="/dev/pts/4"
-    GPG_OPTS=""
     SHARE=
     KEYSERVER=hkp://keys.gnupg.net
     DEBUG=
@@ -637,7 +634,6 @@ used. For key commands the name of the file must be
     GNUPGHOME="/home/user/.egpg1/.gnupg"
     GPG_AGENT_INFO="/tmp/gpg-hkVMqs/S.gpg-agent:12523:1"
     GPG_TTY="/dev/pts/4"
-    GPG_OPTS=""
     SHARE=
     KEYSERVER=hkp://keys.gnupg.net
     DEBUG=
@@ -654,7 +650,6 @@ used. For key commands the name of the file must be
     GNUPGHOME="/home/user/.egpg2/.gnupg"
     GPG_AGENT_INFO="/tmp/gpg-YQuucs/S.gpg-agent:12525:1"
     GPG_TTY="/dev/pts/4"
-    GPG_OPTS=""
     SHARE=
     KEYSERVER=hkp://keys.gnupg.net
     DEBUG=

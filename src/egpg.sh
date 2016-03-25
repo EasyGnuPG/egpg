@@ -145,9 +145,6 @@ config() {
     # read the config file
     local config_file="$EGPG_DIR/config.sh"
     [[ -f "$config_file" ]] || cat <<-_EOF > "$config_file"
-# GnuPG options
-GPG_OPTS=
-
 # Push local changes to the keyserver network.
 # Leave it empty (or comment out) to disable.
 SHARE=
@@ -159,7 +156,6 @@ _EOF
     source "$config_file"
 
     # set defaults, if some configurations are missing
-    GPG_OPTS=${GPG_OPTS:-}
     KEYSERVER=${KEYSERVER:-hkp://keys.gnupg.net}
     DEBUG=${DEBUG:-}
 }
