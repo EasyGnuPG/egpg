@@ -9,7 +9,7 @@ test_expect_success 'Make sure that `haveged` is started' '
 
 test_expect_success 'Generate a key with a passphrase' '
     egpg_init &&
-    change_pinentry_program &&
+    setup_autopin &&
 
     echo <<-_EOF | egpg key gen test1@example.org "Test 1" 2>&1 | grep "Excellent! You created a fresh GPG key." &&
 123456
