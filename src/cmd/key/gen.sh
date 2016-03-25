@@ -83,4 +83,5 @@ cmd_key_gen() {
 
     # send the key to keyserver
     gpg_send_keys $GPG_KEY
+    return 0
 }
