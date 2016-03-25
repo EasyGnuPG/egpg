@@ -9,9 +9,11 @@ test_expect_success 'Make sure that `haveged` is started' '
 
 change_pinentry_program() {
     local autopin="$(dirname $SHARNESS_TEST_DIRECTORY)/utils/autopin.sh" &&
-    sed -i "$HOME/.bashrc" -e "s#--pinentry-program.*#--pinentry-program $autopin \\\\#" &&
-    cat "$HOME/.bashrc" &&
-    kill -9 $(cut -d: -f2 "$EGPG_DIR/.gpg-agent-info") &&
+    cp -f "$autopin" "$EGPG_DIR/" &&
+    autopin="$EGPG_DIR/autopin.sh" &&
+    sed -i "$HOME/.bashrc" -e "s#--pinentry-program.*#--pinentry-program \"$autopin\" \\\\#" &&
+    killall gpg-agent &&
+    rm -rf /tmp/gpg-* &&
     source "$HOME/.bashrc"
 }
 
