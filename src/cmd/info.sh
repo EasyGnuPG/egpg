@@ -33,5 +33,5 @@ _EOF
     local customize_file="$EGPG_DIR/customize.sh"
     [[ -f "$customize_file" ]] && echo "customize_file='$customize_file'"
 
-    call cmd_key_fp
+    call cmd_key_list
 }

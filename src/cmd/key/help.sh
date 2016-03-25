@@ -32,9 +32,6 @@ Commands to manage the key. They are listed below.
         colons). A list of all the keys can be displayed as well
         (including the revoked and expired ones).
 
-    fp,fingerprint
-        Show the fingerprint of the key.
-
     rm,del,delete [<key-id>]
         Delete the key.
 

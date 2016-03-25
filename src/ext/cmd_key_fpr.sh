@@ -16,7 +16,6 @@
 # along with this program.  If not, see http://www.gnu.org/licenses/
 #
 
-cmd_key_fp() {
-    get_gpg_key
-    gpg --with-colons --fingerprint $GPG_KEY | grep '^fpr' | cut -d: -f 10 | sed 's/..../\0 /g'
+cmd_key_fpr() {
+    echo $(call cmd_key_list | grep '^fpr:' | cut -d: -f2)
 }

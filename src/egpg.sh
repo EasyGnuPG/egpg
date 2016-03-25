@@ -61,7 +61,6 @@ cmd_key() {
         help)             call cmd_key_help "$@" ;;
         gen|generate)     call cmd_key_gen "$@" ;;
         ''|ls|list|show)  call cmd_key_list "$@" ;;
-        fp|fingerprint)   call cmd_key_fp "$@" ;;
         rm|del|delete)    call cmd_key_delete "$@" ;;
         exp|export)       call cmd_key_export "$@" ;;
         imp|import)       call cmd_key_import "$@" ;;
