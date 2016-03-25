@@ -26,9 +26,6 @@ test_expect_success 'Test `egpg migrate -d`' '
 test_expect_success 'Test `egpg migrate --homedir`' '
     local gnupghome="$HOME/.egpg/.gnupg" &&
     egpg migrate --homedir "$gnupghome" &&
-
-    egpg &&
-    egpg key &&
     local key_id=$(egpg key | grep "^id: " | cut -d" " -f2) &&
     [[ $key_id == $KEY_ID ]]
 '

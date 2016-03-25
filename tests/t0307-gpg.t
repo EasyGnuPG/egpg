@@ -1,13 +1,9 @@
 #!/usr/bin/env bash
 
 test_description='Command: --,gpg'
-source "$(dirname "$0")"/setup-01.sh
+source "$(dirname "$0")"/setup-03.sh
 
 test_expect_success 'Test `egpg --`' '
-    egpg init &&
-    source "$HOME/.bashrc" &&
-    egpg migrate &&
-
     [[ $(egpg -- -k | grep "^uid" | wc -l) == 4 ]]
 '
 
