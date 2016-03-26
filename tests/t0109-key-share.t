@@ -6,7 +6,7 @@ source "$(dirname "$0")"/setup-01.sh
 test_expect_success 'Init and migrate' '
     egpg init &&
     source "$HOME/.bashrc" &&
-    egpg migrate | grep -e "Importing key from: $GNUPGHOME"
+    egpg key fetch | grep -e "Importing key from: $GNUPGHOME"
 '
 
 test_expect_success 'Test key share (before enabling)' '

@@ -22,5 +22,6 @@ cmd_key_delete() {
 
     local fingerprint
     fingerprint=$(gpg --with-colons --fingerprint $key_id | grep '^fpr' | cut -d: -f10)
+    [[ -n "$fingerprint" ]] || fail "Key $key_id not found."
     gpg --batch --delete-secret-and-public-keys "$fingerprint"
 }
