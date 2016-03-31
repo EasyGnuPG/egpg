@@ -34,7 +34,14 @@ cmd_key_renew() {
     [ $cert == 0 ] && [ $auth == 0 ] && [ $sign == 0 ] && [ $encrypt == 0 ] \
         && cert=1 && auth=1 && sign=1 && encrypt=1
 
-    local time=${1:-1m}
+    local time="$@"
+    if [[ -z "$time" ]]; then
+        time="1m"  # 1 month
+    else
+        # calculate the number of days from now until the given time
+        time=$(( ($(date -d "$time" +%s) - $(date +%s) ) / 86400 + 1 ))
+        time+="d"
+    fi
     local commands=''
     [ $cert == 1 ] && commands+=";expire;$time;y"
     [ $auth == 1 ] && commands+=";key 1;expire;$time;y;key 1"

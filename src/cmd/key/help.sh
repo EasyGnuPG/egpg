@@ -44,10 +44,10 @@ Commands to manage the key. They are listed below.
     fetch [-d,--homedir <gnupghome>] [-k,--key-id <key-id>]
         Get a key from another gpg directory (by default from $GNUPGHOME).
 
-    renew [<time-length>] [-c,--cert] [-a,--auth] [-s,--sign] [-e,--encrypt]
-        Renew the key, set the expiration time (by default) 1 month from now.
-        The renewal time length can be given like this:
-        <n> (days), <n>w (weeks), <n>m (months), <n>y (years)
+    renew,expire [<date>] [-c,--cert] [-a,--auth] [-s,--sign] [-e,--encrypt]
+        Renew the key until the given date (by default 1 month from now).
+        The <date> is in free time format, like "2 months", 2020-11-15,
+        "March 7", etc. (the formats that are accepted by command `date -d`).
         The rest of the options specify which subkey will be renewed
         (certifying, authenticating, signing or encrypting).
         If no options are given, then all of them will be renewed.
