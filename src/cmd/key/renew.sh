@@ -32,7 +32,7 @@ cmd_key_renew() {
     done
     [[ $err -ne 0 ]] && echo "Usage: $COMMAND [<time-length>] [-c,--cert] [-a,--auth] [-s,--sign] [-e,--encrypt]" && return
     [ $cert == 0 ] && [ $auth == 0 ] && [ $sign == 0 ] && [ $encrypt == 0 ] \
-        && cert=1
+        && cert=1 && auth=1 && sign=1 && encrypt=1
 
     local time=${1:-1m}
     local commands=''

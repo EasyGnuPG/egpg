@@ -50,7 +50,7 @@ Commands to manage the key. They are listed below.
         <n> (days), <n>w (weeks), <n>m (months), <n>y (years)
         The rest of the options specify which subkey will be renewed
         (certifying, authenticating, signing or encrypting).
-        If no options are given, then the certifying (main) key will be renewed.
+        If no options are given, then all of them will be renewed.
 
     revcert ["description"]
         Generate a revocation certificate for the key.
