@@ -4,7 +4,7 @@ test_description='Command: contact fetch'
 source "$(dirname "$0")"/setup-01.sh
 
 egpg_init() {
-    local egpg_dir=${1:-$EGPG_DIR}
+    local egpg_dir=${1:-$HOME/.egpg}
     rm -rf "$egpg_dir" &&
     egpg init "$egpg_dir" &&
     source "$HOME/.bashrc"

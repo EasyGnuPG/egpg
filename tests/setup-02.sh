@@ -1,8 +1,9 @@
 source "$(dirname "$0")"/setup-01.sh
 
 egpg_init() {
-    rm -rf "$HOME/.egpg" &&
-    egpg init &&
+    local egpg_dir=${1:-$HOME/.egpg}
+    rm -rf "$egpg_dir" &&
+    egpg init "$egpg_dir" &&
     source "$HOME/.bashrc"
 }
 

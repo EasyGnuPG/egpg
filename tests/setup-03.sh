@@ -5,10 +5,8 @@ send_gpg_commands_from_stdin() {
 }
 
 test_expect_success 'Import the test key and contacts' '
-    egpg migrate | grep -e "Importing key from: $GNUPGHOME" -e "Importing contacts from: $GNUPGHOME" &&
-
-    local key_id=$(egpg key | grep "^id: " | cut -d" " -f2) &&
-    [[ $key_id == $KEY_ID ]] &&
-
+    egpg migrate 2>&1 | grep -e "Importing key from: $GNUPGHOME" -e "Importing contacts from: $GNUPGHOME" &&
+    [[ $(egpg key | grep "^id: " | cut -d" " -f2) == $KEY_ID ]] &&
+    [[ $(egpg contact ls | grep "^id: " | wc -l) == 4 ]] &&
     send_gpg_commands_from_stdin
 '
