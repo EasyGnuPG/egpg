@@ -65,7 +65,7 @@ cmd_key() {
         exp|export)       call cmd_key_export "$@" ;;
         imp|import)       call cmd_key_import "$@" ;;
         fetch)            call cmd_key_fetch "$@" ;;
-        renew|expire)     call cmd_key_renew "$@" ;;
+        renew|expiration) call cmd_key_renew "$@" ;;
         share)            call cmd_key_share "$@" ;;
         revcert)          call cmd_key_revcert "$@" ;;
         rev|revoke)       call cmd_key_rev "$@" ;;
