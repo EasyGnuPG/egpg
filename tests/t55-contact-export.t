@@ -5,7 +5,7 @@ source "$(dirname "$0")"/setup.sh
 
 test_expect_success 'init' '
     egpg_init &&
-    egpg migrate
+    egpg_migrate
 '
 
 test_expect_success 'egpg contact export <contact-id>' '
