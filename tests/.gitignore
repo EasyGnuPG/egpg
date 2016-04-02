@@ -3,3 +3,4 @@ gnupg/.gpg-agent-info
 gnupg/private-keys-v1.d
 test-results/
 trash directory.*
+trash/
