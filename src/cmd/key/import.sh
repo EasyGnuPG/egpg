@@ -28,7 +28,7 @@ cmd_key_import() {
     gpg --import "$file"
 
     # set trust to 'ultimate'
-    get_gpg_key
+    local key_id=$(gpg --with-fingerprint --with-colons "$file" | grep '^sec' | cut -d: -f5)
     local commands=$(echo "trust|5|y|quit" | tr '|' "\n")
-    script -c "gpg --batch --command-fd=0 --key-edit $GPG_KEY <<< \"$commands\" " /dev/null > /dev/null
+    script -c "gpg --batch --command-fd=0 --key-edit $key_id <<< \"$commands\" " /dev/null > /dev/null
 }

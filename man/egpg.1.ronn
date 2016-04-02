@@ -92,9 +92,6 @@ egpg(1) -- Easy GnuPG
     colons). A list of all the keys can be displayed as well
     (including the revoked and expired ones).
 
-* `fp`,`fingerprint`
-
-    Show the fingerprint of the key.
 
 * `rm`,`del`,`delete` [<key-id>]
 
@@ -282,7 +279,6 @@ used. For key commands the name of the file must be
     GNUPGHOME="/home/user/.egpg/.gnupg"
     GPG_AGENT_INFO=""
     GPG_TTY="/dev/pts/8"
-    GPG_OPTS=""
     SHARE=
     KEYSERVER=hkp://keys.gnupg.net
     DEBUG=
@@ -335,7 +331,6 @@ used. For key commands the name of the file must be
     GNUPGHOME="/home/user/.egpg/.gnupg"
     GPG_AGENT_INFO="/tmp/gpg-hBW4UD/S.gpg-agent:29656:1"
     GPG_TTY="/dev/pts/8"
-    GPG_OPTS=""
     SHARE=
     KEYSERVER=hkp://keys.gnupg.net
     DEBUG=
@@ -352,7 +347,7 @@ used. For key commands the name of the file must be
     sign: 839220600A4DEC7D 2016-03-17 2016-04-16 
     encr: B11469C6A9EAE27E 2016-03-17 2016-04-16 
 
-   user@laptop:~$ `egpg key fp`
+   user@laptop:~$ `egpg key fpr`
 
     12FB A098 4EAB 502F D8AC E9D0 969B D1E1 71CF 0068
 
@@ -624,7 +619,6 @@ used. For key commands the name of the file must be
     GNUPGHOME="/home/user/.egpg/.gnupg"
     GPG_AGENT_INFO="/tmp/gpg-O9crSx/S.gpg-agent:11361:1"
     GPG_TTY="/dev/pts/4"
-    GPG_OPTS=""
     SHARE=
     KEYSERVER=hkp://keys.gnupg.net
     DEBUG=
@@ -637,7 +631,6 @@ used. For key commands the name of the file must be
     GNUPGHOME="/home/user/.egpg1/.gnupg"
     GPG_AGENT_INFO="/tmp/gpg-hkVMqs/S.gpg-agent:12523:1"
     GPG_TTY="/dev/pts/4"
-    GPG_OPTS=""
     SHARE=
     KEYSERVER=hkp://keys.gnupg.net
     DEBUG=
@@ -654,7 +647,6 @@ used. For key commands the name of the file must be
     GNUPGHOME="/home/user/.egpg2/.gnupg"
     GPG_AGENT_INFO="/tmp/gpg-YQuucs/S.gpg-agent:12525:1"
     GPG_TTY="/dev/pts/4"
-    GPG_OPTS=""
     SHARE=
     KEYSERVER=hkp://keys.gnupg.net
     DEBUG=

@@ -61,12 +61,11 @@ cmd_key() {
         help)             call cmd_key_help "$@" ;;
         gen|generate)     call cmd_key_gen "$@" ;;
         ''|ls|list|show)  call cmd_key_list "$@" ;;
-        fp|fingerprint)   call cmd_key_fp "$@" ;;
         rm|del|delete)    call cmd_key_delete "$@" ;;
         exp|export)       call cmd_key_export "$@" ;;
         imp|import)       call cmd_key_import "$@" ;;
         fetch)            call cmd_key_fetch "$@" ;;
-        renew)            call cmd_key_renew "$@" ;;
+        renew|expiration) call cmd_key_renew "$@" ;;
         share)            call cmd_key_share "$@" ;;
         revcert)          call cmd_key_revcert "$@" ;;
         rev|revoke)       call cmd_key_rev "$@" ;;
@@ -139,15 +138,12 @@ call_ext() {
 config() {
     ENV_GNUPGHOME="$GNUPGHOME"
     export GNUPGHOME="$EGPG_DIR/.gnupg"
-    export GPG_AGENT_INFO=$(cat "$EGPG_DIR/.gpg-agent-info" | cut -c 16-)
+    export GPG_AGENT_INFO=$(cat "$EGPG_DIR/.gpg-agent-info" 2>/dev/null | cut -c 16-)
     export GPG_TTY=$(tty)
 
     # read the config file
     local config_file="$EGPG_DIR/config.sh"
     [[ -f "$config_file" ]] || cat <<-_EOF > "$config_file"
-# GnuPG options
-GPG_OPTS=
-
 # Push local changes to the keyserver network.
 # Leave it empty (or comment out) to disable.
 SHARE=
@@ -159,7 +155,6 @@ _EOF
     source "$config_file"
 
     # set defaults, if some configurations are missing
-    GPG_OPTS=${GPG_OPTS:-}
     KEYSERVER=${KEYSERVER:-hkp://keys.gnupg.net}
     DEBUG=${DEBUG:-}
 }

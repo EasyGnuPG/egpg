@@ -39,7 +39,7 @@ cmd_key_fetch() {
     echo "Importing key from: $homedir"
 
     # get id of the key to be imported
-    [[ -n "$key_id" ]] || key_id=$(get_valid_keys $homedir | cut -d' ' -f1)
+    [[ -n "$key_id" ]] || key_id=$(get_valid_keys "$homedir" | cut -d' ' -f1)
     [[ -n "$key_id" ]] || fail "No valid key found."
 
     # export to tmp file
@@ -50,7 +50,7 @@ cmd_key_fetch() {
 
     # import from the tmp file
     gpg --import "$file"
-    rm -rf $WORKDIR
+    rm -rf "$WORKDIR"
 
     # set trust to ultimate
     local commands=$(echo "trust|5|y|quit" | tr '|' "\n")

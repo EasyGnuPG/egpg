@@ -17,29 +17,21 @@
 #
 
 cmd_key_renew() {
-    local opts cert=0 auth=0 sign=0 encrypt=0
-    opts="$(getopt -o case -l cert,auth,sign,encrypt -n "$PROGRAM" -- "$@")"
-    local err=$?
-    eval set -- "$opts"
-    while true; do
-        case $1 in
-            -c|--cert) cert=1; shift ;;
-            -a|--auth) auth=1; shift ;;
-            -s|--sign) sign=1; shift ;;
-            -e|--encrypt) encrypt=1; shift ;;
-            --) shift; break ;;
-        esac
-    done
-    [[ $err -ne 0 ]] && echo "Usage: $COMMAND [<time-length>] [-c,--cert] [-a,--auth] [-s,--sign] [-e,--encrypt]" && return
-    [ $cert == 0 ] && [ $auth == 0 ] && [ $sign == 0 ] && [ $encrypt == 0 ] \
-        && cert=1
+    local expdate="$@"
+    if [[ -z "$expdate" ]]; then
+        # default is 1 month
+        time="1m"
+    else
+        # calculate the number of days from now until the given time
+        local expday=$(date -d "$expdate" +%s)
+        local today=$(date -d $(date +%F) +%s)
+        time=$(( ( $expday - $today ) / 86400 ))
+    fi
 
-    local time=${1:-1m}
-    local commands=''
-    [ $cert == 1 ] && commands+=";expire;$time;y"
-    [ $auth == 1 ] && commands+=";key 1;expire;$time;y;key 1"
-    [ $sign == 1 ] && commands+=";key 2;expire;$time;y;key 2"
-    [ $encrypt == 1 ] && commands+=";key 3;expire;$time;y;key 3"
+    local commands=";expire;$time;y"
+    commands+=";key 1;expire;$time;y;key 1"
+    commands+=";key 2;expire;$time;y;key 2"
+    commands+=";key 3;expire;$time;y;key 3"
     commands+=";save"
     commands=$(echo "$commands" | tr ';' "\n")
 

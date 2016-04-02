@@ -23,7 +23,6 @@ EGPG_DIR="$EGPG_DIR"
 GNUPGHOME="$GNUPGHOME"
 GPG_AGENT_INFO="$GPG_AGENT_INFO"
 GPG_TTY="$GPG_TTY"
-GPG_OPTS="$GPG_OPTS"
 SHARE=$SHARE
 KEYSERVER=$KEYSERVER
 DEBUG=$DEBUG
@@ -34,5 +33,5 @@ _EOF
     local customize_file="$EGPG_DIR/customize.sh"
     [[ -f "$customize_file" ]] && echo "customize_file='$customize_file'"
 
-    call cmd_key_fp
+    call cmd_key_list
 }
