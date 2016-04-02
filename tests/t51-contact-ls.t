@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 test_description='Command: contact ls'
-source "$(dirname "$0")"/setup-01.sh
+source "$(dirname "$0")"/setup.sh
 
 test_expect_success 'Init' '
     egpg init &&

@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
 
 test_description='Command: contact delete'
-source "$(dirname "$0")"/setup-03.sh
+source "$(dirname "$0")"/setup.sh
+
+test_expect_success 'init' '
+    egpg_init &&
+    egpg_migrate &&
+    send_gpg_commands_from_stdin
+'
 
 test_expect_success 'egpg contact delete' '
     egpg contact delete $CONTACT_3 &&

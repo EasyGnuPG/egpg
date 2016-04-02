@@ -1,16 +1,19 @@
 #!/usr/bin/env bash
 
-test_description='Create a key with a passphrase'
-source "$(dirname "$0")"/setup-04.sh
+test_description='Command: key gen'
+source "$(dirname "$0")"/setup.sh
 
-test_expect_success 'Make sure that `haveged` is started' '
+test_expect_success 'Make sure `haveged` is started' '
     [[ -n "$(ps ax | grep -v grep | grep haveged)" ]]
 '
 
-test_expect_success 'Generate a key with a passphrase' '
+test_expect_success 'init' '
     egpg_init &&
     setup_autopin &&
+    send_gpg_commands_from_stdin
+'
 
+test_expect_success 'egpg key gen' '
     echo <<-_EOF | egpg key gen test1@example.org "Test 1" 2>&1 | grep "Excellent! You created a fresh GPG key." &&
 123456
 123456
