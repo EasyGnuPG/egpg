@@ -1,3 +1,8 @@
+cmd_contact_uncertify() {
+    echo "Try the command: $(basename $0) -- --key-edit $@"
+    echo "and then use the commands: revsig and/or delsig"
+}
+
 #
 # This file is part of EasyGnuPG.  EasyGnuPG is a wrapper around GnuPG
 # to simplify its operations.  Copyright (C) 2016 Dashamir Hoxha
@@ -15,8 +20,3 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see http://www.gnu.org/licenses/
 #
-
-cmd_contact_uncertify() {
-    echo "Try the command: $(basename $0) -- --key-edit $@"
-    echo "and then use the commands: revsig and/or delsig"
-}

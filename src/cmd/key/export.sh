@@ -1,3 +1,12 @@
+cmd_key_export() {
+    local key_id="$1"
+    [[ -z $key_id ]] && get_gpg_key && key_id=$GPG_KEY
+
+    gpg --armor --export $key_id > $key_id.key
+    gpg --armor --export-secret-keys $key_id >> $key_id.key
+    echo "Key exported to: $key_id.key"
+}
+
 #
 # This file is part of EasyGnuPG.  EasyGnuPG is a wrapper around GnuPG
 # to simplify its operations.  Copyright (C) 2016 Dashamir Hoxha
@@ -15,12 +24,3 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see http://www.gnu.org/licenses/
 #
-
-cmd_key_export() {
-    local key_id="$1"
-    [[ -z $key_id ]] && get_gpg_key && key_id=$GPG_KEY
-
-    gpg --armor --export $key_id > $key_id.key
-    gpg --armor --export-secret-keys $key_id >> $key_id.key
-    echo "Key exported to: $key_id.key"
-}

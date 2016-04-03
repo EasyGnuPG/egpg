@@ -1,3 +1,20 @@
+cmd_contact_export() {
+    local opts output="-"
+    opts="$(getopt -o o: -l output: -n "$PROGRAM" -- "$@")"
+    local err=$?
+    eval set -- "$opts"
+    while true; do
+        case $1 in
+            -o|--output) output="$2"; shift 2 ;;
+            --) shift; break ;;
+        esac
+    done
+    [[ $err == 0 ]] || fail "Usage: $COMMAND [<contact>...] [-o,--output <file>]"
+
+    # export
+    gpg --armor --export --output $output $@
+}
+
 #
 # This file is part of EasyGnuPG.  EasyGnuPG is a wrapper around GnuPG
 # to simplify its operations.  Copyright (C) 2016 Dashamir Hoxha
@@ -15,20 +32,3 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see http://www.gnu.org/licenses/
 #
-
-cmd_contact_export() {
-    local opts output="-"
-    opts="$(getopt -o o: -l output: -n "$PROGRAM" -- "$@")"
-    local err=$?
-    eval set -- "$opts"
-    while true; do
-        case $1 in
-            -o|--output) output="$2"; shift 2 ;;
-            --) shift; break ;;
-        esac
-    done
-    [[ $err == 0 ]] || fail "Usage: $COMMAND [<contact>...] [-o,--output <file>]"
-
-    # export
-    gpg --armor --export --output $output $@
-}

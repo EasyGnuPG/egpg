@@ -1,3 +1,13 @@
+cmd_key_delete() {
+    local key_id="$1"
+    [[ -z $key_id ]] && get_gpg_key && key_id=$GPG_KEY
+
+    local fingerprint
+    fingerprint=$(gpg --with-colons --fingerprint $key_id | grep '^fpr' | cut -d: -f10)
+    [[ -n "$fingerprint" ]] || fail "Key $key_id not found."
+    gpg --batch --delete-secret-and-public-keys "$fingerprint"
+}
+
 #
 # This file is part of EasyGnuPG.  EasyGnuPG is a wrapper around GnuPG
 # to simplify its operations.  Copyright (C) 2016 Dashamir Hoxha
@@ -15,13 +25,3 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see http://www.gnu.org/licenses/
 #
-
-cmd_key_delete() {
-    local key_id="$1"
-    [[ -z $key_id ]] && get_gpg_key && key_id=$GPG_KEY
-
-    local fingerprint
-    fingerprint=$(gpg --with-colons --fingerprint $key_id | grep '^fpr' | cut -d: -f10)
-    [[ -n "$fingerprint" ]] || fail "Key $key_id not found."
-    gpg --batch --delete-secret-and-public-keys "$fingerprint"
-}

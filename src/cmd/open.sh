@@ -1,3 +1,17 @@
+cmd_open() {
+    local file="$1" ; shift
+    [[ -z "$file" ]] && fail "Usage: $(basename "$0") open <file.sealed>"
+    [[ -f "$file" ]] || fail "Cannot find file '$file'"
+
+    local output=${file%.sealed}
+    [[ "$output" != "$file" ]] || fail "The given file does not end in '.sealed'."
+
+    # decrypt and verify
+    gpg --keyserver "$KEYSERVER" \
+        --keyserver-options auto-key-retrieve,verbose,honor-keyserver-url \
+        --decrypt --output "$output" "$file"
+}
+
 #
 # This file is part of EasyGnuPG.  EasyGnuPG is a wrapper around GnuPG
 # to simplify its operations.  Copyright (C) 2016 Dashamir Hoxha
@@ -15,17 +29,3 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see http://www.gnu.org/licenses/
 #
-
-cmd_open() {
-    local file="$1" ; shift
-    [[ -z "$file" ]] && fail "Usage: $(basename "$0") open <file.sealed>"
-    [[ -f "$file" ]] || fail "Cannot find file '$file'"
-
-    local output=${file%.sealed}
-    [[ "$output" != "$file" ]] || fail "The given file does not end in '.sealed'."
-
-    # decrypt and verify
-    gpg --keyserver "$KEYSERVER" \
-        --keyserver-options auto-key-retrieve,verbose,honor-keyserver-url \
-        --decrypt --output "$output" "$file"
-}

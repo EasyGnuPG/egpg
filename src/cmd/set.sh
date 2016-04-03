@@ -1,3 +1,18 @@
+cmd_set() {
+    local option=$1 ; shift
+    case ${option,,} in
+        share)
+            local value=$1
+            SHARE=$value
+            sed -i "$EGPG_DIR/config.sh" -e "/SHARE=/c SHARE=$value"
+            gpg_send_keys
+            ;;
+        *)
+            echo "Unknown option '$option'"
+            ;;
+    esac
+}
+
 #
 # This file is part of EasyGnuPG.  EasyGnuPG is a wrapper around GnuPG
 # to simplify its operations.  Copyright (C) 2016 Dashamir Hoxha
@@ -15,18 +30,3 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see http://www.gnu.org/licenses/
 #
-
-cmd_set() {
-    local option=$1 ; shift
-    case ${option,,} in
-        share)
-            local value=$1
-            SHARE=$value
-            sed -i "$EGPG_DIR/config.sh" -e "/SHARE=/c SHARE=$value"
-            gpg_send_keys
-            ;;
-        *)
-            echo "Unknown option '$option'"
-            ;;
-    esac
-}

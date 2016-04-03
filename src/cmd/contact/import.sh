@@ -1,3 +1,13 @@
+cmd_contact_import() {
+    local file="$1"
+    [[ -n "$file" ]] || fail "Usage: $COMMAND <file>"
+    [[ -f "$file" ]] || fail "Cannot find file: $file"
+
+    # import
+    echo "Importing contacts from file: $file"
+    gpg --import "$file"
+}
+
 #
 # This file is part of EasyGnuPG.  EasyGnuPG is a wrapper around GnuPG
 # to simplify its operations.  Copyright (C) 2016 Dashamir Hoxha
@@ -15,13 +25,3 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see http://www.gnu.org/licenses/
 #
-
-cmd_contact_import() {
-    local file="$1"
-    [[ -n "$file" ]] || fail "Usage: $COMMAND <file>"
-    [[ -f "$file" ]] || fail "Cannot find file: $file"
-
-    # import
-    echo "Importing contacts from file: $file"
-    gpg --import "$file"
-}

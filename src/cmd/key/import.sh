@@ -1,3 +1,20 @@
+cmd_key_import() {
+    assert_no_valid_key
+
+    local file="$1"
+    [[ -n "$file" ]] || fail "Usage: $COMMAND  <file>"
+    [[ -f "$file" ]] || fail "Cannot find file: $file"
+
+    # import
+    echo "Importing key from file: $file"
+    gpg --import "$file"
+
+    # set trust to 'ultimate'
+    local key_id=$(gpg --with-fingerprint --with-colons "$file" | grep '^sec' | cut -d: -f5)
+    local commands=$(echo "trust|5|y|quit" | tr '|' "\n")
+    script -c "gpg --batch --command-fd=0 --key-edit $key_id <<< \"$commands\" " /dev/null > /dev/null
+}
+
 #
 # This file is part of EasyGnuPG.  EasyGnuPG is a wrapper around GnuPG
 # to simplify its operations.  Copyright (C) 2016 Dashamir Hoxha
@@ -15,20 +32,3 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see http://www.gnu.org/licenses/
 #
-
-cmd_key_import() {
-    assert_no_valid_key
-
-    local file="$1"
-    [[ -n "$file" ]] || fail "Usage: $COMMAND  <file>"
-    [[ -f "$file" ]] || fail "Cannot find file: $file"
-
-    # import
-    echo "Importing key from file: $file"
-    gpg --import "$file"
-
-    # set trust to 'ultimate'
-    local key_id=$(gpg --with-fingerprint --with-colons "$file" | grep '^sec' | cut -d: -f5)
-    local commands=$(echo "trust|5|y|quit" | tr '|' "\n")
-    script -c "gpg --batch --command-fd=0 --key-edit $key_id <<< \"$commands\" " /dev/null > /dev/null
-}

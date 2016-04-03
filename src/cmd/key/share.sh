@@ -1,3 +1,9 @@
+cmd_key_share() {
+    get_gpg_key
+    is_true $SHARE || fail "You must enable sharing first with:\n  $(basename $0) set share yes"
+    gpg_send_keys $GPG_KEY
+}
+
 #
 # This file is part of EasyGnuPG.  EasyGnuPG is a wrapper around GnuPG
 # to simplify its operations.  Copyright (C) 2016 Dashamir Hoxha
@@ -15,9 +21,3 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see http://www.gnu.org/licenses/
 #
-
-cmd_key_share() {
-    get_gpg_key
-    is_true $SHARE || fail "You must enable sharing first with:\n  $(basename $0) set share yes"
-    gpg_send_keys $GPG_KEY
-}

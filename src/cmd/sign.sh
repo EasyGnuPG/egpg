@@ -1,3 +1,14 @@
+cmd_sign() {
+    local file="$1" ; shift
+    [[ -z "$file" ]] && fail "Usage: $(basename "$0") sign <file>"
+    [[ -f "$file" ]] || fail "Cannot find file '$file'"
+
+    # sign
+    get_gpg_key
+    gpg --local-user $GPG_KEY \
+        --detach-sign --armor --output "$file.signature" "$file"
+}
+
 #
 # This file is part of EasyGnuPG.  EasyGnuPG is a wrapper around GnuPG
 # to simplify its operations.  Copyright (C) 2016 Dashamir Hoxha
@@ -15,14 +26,3 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see http://www.gnu.org/licenses/
 #
-
-cmd_sign() {
-    local file="$1" ; shift
-    [[ -z "$file" ]] && fail "Usage: $(basename "$0") sign <file>"
-    [[ -f "$file" ]] || fail "Cannot find file '$file'"
-
-    # sign
-    get_gpg_key
-    gpg --local-user $GPG_KEY \
-        --detach-sign --armor --output "$file.signature" "$file"
-}

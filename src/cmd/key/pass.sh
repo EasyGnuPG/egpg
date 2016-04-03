@@ -1,3 +1,9 @@
+cmd_key_pass() {
+    get_gpg_key
+    local commands=$(echo "passwd;save" | tr ';' "\n")
+    script -c "gpg --command-fd=0 --key-edit $GPG_KEY <<< \"$commands\" " /dev/null > /dev/null
+}
+
 #
 # This file is part of EasyGnuPG.  EasyGnuPG is a wrapper around GnuPG
 # to simplify its operations.  Copyright (C) 2016 Dashamir Hoxha
@@ -15,9 +21,3 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see http://www.gnu.org/licenses/
 #
-
-cmd_key_pass() {
-    get_gpg_key
-    local commands=$(echo "passwd;save" | tr ';' "\n")
-    script -c "gpg --command-fd=0 --key-edit $GPG_KEY <<< \"$commands\" " /dev/null > /dev/null
-}

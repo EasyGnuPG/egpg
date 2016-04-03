@@ -1,3 +1,7 @@
+cmd_key_fpr() {
+    echo $(call cmd_key_list | grep '^fpr:' | cut -d: -f2)
+}
+
 #
 # This file is part of EasyGnuPG.  EasyGnuPG is a wrapper around GnuPG
 # to simplify its operations.  Copyright (C) 2016 Dashamir Hoxha
@@ -15,7 +19,3 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see http://www.gnu.org/licenses/
 #
-
-cmd_key_fpr() {
-    echo $(call cmd_key_list | grep '^fpr:' | cut -d: -f2)
-}

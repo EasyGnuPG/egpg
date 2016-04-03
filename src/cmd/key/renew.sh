@@ -25,6 +25,7 @@ cmd_key_renew() {
         # calculate the number of days from now until the given time
         local expday=$(date -d "$expdate" +%s)
         local today=$(date -d $(date +%F) +%s)
+
         time=$(( ( $expday - $today ) / 86400 ))
     fi
 
