@@ -1,3 +1,14 @@
+# Get keys and contacts from an existing gpg directory.
+
+cmd_migrate_help() {
+    cat <<-_EOF
+    migrate [-d,--homedir <gnupghome>]
+        Get keys and contacts from another gpg directory (by default
+        from $GNUPGHOME).
+
+_EOF
+}
+
 cmd_migrate() {
     local opts homedir
     opts="$(getopt -o d: -l homedir: -n "$PROGRAM" -- "$@")"
@@ -9,7 +20,7 @@ cmd_migrate() {
             --) shift; break ;;
         esac
     done
-    [[ $err == 0 ]] || fail "Usage: $COMMAND [-d,--dir <gnupghome>]"
+    [[ $err == 0 ]] || fail "Usage:\n$(cmd_migrate_help)"
 
     # get the gnupg dir
     [[ -n "$homedir" ]] || homedir="$ENV_GNUPGHOME"

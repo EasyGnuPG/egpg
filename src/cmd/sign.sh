@@ -1,6 +1,16 @@
+# Sign a file.
+
+cmd_sign_help() {
+    cat <<-_EOF
+    sign <file>
+        Sign a file. The signature will be saved to <file.signature>.
+
+_EOF
+}
+
 cmd_sign() {
     local file="$1" ; shift
-    [[ -z "$file" ]] && fail "Usage: $(basename "$0") sign <file>"
+    [[ -z "$file" ]] && fail "Usage:\n$(cmd_sign_help)"
     [[ -f "$file" ]] || fail "Cannot find file '$file'"
 
     # sign

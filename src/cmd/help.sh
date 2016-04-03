@@ -6,42 +6,23 @@ Usage: $(basename $0) <command> [<options>]
 EasyGnuPG is a wrapper around GnuPG to simplify its operations.
 Commands and their options are listed below.
 
-    init [<dir>]
-        Initialize egpg. Optionally give the directory to be used.
-        If not given, the default directory will be $HOME/.egpg/
+_EOF
+    call cmd_init help
+    call cmd_migrate help
+    call cmd_info help
+    call cmd_seal help
+    call cmd_open help
+    call cmd_sign help
+    call cmd_verify help
+    call cmd_set help
 
-    migrate [-d,--homedir <gnupghome>]
-        Get keys and contacts from another gpg directory (by default
-        from $GNUPGHOME).
-
-    [info]
-        Display info about the current configuration and settings.
-
-    seal <file> [<recipient>...]
-        Sign and encrypt a file. The resulting file will have the
-        extension '.sealed' The original file will be erased.
-
-    open <file.sealed>
-        Decrypt and verify the signature of the given file.
-        The file has to end with '.sealed' and the output will have
-        that extension stripped.
-
-    sign <file>
-        Sign a file. The signature will be saved to <file.signature>.
-
-    verify <file>
-        Verify the signature of the given file.  The signature file
-        <file.signature> must be present as well.
-
+    cat <<-_EOF
     key <command> [<options>]
         Commands for handling the key. For more details see 'key help'.
 
     contact <command> [<options>]
         Commands for handling the contacts. For more details see
         'contact help'.
-
-    set <option> <value>
-        Change the settings.
 
     --,gpg ...
         Run any gpg command (but using the configuration settings of egpg).
@@ -53,6 +34,7 @@ Commands and their options are listed below.
         Show version information.
 
 More information may be found in the egpg(1) man page.
+Try also: '$(basename $0) key help' and '$(basename $0) contact help'
 
 _EOF
 }

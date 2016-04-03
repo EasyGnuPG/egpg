@@ -1,3 +1,13 @@
+# Change the settings.
+
+cmd_set_help() {
+    cat <<-_EOF
+    set <option> <value>
+        Change the settings.
+
+_EOF
+}
+
 cmd_set() {
     local option=$1 ; shift
     case ${option,,} in

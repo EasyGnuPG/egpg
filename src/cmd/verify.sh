@@ -1,6 +1,17 @@
+# Verify the signature of the given file.
+
+cmd_verify_help() {
+    cat <<-_EOF
+    verify <file>
+        Verify the signature of the given file.  The signature file
+        <file.signature> must be present as well.
+
+_EOF
+}
+
 cmd_verify() {
     local file="$1" ; shift
-    [[ -z "$file" ]] && fail "Usage: $(basename "$0") verify <file>"
+    [[ -z "$file" ]] && fail "Usage:\n$(cmd_verify_help)"
     [[ -f "$file" ]] || fail "Cannot find file '$file'"
     [[ -f "$file.signature" ]] || fail "Cannot find file '$file.signature'"
 

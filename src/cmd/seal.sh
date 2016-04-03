@@ -1,6 +1,17 @@
+# Sign and encrypt a file.
+
+cmd_seal_help() {
+    cat <<-_EOF
+    seal <file> [<recipient>...]
+        Sign and encrypt a file. The resulting file will have the
+        extension '.sealed'. The original file will be erased.
+
+_EOF
+}
+
 cmd_seal() {
     local file="$1" ; shift
-    [[ -z "$file" ]] && fail "Usage: $(basename "$0") seal <file> [<recipient>+]"
+    [[ -z "$file" ]] && fail "Usage:\n$(cmd_seal_help)"
     [[ -f "$file" ]] || fail "Cannot find file '$file'"
 
     if [[ -f "$file.sealed" ]]; then

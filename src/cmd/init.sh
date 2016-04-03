@@ -1,3 +1,14 @@
+# Initialize egpg.
+
+cmd_init_help() {
+    cat <<-_EOF
+    init [<dir>]
+        Initialize egpg. Optionally give the directory to be used.
+        If not given, the default directory will be $HOME/.egpg/
+
+_EOF
+}
+
 cmd_init() {
     # make sure that dependencies are installed
     test $(which haveged) || fail "You should install haveged:\n    sudo apt-get install haveged"

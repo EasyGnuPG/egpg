@@ -100,39 +100,33 @@ call() {
     local file="$LIBDIR/$(echo $cmd | tr _ /).sh"
     [[ -f "$file" ]] || fail "Cannot find command file: $file"
     source "$file"
-    $cmd "$@"
+    if [[ $1 == "help" ]]
+    then ${cmd}_help
+    else $cmd "$@"
+    fi
 }
 
 call_ext() {
     local cmd=$1; shift
 
-    # try '~/.egpg/cmd.sh'
-    if [[ -f "$EGPG_DIR/$cmd.sh" ]]; then
-        debug loading: "$EGPG_DIR/$cmd.sh"
-        source "$EGPG_DIR/$cmd.sh"
-        debug running: $cmd "$@"
-        $cmd "$@"
+    load() {
+        debug loading: "$1"
+        source "$1"
+    }
+
+    if   [[ -f "$EGPG_DIR/$cmd.sh" ]];             then load "$EGPG_DIR/$cmd.sh"
+    elif [[ -f "$LIBDIR/ext/$PLATFORM/$cmd.sh" ]]; then load "$LIBDIR/ext/$PLATFORM/$cmd.sh"
+    elif [[ -f "$LIBDIR/ext/$cmd.sh" ]];           then load "$LIBDIR/ext/$cmd.sh"
+    else
+        echo -e "Unknown command '$cmd'.\nTry:  $(basename $0) help"
         return
     fi
 
-    # try 'src/ext/platform/cmd.sh'
-    if [[ -f "$LIBDIR/ext/$PLATFORM/$cmd.sh" ]]; then
-        debug loading: "$LIBDIR/ext/$PLATFORM/$cmd.sh"
-        source "$LIBDIR/ext/$PLATFORM/$cmd.sh"
-        debug running: $cmd "$@"
-        $cmd "$@"
-        return
+    debug running: $cmd "$@"
+    if [[ $1 == 'help' ]]
+    then ${cmd}_help
+    else $cmd "$@"
     fi
-
-    # try 'src/ext/xyz.sh'
-    if [[ -f "$LIBDIR/ext/$cmd.sh" ]]; then
-        debug loading: "$LIBDIR/ext/$cmd.sh"
-        source "$LIBDIR/ext/$cmd.sh"
-        debug running: $cmd "$@"
-        $cmd "$@"
-        return
-    fi
-    echo -e "Unknown command '$cmd'.\nTry:  $(basename $0) help"
 }
 
 config() {
@@ -162,9 +156,9 @@ _EOF
 main() {
     # handle some basic commands
     case "$1" in
-        v|-v|version|--version)  cmd_version "$@" ; exit 0 ;;
-        help|-h|--help)          call cmd_help "$@" ; exit 0 ;;
-        init)                    call cmd_init "$@" ; exit 0 ;;
+        v|-v|version|--version)  shift; cmd_version "$@" ; exit 0 ;;
+        help|-h|--help)          shift; call cmd_help "$@" ; exit 0 ;;
+        init)                    shift; call cmd_init "$@" ; exit 0 ;;
     esac
 
     # set config variables

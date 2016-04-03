@@ -1,3 +1,13 @@
+# Display info about the current configuration and settings.
+
+cmd_info_help() {
+    cat <<-_EOF
+    [info]
+        Display info about the current configuration and settings.
+
+_EOF
+}
+
 cmd_info() {
     cmd_version
     cat <<-_EOF

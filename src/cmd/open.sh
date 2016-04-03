@@ -1,6 +1,18 @@
+# Decrypt and verify the signature of the given file.
+
+cmd_open_help() {
+    cat <<-_EOF
+    open <file.sealed>
+        Decrypt and verify the signature of the given file.
+        The file has to end with '.sealed' and the output will have
+        that extension stripped.
+
+_EOF
+}
+
 cmd_open() {
     local file="$1" ; shift
-    [[ -z "$file" ]] && fail "Usage: $(basename "$0") open <file.sealed>"
+    [[ -z "$file" ]] && fail "Usage:\n$(cmd_open_help)"
     [[ -f "$file" ]] || fail "Cannot find file '$file'"
 
     local output=${file%.sealed}
