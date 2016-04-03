@@ -18,5 +18,5 @@
 
 cmd_contact_uncertify() {
     echo "Try the command: $(basename $0) -- --key-edit $@"
-    echo "and then use the command: revsig"
+    echo "and then use the commands: revsig and/or delsig"
 }
