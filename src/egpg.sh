@@ -48,6 +48,7 @@ cmd() {
         key)              cmd_key "$@" ;;
         c|contact)        cmd_contact "$@" ;;
 
+        ext)              cmd_ext_help "$@" ;;
         *)                call_ext cmd_$cmd "$@" ;;
     esac
 }
@@ -127,6 +128,19 @@ call_ext() {
     then ${cmd}_help
     else $cmd "$@"
     fi
+}
+
+cmd_ext_help() {
+    for cmd_file in \
+        "$LIBDIR/ext"/cmd_*.sh \
+        "$LIBDIR/ext/$PLATFORM"/cmd_*.sh \
+        "$EGPG_DIR"/cmd_*.sh
+    do
+        [[ -f "$cmd_file" ]] || continue
+        source "$cmd_file"
+        cmd=$(basename "${cmd_file%%.sh}")
+        ${cmd}_help
+    done
 }
 
 config() {

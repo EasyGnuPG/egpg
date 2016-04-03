@@ -1,3 +1,13 @@
+# Show the fingerprint of the key.
+
+cmd_key_fpr_help() {
+    cat <<-_EOF
+    key fpr
+        Show the fingerprint of the key.
+
+_EOF
+}
+
 cmd_key_fpr() {
     echo $(call cmd_key_list | grep '^fpr:' | cut -d: -f2)
 }
