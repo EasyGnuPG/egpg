@@ -1,3 +1,13 @@
+# Generate a revocation certificate for the key.
+
+cmd_key_revcert_help() {
+    cat <<-_EOF
+    revcert ["description"]
+        Generate a revocation certificate for the key.
+
+_EOF
+}
+
 cmd_key_revcert() {
     echo "Creating a revocation certificate."
     local description=${1:-"Key is being revoked"}

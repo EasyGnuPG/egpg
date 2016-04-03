@@ -1,3 +1,13 @@
+# Change the passphrase.
+
+cmd_key_pass_help() {
+    cat <<-_EOF
+    pass
+        Change the passphrase.
+
+_EOF
+}
+
 cmd_key_pass() {
     get_gpg_key
     local commands=$(echo "passwd;save" | tr ';' "\n")

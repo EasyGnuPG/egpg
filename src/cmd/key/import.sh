@@ -1,8 +1,18 @@
+# Import key from file.
+
+cmd_key_import_help() {
+    cat <<-_EOF
+    imp,import <file>
+        Import key from file.
+
+_EOF
+}
+
 cmd_key_import() {
     assert_no_valid_key
 
     local file="$1"
-    [[ -n "$file" ]] || fail "Usage: $COMMAND  <file>"
+    [[ -n "$file" ]] || fail "Usage:\n$(cmd_key_import_help)"
     [[ -f "$file" ]] || fail "Cannot find file: $file"
 
     # import

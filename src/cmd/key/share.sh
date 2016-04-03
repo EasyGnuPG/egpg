@@ -1,3 +1,13 @@
+# Publish the key to the keyserver network.
+
+cmd_key_share_help() {
+    cat <<-_EOF
+    share
+        Publish the key to the keyserver network.
+
+_EOF
+}
+
 cmd_key_share() {
     get_gpg_key
     is_true $SHARE || fail "You must enable sharing first with:\n  $(basename $0) set share yes"

@@ -1,3 +1,15 @@
+# Show the details of the key.
+
+cmd_key_list_help() {
+    cat <<-_EOF
+    [ls,list,show] [-r,--raw | -c,--colons] [-a,--all]
+        Show the details of the key (optionally in raw format or with
+        colons). A list of all the keys can be displayed as well
+        (including the revoked and expired ones).
+
+_EOF
+}
+
 cmd_key_list() {
     local opts raw=0 colons=0 all=0
     opts="$(getopt -o rca -l raw,colons,all -n "$PROGRAM" -- "$@")"
@@ -11,8 +23,8 @@ cmd_key_list() {
             --) shift; break ;;
         esac
     done
-    [[ $err -ne 0 ]] && echo "Usage: $COMMAND [-r,--raw | -c,--colons] [-a,--all]" && return
-    [[ $raw == 1 ]] && [[ $colons == 1 ]] && echo "Usage: $COMMAND [-r,--raw | -c,--colons]" && return
+    [[ $err -ne 0 ]] && fail "Usage:\n$(cmd_key_list_help)"
+    [[ $raw == 1 ]] && [[ $colons == 1 ]] && fail "Usage:\n$(cmd_key_list_help)"
 
     local secret_keys
     if [[ $all == 0 ]]; then

@@ -1,3 +1,13 @@
+# Revoke the key.
+
+cmd_key_rev_help() {
+    cat <<-_EOF
+    rev,revoke [<revocation-certificate>]
+        Cancel the key by publishing the given revocation certificate.
+
+_EOF
+}
+
 cmd_key_rev() {
     local revoke_cert="$1"
     get_gpg_key

@@ -1,3 +1,13 @@
+# Delete the key.
+
+cmd_key_delete_help() {
+    cat <<-_EOF
+    rm,del,delete [<key-id>]
+        Delete the key.
+
+_EOF
+}
+
 cmd_key_delete() {
     local key_id="$1"
     [[ -z $key_id ]] && get_gpg_key && key_id=$GPG_KEY

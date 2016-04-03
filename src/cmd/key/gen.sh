@@ -1,3 +1,14 @@
+# Create a new GPG key.
+
+cmd_key_gen_help() {
+    cat <<-_EOF
+    gen,generate [<email> <name>] [-n,--no-passphrase]
+        Create a new GPG key. If <email> and <name> are not given as
+        arguments, they will be asked interactively.
+
+_EOF
+}
+
 cmd_key_gen() {
     assert_no_valid_key
 
@@ -11,7 +22,7 @@ cmd_key_gen() {
             --) shift; break ;;
         esac
     done
-    [[ $err -ne 0 ]] && echo "Usage: $COMMAND <email> <name> [-n,--no-passphrase]" && return
+    [[ $err -ne 0 ]] && fail "Usage:\n$(cmd_key_gen_help)"
 
     local email=$1 real_name=$2
 

@@ -1,3 +1,13 @@
+# Export key to file.
+
+cmd_key_export_help() {
+    cat <<-_EOF
+    exp,export [<key-id>]
+        Export key to file.
+
+_EOF
+}
+
 cmd_key_export() {
     local key_id="$1"
     [[ -z $key_id ]] && get_gpg_key && key_id=$GPG_KEY

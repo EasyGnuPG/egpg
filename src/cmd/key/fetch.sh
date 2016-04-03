@@ -1,3 +1,13 @@
+# Get a key from another gpg directory.
+
+cmd_key_fetch_help() {
+    cat <<-_EOF
+    fetch [-d,--homedir <gnupghome>] [-k,--key-id <key-id>]
+        Get a key from another gpg directory (by default from $GNUPGHOME).
+
+_EOF
+}
+
 cmd_key_fetch() {
     assert_no_valid_key
 
@@ -12,7 +22,7 @@ cmd_key_fetch() {
             --) shift; break ;;
         esac
     done
-    [[ $err -eq 0 ]] || fail "Usage: $COMMAND [-d,--homedir <gnupghome>] [-k,--key-id <key-id>]"
+    [[ $err -eq 0 ]] || fail "Usage:\n$(cmd_key_fetch_help)"
 
     # get the gnupg dir
     [[ -n "$homedir" ]] || homedir="$ENV_GNUPGHOME"
