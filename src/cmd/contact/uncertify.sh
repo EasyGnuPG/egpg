@@ -1,3 +1,13 @@
+# Revoke the certification of a contact.
+
+cmd_contact_uncertify_help() {
+    cat <<-_EOF
+    uncertify <contact>
+        Revoke the certification of a contact.
+
+_EOF
+}
+
 cmd_contact_uncertify() {
     echo "Try the command: $(basename $0) -- --key-edit $@"
     echo "and then use the commands: revsig and/or delsig"

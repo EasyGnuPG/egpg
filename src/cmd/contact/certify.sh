@@ -1,3 +1,20 @@
+# Certify a verified contact.
+
+cmd_contact_certify_help() {
+    cat <<-_EOF
+    certify <contact> [-p,--publish] [-l,--level <level>] [-t,--time <time>]
+        You have verified the identity of the contact (the details of
+        the contact, name, email, etc. are correct and belong to a
+        real person).  With the --publish option you also share your
+        certification with the world, so that your friends may rely on
+        it if they wish.  The levels of certification are: 0
+        (unknown), 1 (onfaith), 2 (casual), 3 (extensive).  The time
+        of certification can be: 0 (unlimited), <n>d (<n> days), <n>w
+        (<n> weeks), <n>m (<n> months), <n>y (<n> years).
+
+_EOF
+}
+
 cmd_contact_certify() {
     local opts publish=0 level=2 time='1y'
     opts="$(getopt -o pl:t: -l publish,level:,time: -n "$PROGRAM" -- "$@")"
@@ -11,10 +28,9 @@ cmd_contact_certify() {
             --) shift; break ;;
         esac
     done
-    local usage="Usage: $COMMAND <contact> [-p,--publish] [-l,--level <level>] [-t,--time <time>]"
-    [[ $err == 0 ]] || fail $usage
+    [[ $err == 0 ]] || fail "Usage:\n$(cmd_contact_certify_help)"
     local contact="$1"
-    [[ -n $contact ]] || fail $usage
+    [[ -n $contact ]] || fail "Usage:\n$(cmd_contact_certify_help)"
 
     case ${level,,} in
         unknown) level=0 ;;

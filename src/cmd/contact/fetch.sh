@@ -1,3 +1,13 @@
+# Get contacts from another gpg directory.
+
+cmd_contact_fetch_help() {
+    cat <<-_EOF
+    fetch [<contact>...] [-d,--homedir <gnupghome>]
+        Get contacts from another gpg directory (by default from $GNUPGHOME).
+
+_EOF
+}
+
 cmd_contact_fetch() {
     local opts homedir
     opts="$(getopt -o d: -l homedir: -n "$PROGRAM" -- "$@")"
@@ -9,7 +19,7 @@ cmd_contact_fetch() {
             --) shift; break ;;
         esac
     done
-    [[ $err == 0 ]] || fail "Usage: $COMMAND [<contact>...] [-d,--homedir <gnupghome>]"
+    [[ $err == 0 ]] || fail "Usage:\n$(cmd_contact_fetch_help)"
 
     # get the gnupg dir
     [[ -n "$homedir" ]] || homedir="$ENV_GNUPGHOME"

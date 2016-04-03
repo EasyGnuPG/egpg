@@ -1,6 +1,16 @@
+# Import (add) contact(s) from file.
+
+cmd_contact_import_help() {
+    cat <<-_EOF
+    imp,import,add <file>
+        Import (add) contact(s) from file.
+
+_EOF
+}
+
 cmd_contact_import() {
     local file="$1"
-    [[ -n "$file" ]] || fail "Usage: $COMMAND <file>"
+    [[ -n "$file" ]] || fail "Usage:\n$(cmd_contact_import_help)"
     [[ -f "$file" ]] || fail "Cannot find file: $file"
 
     # import

@@ -1,5 +1,15 @@
+# Retrieve contacts located at the specified URIs.
+
+cmd_contact_fetchuri_help() {
+    cat <<-_EOF
+    fetch-uri <uri>...
+        Retrieve contacts located at the specified URIs.
+
+_EOF
+}
+
 cmd_contact_fetchuri() {
-    [[ -z $1 ]] && fail "Usage: $COMMAND <uri>..."
+    [[ -z $1 ]] && fail "Usage:\n$(cmd_contact_fetchuri_help)"
     gpg --fetch-keys "$@"
 }
 

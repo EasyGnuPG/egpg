@@ -6,53 +6,18 @@ Usage: $(basename $0) contact <command> [<options>]
 Commands to manage the contacts (correspondents, partners).
 They are listed below.
 
-    ls,list,show,find [<contact>...] [-r,--raw | -c,--colons]
-        Show the details of the contacts (optionally in raw format or
-        with colons). A list of all the contacts will be displayed if
-        no one is selected. A contact can be selected by name, email,
-        id, etc.
-
-    rm,del,delete <contact>... [-f,--force]
-        Delete the given contact(s).
-
-    exp,export [<contact>...] [-o,--output <file>]
-        Export contact(s) to file.
-
-    imp,import,add <file>
-        Import (add) contact(s) from file.
-
-    fetch [<contact>...] [-d,--homedir <gnupghome>]
-        Get contacts from another gpg directory (by default from $GNUPGHOME).
-
-    fetch-uri <uri>...
-        Retrieve contacts located at the specified URIs.
-
-    search <name> [-s,--keyserver <server>]
-        Search the keyserver network for a person.
-
-    receive,pull <contact-id> [-s,--keyserver <server>]
-        Download contact from the keyserver network.
-
-    certify <contact> [-p,--publish] [-l,--level <level>] [-t,--time <time>]
-        You have verified the identity of the contact (the details of
-        the contact, name, email, etc. are correct and belong to a
-        real person).  With the --publish option you also share your
-        certification with the world, so that your friends may rely on
-        it if they wish.  The levels of certification are: 0
-        (unknown), 1 (onfaith), 2 (casual), 3 (extensive).  The time
-        of certification can be: 0 (unlimited), <n>d (<n> days), <n>w
-        (<n> weeks), <n>m (<n> months), <n>y (<n> years).
-
-    uncertify <contact>
-        Revoke the certification of a contact.
-
-    trust <contact> [-l,--level <trust-level>]
-        You have verified the identity of the contact and you also
-        trust him to be able to verify correctly and honestly the
-        identities of other people. The trust levels are:
-        4 (full), 3 (marginal), 2 (none), 1 (unknown)
-
 _EOF
+    call cmd_contact_list help
+    call cmd_contact_delete help
+    call cmd_contact_export help
+    call cmd_contact_import help
+    call cmd_contact_fetch help
+    call cmd_contact_fetchuri help
+    call cmd_contact_search help
+    call cmd_contact_receive help
+    call cmd_contact_certify help
+    call cmd_contact_uncertify help
+    call cmd_contact_trust help
 }
 
 #

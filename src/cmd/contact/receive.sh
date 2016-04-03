@@ -1,5 +1,14 @@
+# Download contact from the keyserver network.
+
+cmd_contact_receive_help() {
+    cat <<-_EOF
+    receive,pull <contact-id> [-s,--keyserver <server>]
+        Download contact from the keyserver network.
+
+_EOF
+}
+
 cmd_contact_receive() {
-    local usage="Usage: $COMMAND <contact-id>... [-s,--keyserver <server>]"
     local opts keyserver="$KEYSERVER"
     opts="$(getopt -o s: -l keyserver: -n "$PROGRAM" -- "$@")"
     local err=$?
@@ -10,8 +19,8 @@ cmd_contact_receive() {
             --) shift; break ;;
         esac
     done
-    [[ $err != 0 ]] && fail $usage
-    [[ -z $1 ]] && fail $usage
+    [[ $err != 0 ]] && fail "Usage:\n$(cmd_contact_receive_help)"
+    [[ -z $1 ]] && fail "Usage:\n$(cmd_contact_receive_help)"
 
     gpg --keyserver "$keyserver" --recv-keys "$@"
 }

@@ -1,3 +1,16 @@
+# Show the details of the contacts.
+
+cmd_contact_list_help() {
+    cat <<-_EOF
+    ls,list,show,find [<contact>...] [-r,--raw | -c,--colons]
+        Show the details of the contacts (optionally in raw format or
+        with colons). A list of all the contacts will be displayed if
+        no one is selected. A contact can be selected by name, email,
+        id, etc.
+
+_EOF
+}
+
 cmd_contact_list() {
     local opts raw=0 colons=0
     opts="$(getopt -o rc -l raw,colons -n "$PROGRAM" -- "$@")"
@@ -10,9 +23,8 @@ cmd_contact_list() {
             --) shift; break ;;
         esac
     done
-    local usage="Usage: $COMMAND [<contact>] [-r,--raw | -c,--colons]"
-    [[ $err -ne 0 ]] && echo $usage && return
-    [[ $raw == 1 ]] && [[ $colons == 1 ]] && echo $usage && return
+    [[ $err -ne 0 ]] && fail "Usage:\n$(cmd_contact_list_help)"
+    [[ $raw == 1 ]] && [[ $colons == 1 ]] && fail "Usage:\n$(cmd_contact_list_help)"
 
     [[ $raw == 1 ]] && \
         gpg --list-keys --with-sig-check "$@" && \

@@ -1,5 +1,17 @@
+# Trust contact to verify and certify correctly others.
+
+cmd_contact_trust_help() {
+    cat <<-_EOF
+    trust <contact> [-l,--level <trust-level>]
+        You have verified the identity of the contact and you also
+        trust him to be able to verify correctly and honestly the
+        identities of other people. The trust levels are:
+        4 (full), 3 (marginal), 2 (none), 1 (unknown)
+
+_EOF
+}
+
 cmd_contact_trust() {
-    local usage="Usage: $COMMAND <contact> [-l,--level <trust-level>]"
     local opts level=3
     opts="$(getopt -o l: -l level: -n "$PROGRAM" -- "$@")"
     local err=$?
@@ -10,9 +22,9 @@ cmd_contact_trust() {
             --) shift; break ;;
         esac
     done
-    [[ $err == 0 ]] || fail $usage
+    [[ $err == 0 ]] || fail "Usage:\n$(cmd_contact_trust_help)"
     local contact="$1"
-    [[ -n $contact ]] || fail $usage
+    [[ -n $contact ]] || fail "Usage:\n$(cmd_contact_trust_help)"
 
     case ${level,,} in
         unknown) level=1 ;;

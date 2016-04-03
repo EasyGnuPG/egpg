@@ -1,3 +1,13 @@
+# Delete contact(s).
+
+cmd_contact_delete_help() {
+    cat <<-_EOF
+    rm,del,delete <contact>... [-f,--force]
+        Delete the given contact(s).
+
+_EOF
+}
+
 cmd_contact_delete() {
     local opts force=0
     opts="$(getopt -o f -l force -n "$PROGRAM" -- "$@")"
@@ -9,9 +19,8 @@ cmd_contact_delete() {
             --) shift; break ;;
         esac
     done
-    local usage="Usage: $COMMAND <contact>... [-f,--force]"
-    [[ $err != 0 ]] && fail $usage
-    [[ -z $1 ]] && fail $usage
+    [[ $err != 0 ]] && fail "Usage:\n$(cmd_contact_delete_help)"
+    [[ -z $1 ]] && fail "Usage:\n$(cmd_contact_delete_help)"
 
     if [[ $force == 0 ]]; then
         gpg --delete-keys "$@"

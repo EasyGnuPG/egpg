@@ -1,3 +1,13 @@
+# Export contact(s).
+
+cmd_contact_export_help() {
+    cat <<-_EOF
+    exp,export [<contact>...] [-o,--output <file>]
+        Export contact(s) to file.
+
+_EOF
+}
+
 cmd_contact_export() {
     local opts output="-"
     opts="$(getopt -o o: -l output: -n "$PROGRAM" -- "$@")"
@@ -9,7 +19,7 @@ cmd_contact_export() {
             --) shift; break ;;
         esac
     done
-    [[ $err == 0 ]] || fail "Usage: $COMMAND [<contact>...] [-o,--output <file>]"
+    [[ $err == 0 ]] || fail "Usage:\n$(cmd_contact_export_help)"
 
     # export
     gpg --armor --export --output $output $@
