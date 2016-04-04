@@ -109,14 +109,12 @@ egpg(1) -- Easy GnuPG
 
     Get a key from another gpg directory (by default from $GNUPGHOME).
 
-* `renew` [<time-length>] [-c,--cert] [-a,--auth] [-s,--sign] [-e,--encrypt]
+* `renew`,`expiration` [<date>]
 
-    Renew the key, set the expiration time (by default) 1 month from
-    now.  The renewal time length can be given like this: <n> (days),
-    <n>w (weeks), <n>m (months), <n>y (years). The rest of the options
-    specify which subkey will be renewed (certifying, authenticating,
-    signing or encrypting).  If no options are given, then the
-    certifying (main) key will be renewed.
+    Renew the key until the given date (by default 1 month from now).
+    The <date> is in free time format, like "2 months", 2020-11-15,
+    "March 7", "5 years" etc. The date formats are those that are
+    accepted by the command `date -d` (see `info date`).
 
 * `revcert` ["description"]
 
@@ -192,6 +190,13 @@ egpg(1) -- Easy GnuPG
     him to be able to verify correctly and honestly the identities of
     other people. The trust levels are: 4 (full), 3 (marginal), 2
     (none), 1 (unknown)
+
+
+## EXTERNAL COMMANDS
+
+* `key fpr`
+
+    Show the fingerprint of the key.
 
 
 ## FILES
@@ -351,28 +356,16 @@ used. For key commands the name of the file must be
 
     12FB A098 4EAB 502F D8AC E9D0 969B D1E1 71CF 0068
 
-   user@laptop:~$ `egpg key renew 1y`
+   user@laptop:~$ `egpg key renew 1 year`
 
     id: 969BD1E171CF0068
     uid: Test User <test@example.org>
     fpr: 12FB A098 4EAB 502F D8AC E9D0 969B D1E1 71CF 0068 
     trust: ultimate
-    cert: 969BD1E171CF0068 2016-03-17 2017-03-17 
-    auth: 7FFAB0D2C6DC09C9 2016-03-17 2016-04-16 
-    sign: 839220600A4DEC7D 2016-03-17 2016-04-16 
-    encr: B11469C6A9EAE27E 2016-03-17 2016-04-16 
-
-   user@laptop:~$ `egpg key renew 1y --auth`
-
-    id: 969BD1E171CF0068
-    uid: Test User <test@example.org>
-    fpr: 12FB A098 4EAB 502F D8AC E9D0 969B D1E1 71CF 0068 
-    trust: ultimate
-    cert: 969BD1E171CF0068 2016-03-17 2017-03-17 
-    auth: 7FFAB0D2C6DC09C9 2016-03-17 2017-03-17 
-    sign: 839220600A4DEC7D 2016-03-17 2016-04-16 
-    encr: B11469C6A9EAE27E 2016-03-17 2016-04-16 
-
+    cert: 969BD1E171CF0068 2016-03-17 2017-04-16 
+    auth: 7FFAB0D2C6DC09C9 2016-03-17 2017-04-16 
+    sign: 839220600A4DEC7D 2016-03-17 2017-04-16 
+    encr: B11469C6A9EAE27E 2016-03-17 2017-04-16 
 
    user@laptop:~$ `echo "This is a test message." > test.txt`
 
@@ -607,7 +600,7 @@ used. For key commands the name of the file must be
     fi
 
     alias egpg1='EGPG_DIR="/home/user/.egpg1" egpg'
-    alias egpg1='EGPG_DIR="/home/user/.egpg2" egpg'
+    alias egpg2='EGPG_DIR="/home/user/.egpg2" egpg'
     export EGPG_DIR="/home/user/.egpg"
 
    user@laptop:~$ `source ~/.bashrc`

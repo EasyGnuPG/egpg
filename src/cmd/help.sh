@@ -34,7 +34,10 @@ _EOF
         Show version information.
 
 More information may be found in the egpg(1) man page.
-Try also: '$(basename $0) key help' and '$(basename $0) contact help'
+Try also:
+    $(basename $0) key help          # for key commands
+    $(basename $0) contact help      # for contact commands
+    $(basename $0) ext help          # for external commands
 
 _EOF
 }

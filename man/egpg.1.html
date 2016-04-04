@@ -82,6 +82,7 @@
     <a href="#COMMANDS">COMMANDS</a>
     <a href="#KEY-COMMANDS">KEY COMMANDS</a>
     <a href="#CONTACT-COMMANDS">CONTACT COMMANDS</a>
+    <a href="#EXTERNAL-COMMANDS">EXTERNAL COMMANDS</a>
     <a href="#FILES">FILES</a>
     <a href="#ENVIRONMENT-VARIABLES">ENVIRONMENT VARIABLES</a>
     <a href="#CUSTOMIZATION">CUSTOMIZATION</a>
@@ -181,9 +182,6 @@
 <p>  Show the details of the key (optionally in raw format or with
   colons). A list of all the keys can be displayed as well
   (including the revoked and expired ones).</p></li>
-<li><p><code>fp</code>,<code>fingerprint</code></p>
-
-<p>  Show the fingerprint of the key.</p></li>
 <li><p><code>rm</code>,<code>del</code>,<code>delete</code> [<var>key-id</var>]</p>
 
 <p>  Delete the key.</p></li>
@@ -196,14 +194,12 @@
 <li><p><code>fetch</code> [-d,--homedir <var>gnupghome</var>] [-k,--key-id <var>key-id</var>]</p>
 
 <p>  Get a key from another gpg directory (by default from $GNUPGHOME).</p></li>
-<li><p><code>renew</code> [<var>time-length</var>] [-c,--cert] [-a,--auth] [-s,--sign] [-e,--encrypt]</p>
+<li><p><code>renew</code>,<code>expiration</code> [<var>date</var>]</p>
 
-<p>  Renew the key, set the expiration time (by default) 1 month from
-  now.  The renewal time length can be given like this: <var>n</var> (days),
-  <var>n</var>w (weeks), <var>n</var>m (months), <var>n</var>y (years). The rest of the options
-  specify which subkey will be renewed (certifying, authenticating,
-  signing or encrypting).  If no options are given, then the
-  certifying (main) key will be renewed.</p></li>
+<p>  Renew the key until the given date (by default 1 month from now).
+  The <var>date</var> is in free time format, like "2 months", 2020-11-15,
+  "March 7", "5 years" etc. The date formats are those that are
+  accepted by the command <code>date -d</code> (see <code>info date</code>).</p></li>
 <li><p><code>revcert</code> ["description"]</p>
 
 <p>  Generate a revocation certificate for the key.</p></li>
@@ -267,6 +263,15 @@
   him to be able to verify correctly and honestly the identities of
   other people. The trust levels are: 4 (full), 3 (marginal), 2
   (none), 1 (unknown)</p></li>
+</ul>
+
+
+<h2 id="EXTERNAL-COMMANDS">EXTERNAL COMMANDS</h2>
+
+<ul>
+<li><p><code>key fpr</code></p>
+
+<p>  Show the fingerprint of the key.</p></li>
 </ul>
 
 
@@ -365,7 +370,6 @@ EGPG_DIR="/home/user/.egpg"
 GNUPGHOME="/home/user/.egpg/.gnupg"
 GPG_AGENT_INFO=""
 GPG_TTY="/dev/pts/8"
-GPG_OPTS=""
 SHARE=
 KEYSERVER=hkp://keys.gnupg.net
 DEBUG=
@@ -419,7 +423,6 @@ EGPG_DIR="/home/user/.egpg"
 GNUPGHOME="/home/user/.egpg/.gnupg"
 GPG_AGENT_INFO="/tmp/gpg-hBW4UD/S.gpg-agent:29656:1"
 GPG_TTY="/dev/pts/8"
-GPG_OPTS=""
 SHARE=
 KEYSERVER=hkp://keys.gnupg.net
 DEBUG=
@@ -438,33 +441,21 @@ sign: 839220600A4DEC7D 2016-03-17 2016-04-16
 encr: B11469C6A9EAE27E 2016-03-17 2016-04-16 
 </code></pre>
 
-<p>   user@laptop:~$ <code>egpg key fp</code></p>
+<p>   user@laptop:~$ <code>egpg key fpr</code></p>
 
 <pre><code>12FB A098 4EAB 502F D8AC E9D0 969B D1E1 71CF 0068
 </code></pre>
 
-<p>   user@laptop:~$ <code>egpg key renew 1y</code></p>
+<p>   user@laptop:~$ <code>egpg key renew 1 year</code></p>
 
 <pre><code>id: 969BD1E171CF0068
 uid: Test User &lt;test@example.org&gt;
 fpr: 12FB A098 4EAB 502F D8AC E9D0 969B D1E1 71CF 0068 
 trust: ultimate
-cert: 969BD1E171CF0068 2016-03-17 2017-03-17 
-auth: 7FFAB0D2C6DC09C9 2016-03-17 2016-04-16 
-sign: 839220600A4DEC7D 2016-03-17 2016-04-16 
-encr: B11469C6A9EAE27E 2016-03-17 2016-04-16 
-</code></pre>
-
-<p>   user@laptop:~$ <code>egpg key renew 1y --auth</code></p>
-
-<pre><code>id: 969BD1E171CF0068
-uid: Test User &lt;test@example.org&gt;
-fpr: 12FB A098 4EAB 502F D8AC E9D0 969B D1E1 71CF 0068 
-trust: ultimate
-cert: 969BD1E171CF0068 2016-03-17 2017-03-17 
-auth: 7FFAB0D2C6DC09C9 2016-03-17 2017-03-17 
-sign: 839220600A4DEC7D 2016-03-17 2016-04-16 
-encr: B11469C6A9EAE27E 2016-03-17 2016-04-16 
+cert: 969BD1E171CF0068 2016-03-17 2017-04-16 
+auth: 7FFAB0D2C6DC09C9 2016-03-17 2017-04-16 
+sign: 839220600A4DEC7D 2016-03-17 2017-04-16 
+encr: B11469C6A9EAE27E 2016-03-17 2017-04-16 
 </code></pre>
 
 <p>   user@laptop:~$ <code>echo "This is a test message." &gt; test.txt</code></p>
@@ -707,7 +698,7 @@ then
 fi
 
 alias egpg1='EGPG_DIR="/home/user/.egpg1" egpg'
-alias egpg1='EGPG_DIR="/home/user/.egpg2" egpg'
+alias egpg2='EGPG_DIR="/home/user/.egpg2" egpg'
 export EGPG_DIR="/home/user/.egpg"
 </code></pre>
 
@@ -720,7 +711,6 @@ EGPG_DIR="/home/user/.egpg"
 GNUPGHOME="/home/user/.egpg/.gnupg"
 GPG_AGENT_INFO="/tmp/gpg-O9crSx/S.gpg-agent:11361:1"
 GPG_TTY="/dev/pts/4"
-GPG_OPTS=""
 SHARE=
 KEYSERVER=hkp://keys.gnupg.net
 DEBUG=
@@ -734,7 +724,6 @@ EGPG_DIR="/home/user/.egpg1"
 GNUPGHOME="/home/user/.egpg1/.gnupg"
 GPG_AGENT_INFO="/tmp/gpg-hkVMqs/S.gpg-agent:12523:1"
 GPG_TTY="/dev/pts/4"
-GPG_OPTS=""
 SHARE=
 KEYSERVER=hkp://keys.gnupg.net
 DEBUG=
@@ -752,7 +741,6 @@ EGPG_DIR="/home/user/.egpg2"
 GNUPGHOME="/home/user/.egpg2/.gnupg"
 GPG_AGENT_INFO="/tmp/gpg-YQuucs/S.gpg-agent:12525:1"
 GPG_TTY="/dev/pts/4"
-GPG_OPTS=""
 SHARE=
 KEYSERVER=hkp://keys.gnupg.net
 DEBUG=
@@ -790,7 +778,7 @@ Try first:  egpg key gen
 
   <ol class='man-decor man-foot man foot'>
     <li class='tl'>dashohoxha</li>
-    <li class='tc'>March 2016</li>
+    <li class='tc'>April 2016</li>
     <li class='tr'>egpg(1)</li>
   </ol>
 

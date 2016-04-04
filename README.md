@@ -74,6 +74,7 @@ The philosophic goals here are these:
     egpg help
     egpg key help
     egpg contact help
+    egpg ext help
 
 For more details see the manual page: [http://dashohoxha.github.io/egpg/man/][5]
 

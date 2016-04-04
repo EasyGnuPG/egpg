@@ -1,7 +1,7 @@
 .\" generated with Ronn/v0.7.3
 .\" http://github.com/rtomayko/ronn/tree/0.7.3
 .
-.TH "EGPG" "1" "March 2016" "dashohoxha" "Easy GnuPG"
+.TH "EGPG" "1" "April 2016" "dashohoxha" "Easy GnuPG"
 .
 .SH "NAME"
 \fBegpg\fR \- Easy GnuPG
@@ -112,12 +112,6 @@ Create a new GPG key\. If \fIemail\fR and \fIname\fR are not given as arguments,
 Show the details of the key (optionally in raw format or with colons)\. A list of all the keys can be displayed as well (including the revoked and expired ones)\.
 .
 .IP "\(bu" 4
-\fBfp\fR,\fBfingerprint\fR
-.
-.IP
-Show the fingerprint of the key\.
-.
-.IP "\(bu" 4
 \fBrm\fR,\fBdel\fR,\fBdelete\fR [\fIkey\-id\fR]
 .
 .IP
@@ -142,10 +136,10 @@ Import key from file\.
 Get a key from another gpg directory (by default from $GNUPGHOME)\.
 .
 .IP "\(bu" 4
-\fBrenew\fR [\fItime\-length\fR] [\-c,\-\-cert] [\-a,\-\-auth] [\-s,\-\-sign] [\-e,\-\-encrypt]
+\fBrenew\fR,\fBexpiration\fR [\fIdate\fR]
 .
 .IP
-Renew the key, set the expiration time (by default) 1 month from now\. The renewal time length can be given like this: \fIn\fR (days), \fIn\fRw (weeks), \fIn\fRm (months), \fIn\fRy (years)\. The rest of the options specify which subkey will be renewed (certifying, authenticating, signing or encrypting)\. If no options are given, then the certifying (main) key will be renewed\.
+Renew the key until the given date (by default 1 month from now)\. The \fIdate\fR is in free time format, like "2 months", 2020\-11\-15, "March 7", "5 years" etc\. The date formats are those that are accepted by the command \fBdate \-d\fR (see \fBinfo date\fR)\.
 .
 .IP "\(bu" 4
 \fBrevcert\fR ["description"]
@@ -240,6 +234,16 @@ Revoke the certification of a contact\.
 .
 .IP
 You have verified the identity of the contact and you also trust him to be able to verify correctly and honestly the identities of other people\. The trust levels are: 4 (full), 3 (marginal), 2 (none), 1 (unknown)
+.
+.IP "" 0
+.
+.SH "EXTERNAL COMMANDS"
+.
+.IP "\(bu" 4
+\fBkey fpr\fR
+.
+.IP
+Show the fingerprint of the key\.
 .
 .IP "" 0
 .
@@ -394,7 +398,6 @@ EGPG_DIR="/home/user/\.egpg"
 GNUPGHOME="/home/user/\.egpg/\.gnupg"
 GPG_AGENT_INFO=""
 GPG_TTY="/dev/pts/8"
-GPG_OPTS=""
 SHARE=
 KEYSERVER=hkp://keys\.gnupg\.net
 DEBUG=
@@ -464,7 +467,6 @@ EGPG_DIR="/home/user/\.egpg"
 GNUPGHOME="/home/user/\.egpg/\.gnupg"
 GPG_AGENT_INFO="/tmp/gpg\-hBW4UD/S\.gpg\-agent:29656:1"
 GPG_TTY="/dev/pts/8"
-GPG_OPTS=""
 SHARE=
 KEYSERVER=hkp://keys\.gnupg\.net
 DEBUG=
@@ -495,7 +497,7 @@ encr: B11469C6A9EAE27E 2016\-03\-17 2016\-04\-16
 .IP "" 0
 .
 .P
-user@laptop:~$ \fBegpg key fp\fR
+user@laptop:~$ \fBegpg key fpr\fR
 .
 .IP "" 4
 .
@@ -508,7 +510,7 @@ user@laptop:~$ \fBegpg key fp\fR
 .IP "" 0
 .
 .P
-user@laptop:~$ \fBegpg key renew 1y\fR
+user@laptop:~$ \fBegpg key renew 1 year\fR
 .
 .IP "" 4
 .
@@ -518,30 +520,10 @@ id: 969BD1E171CF0068
 uid: Test User <test@example\.org>
 fpr: 12FB A098 4EAB 502F D8AC E9D0 969B D1E1 71CF 0068
 trust: ultimate
-cert: 969BD1E171CF0068 2016\-03\-17 2017\-03\-17
-auth: 7FFAB0D2C6DC09C9 2016\-03\-17 2016\-04\-16
-sign: 839220600A4DEC7D 2016\-03\-17 2016\-04\-16
-encr: B11469C6A9EAE27E 2016\-03\-17 2016\-04\-16
-.
-.fi
-.
-.IP "" 0
-.
-.P
-user@laptop:~$ \fBegpg key renew 1y \-\-auth\fR
-.
-.IP "" 4
-.
-.nf
-
-id: 969BD1E171CF0068
-uid: Test User <test@example\.org>
-fpr: 12FB A098 4EAB 502F D8AC E9D0 969B D1E1 71CF 0068
-trust: ultimate
-cert: 969BD1E171CF0068 2016\-03\-17 2017\-03\-17
-auth: 7FFAB0D2C6DC09C9 2016\-03\-17 2017\-03\-17
-sign: 839220600A4DEC7D 2016\-03\-17 2016\-04\-16
-encr: B11469C6A9EAE27E 2016\-03\-17 2016\-04\-16
+cert: 969BD1E171CF0068 2016\-03\-17 2017\-04\-16
+auth: 7FFAB0D2C6DC09C9 2016\-03\-17 2017\-04\-16
+sign: 839220600A4DEC7D 2016\-03\-17 2017\-04\-16
+encr: B11469C6A9EAE27E 2016\-03\-17 2017\-04\-16
 .
 .fi
 .
@@ -895,7 +877,7 @@ then
 fi
 
 alias egpg1=\'EGPG_DIR="/home/user/\.egpg1" egpg\'
-alias egpg1=\'EGPG_DIR="/home/user/\.egpg2" egpg\'
+alias egpg2=\'EGPG_DIR="/home/user/\.egpg2" egpg\'
 export EGPG_DIR="/home/user/\.egpg"
 .
 .fi
@@ -917,7 +899,6 @@ EGPG_DIR="/home/user/\.egpg"
 GNUPGHOME="/home/user/\.egpg/\.gnupg"
 GPG_AGENT_INFO="/tmp/gpg\-O9crSx/S\.gpg\-agent:11361:1"
 GPG_TTY="/dev/pts/4"
-GPG_OPTS=""
 SHARE=
 KEYSERVER=hkp://keys\.gnupg\.net
 DEBUG=
@@ -939,7 +920,6 @@ EGPG_DIR="/home/user/\.egpg1"
 GNUPGHOME="/home/user/\.egpg1/\.gnupg"
 GPG_AGENT_INFO="/tmp/gpg\-hkVMqs/S\.gpg\-agent:12523:1"
 GPG_TTY="/dev/pts/4"
-GPG_OPTS=""
 SHARE=
 KEYSERVER=hkp://keys\.gnupg\.net
 DEBUG=
@@ -965,7 +945,6 @@ EGPG_DIR="/home/user/\.egpg2"
 GNUPGHOME="/home/user/\.egpg2/\.gnupg"
 GPG_AGENT_INFO="/tmp/gpg\-YQuucs/S\.gpg\-agent:12525:1"
 GPG_TTY="/dev/pts/4"
-GPG_OPTS=""
 SHARE=
 KEYSERVER=hkp://keys\.gnupg\.net
 DEBUG=
