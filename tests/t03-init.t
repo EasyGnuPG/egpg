@@ -23,7 +23,7 @@ test_expect_success 'egpg key fetch' '
 
 test_expect_success 'egpg init dir1 (keep old dir)' '
     [[ ! -d "$HOME/.egpg1" ]] &&
-    egpg_init "$HOME/.egpg1"
+    egpg_init -d "$HOME/.egpg1" &&
     [[ -d "$HOME/.egpg1" ]] &&
     [[ -d "$HOME/.egpg" ]] &&
     egpg | grep "^EGPG_DIR=\"$HOME/.egpg1\""
@@ -31,7 +31,7 @@ test_expect_success 'egpg init dir1 (keep old dir)' '
 
 test_expect_success 'egpg init dir2 (keep old dir)' '
     [[ ! -d "$HOME/.egpg2" ]] &&
-    egpg_init "$HOME/.egpg2" <<< "n"
+    egpg_init -d "$HOME/.egpg2" <<< "n" &&
     [[ -d "$HOME/.egpg2" ]] &&
     [[ -d "$HOME/.egpg1" ]] &&
     egpg | grep "^EGPG_DIR=\"$HOME/.egpg2\""
@@ -40,7 +40,7 @@ test_expect_success 'egpg init dir2 (keep old dir)' '
 test_expect_success 'egpg init dir1 (remove old dir)' '
     [[ -d "$HOME/.egpg1" ]] &&
     [[ -d "$HOME/.egpg2" ]] &&
-    egpg_init "$HOME/.egpg1" <<< "y"
+    egpg_init -d "$HOME/.egpg1" <<< "y" &&
     [[ -d "$HOME/.egpg1" ]] &&
     [[ ! -d "$HOME/.egpg2" ]] &&
     egpg | grep "^EGPG_DIR=\"$HOME/.egpg1\""
@@ -49,7 +49,7 @@ test_expect_success 'egpg init dir1 (remove old dir)' '
 test_expect_success 'egpg init (remove old dir)' '
     [[ -d "$HOME/.egpg" ]] &&
     [[ -d "$HOME/.egpg1" ]] &&
-    egpg_init <<< "y"
+    egpg_init <<< "y" &&
     [[ -d "$HOME/.egpg" ]] &&
     [[ ! -d "$HOME/.egpg1" ]] &&
     egpg | grep "^EGPG_DIR=\"$HOME/.egpg\"" &&
