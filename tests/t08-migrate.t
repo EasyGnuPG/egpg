@@ -10,8 +10,8 @@ test_expect_success 'egpg migrate' '
 '
 
 test_expect_success 'egpg migrate -d' '
-    egpg_init -d "$HOME/.egpg1" &&
-    egpg_init -d "$HOME/.egpg2" &&
+    egpg_init "$HOME/.egpg1" &&
+    egpg_init "$HOME/.egpg2" &&
 
     local gnupghome="$HOME/.egpg1/.gnupg" &&
     egpg migrate -d "$gnupghome" 2>&1 | grep -e "Importing key from: $gnupghome" -e "No valid key found." &&

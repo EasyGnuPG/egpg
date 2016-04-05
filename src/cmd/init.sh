@@ -30,7 +30,7 @@ cmd_init() {
 
     # create the new $EGPG_DIR
     export EGPG_DIR="$HOME/.egpg"
-    [[ -n "$2" ]] && export EGPG_DIR="$2"
+    [[ -n "$1" ]] && export EGPG_DIR="$1"
     mkdir -pv "$EGPG_DIR"
 
     # setup $GNUPGHOME
