@@ -131,6 +131,17 @@ call_ext() {
 }
 
 cmd_ext_help() {
+    cat <<-_EOF
+An external 'command' can be loaded from:
+    1. $EGPG_DIR/cmd_command.sh
+    2. $LIB/ext/$PLATFORM/cmd_command.sh
+    3. $LIB/ext/cmd_command.sh
+The first file that is found is loaded and used.
+For key commands the name of the file must be: cmd_key_command.sh
+and for contact commands it must be: cmd_contact_command.sh
+
+_EOF
+
     for cmd_file in \
         "$LIBDIR/ext"/cmd_*.sh \
         "$LIBDIR/ext/$PLATFORM"/cmd_*.sh \
@@ -139,6 +150,7 @@ cmd_ext_help() {
         [[ -f "$cmd_file" ]] || continue
         source "$cmd_file"
         cmd=$(basename "${cmd_file%%.sh}")
+        [[ $cmd == *"test" ]] && continue
         ${cmd}_help
     done
 }

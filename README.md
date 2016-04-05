@@ -62,8 +62,12 @@ The philosophic goals here are these:
 **egpg** presents a series of subcommands:
 
     egpg init
+
     egpg key gen <email> [<name>]
     egpg key ls
+
+    egpg contact search <name>
+    egpg contact ls
 
     egpg sign <file>
     egpg verify <file>
