@@ -21,7 +21,7 @@ _egpg()
     local cur=$2
     if [[ $COMP_CWORD == 1 ]]; then
         local commands="init migrate info seal open sign verify set key contact gpg help version"
-        COMPREPLY+=($(compgen -W "${commands}" -- $cur))
+        COMPREPLY+=($(compgen -W "$commands" -- $cur))
         return
     fi
 
@@ -38,7 +38,15 @@ _egpg()
                 COMPREPLY+=($(compgen -W "-d --homedir" -- $cur))
             fi
             ;;
+        seal)
+            if [[ $COMP_CWORD == 2 ]]; then
+                COMPREPLY+=($(compgen -f -- $cur))
+            else
+                local contacts=$(egpg contact ls | grep '^uid: ' | cut -d"<" -f2 | cut -d">" -f1)
+                COMPREPLY+=($(compgen -W "$contacts" -- $cur))
+            fi
+            ;;
     esac
 }
 
-complete -o filenames -o nospace -F _egpg egpg egpg.sh
+complete -o filenames -F _egpg egpg egpg.sh
