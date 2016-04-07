@@ -2,21 +2,22 @@
 
 cmd_verify_help() {
     cat <<-_EOF
-    verify <file>
-        Verify the signature of the given file.  The signature file
-        <file.signature> must be present as well.
+    verify <file.signature>
+        Verify the signature. The signed file must be present as well.
 
 _EOF
 }
 
 cmd_verify() {
-    local file="$1" ; shift
-    [[ -z "$file" ]] && fail "Usage:\n$(cmd_verify_help)"
+    local signature="$1" ; shift
+    [[ -z "$signature" ]] && fail "Usage:\n$(cmd_verify_help)"
+    [[ -f "$signature" ]] || fail "Cannot find signature '$signature'"
+    file=${signature%.signature}
+    [[ "$file" == "$signature" ]] && fail "Signature file must have extension '.signature'"
     [[ -f "$file" ]] || fail "Cannot find file '$file'"
-    [[ -f "$file.signature" ]] || fail "Cannot find file '$file.signature'"
 
     # verify
-    gpg --verify "$file.signature" "$file"
+    gpg --verify "$signature" "$file"
 }
 
 #
