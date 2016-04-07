@@ -49,10 +49,9 @@ egpg(1) -- Easy GnuPG
 
     Sign a file. The signature will be saved to <file**.signature**>.
 
-* `verify` <file>
+* `verify` <file.signature>
 
-    Verify the signature of the given file.  The signature file
-    <file**.signature**> must be present as well.
+    Verify the signature. The signed file must be present as well.
 
 * `key` <command> [<options>...]
 
@@ -391,7 +390,7 @@ used. For key commands the name of the file must be
     user: "Test User <test@example.org>"
     4096-bit RSA key, ID 0A4DEC7D, created 2016-03-17 (main key ID 71CF0068)
 
-   user@laptop:~$ `egpg verify test.txt`
+   user@laptop:~$ `egpg verify test.txt.signature`
 
     gpg: Signature made Thu 17 Mar 2016 04:02:42 PM CET using RSA key ID 0A4DEC7D
     gpg: Good signature from "Test User <test@example.org>"

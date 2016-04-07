@@ -145,10 +145,9 @@
 <li><p><code>sign</code> <var>file</var></p>
 
 <p>  Sign a file. The signature will be saved to &lt;file<strong>.signature</strong>>.</p></li>
-<li><p><code>verify</code> <var>file</var></p>
+<li><p><code>verify</code> &lt;file.signature></p>
 
-<p>  Verify the signature of the given file.  The signature file
-  &lt;file<strong>.signature</strong>> must be present as well.</p></li>
+<p>  Verify the signature. The signed file must be present as well.</p></li>
 <li><p><code>key</code> <var>command</var> [<var>options</var>...]</p>
 
 <p>  Commands for handling the key. For more details see <code>key help</code>.</p></li>
@@ -485,7 +484,7 @@ user: "Test User &lt;test@example.org&gt;"
 4096-bit RSA key, ID 0A4DEC7D, created 2016-03-17 (main key ID 71CF0068)
 </code></pre>
 
-<p>   user@laptop:~$ <code>egpg verify test.txt</code></p>
+<p>   user@laptop:~$ <code>egpg verify test.txt.signature</code></p>
 
 <pre><code>gpg: Signature made Thu 17 Mar 2016 04:02:42 PM CET using RSA key ID 0A4DEC7D
 gpg: Good signature from "Test User &lt;test@example.org&gt;"

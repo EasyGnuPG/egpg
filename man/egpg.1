@@ -54,10 +54,10 @@ Decrypt and verify the signature of the given file\. The file has to end with \f
 Sign a file\. The signature will be saved to <file\fB\.signature\fR>\.
 .
 .IP "\(bu" 4
-\fBverify\fR \fIfile\fR
+\fBverify\fR <file\.signature>
 .
 .IP
-Verify the signature of the given file\. The signature file <file\fB\.signature\fR> must be present as well\.
+Verify the signature\. The signed file must be present as well\.
 .
 .IP "\(bu" 4
 \fBkey\fR \fIcommand\fR [\fIoptions\fR\.\.\.]
@@ -582,7 +582,7 @@ user: "Test User <test@example\.org>"
 .IP "" 0
 .
 .P
-user@laptop:~$ \fBegpg verify test\.txt\fR
+user@laptop:~$ \fBegpg verify test\.txt\.signature\fR
 .
 .IP "" 4
 .

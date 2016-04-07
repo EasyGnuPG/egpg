@@ -54,7 +54,7 @@ _egpg()
             [[ $last == $cmd ]] && COMPREPLY=( $(compgen -f -X '*.signature' -- $cur) )
             ;;
         verify)
-            [[ $last == $cmd ]] && COMPREPLY=( $(compgen -f -X '*.signature' -- $cur) )
+            [[ $last == $cmd ]] && COMPREPLY=( $(compgen -f -X '!*.signature' -- $cur) )
             ;;
     esac
 }
