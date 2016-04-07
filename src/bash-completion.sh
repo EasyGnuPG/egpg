@@ -56,6 +56,44 @@ _egpg()
         verify)
             [[ $last == $cmd ]] && COMPREPLY=( $(compgen -f -X '!*.signature' -- $cur) )
             ;;
+        key)
+            if [[ $COMP_CWORD == 2 ]]; then
+                local commands="generate list delete export import fetch renew revcert revoke pass help"
+                COMPREPLY=( $(compgen -W "$commands" -- $cur) )
+            else
+                _egpg_key
+            fi
+            ;;
+        contact)
+            if [[ $COMP_CWORD == 2 ]]; then
+                local commands="list show find delete export import fetch fetch-uri search receive pull certify uncertify trust help"
+                COMPREPLY=( $(compgen -W "$commands" -- $cur) )
+            else
+                _egpg_contact
+            fi
+            ;;
+    esac
+}
+
+_egpg_key() {
+    COMPREPLY=()
+    local cur="${COMP_WORDS[COMP_CWORD]}"
+    local last="${COMP_WORDS[$COMP_CWORD-1]}"
+    local cmd="${COMP_WORDS[2]}"
+    case $cmd in
+        ls|list|show)
+            ;;
+    esac
+}
+
+_egpg_contact() {
+    COMPREPLY=()
+    local cur="${COMP_WORDS[COMP_CWORD]}"
+    local last="${COMP_WORDS[$COMP_CWORD-1]}"
+    local cmd="${COMP_WORDS[2]}"
+    case $cmd in
+        ls|list|show|find)
+            ;;
     esac
 }
 
