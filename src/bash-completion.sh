@@ -36,7 +36,7 @@ _egpg()
             if [[ $last == "-d" || $last == "--homedir" ]]; then
                 _egpg_complete_dir ~/.gnupg
             else
-                COMPREPLY=( $(compgen -W "-d --homedir" -- $cur) )
+                COMPREPLY=( $(compgen -W "--homedir" -- $cur) )
             fi
             ;;
         seal)
@@ -83,12 +83,12 @@ _egpg_key() {
     case $cmd in
         ls|list|show)
             if [[ $last == $cmd ]]; then
-                COMPREPLY=( $(compgen -W "-r --raw -c --colons -a --all" -- $cur) )
+                COMPREPLY=( $(compgen -W "--raw --colons --all" -- $cur) )
             fi
             ;;
         gen|generate)
             if [[ $last != "-n" && $last != "--no-passphrase" ]]; then
-                COMPREPLY=( $(compgen -W "-n --no-passphrase" -- $cur) )
+                COMPREPLY=( $(compgen -W "--no-passphrase" -- $cur) )
             fi
             ;;
         rm|del|delete)
@@ -123,10 +123,15 @@ _egpg_key() {
                 local secret_keys=$(gpg --homedir "$homedir" -K --with-colons | grep "^sec:" | cut -d: -f5)
                 COMPREPLY=( $(compgen -W "$secret_keys" -- $cur) )
             else
-                COMPREPLY=( $(compgen -W "-d --homedir -k --key-id" -- $cur) )
+                COMPREPLY=( $(compgen -W "--homedir --key-id" -- $cur) )
             fi
             ;;
     esac
+}
+
+_egpg_complete_contacts() {
+    local contacts=$(egpg contact ls | grep '^uid: ' | cut -d"<" -f2 | cut -d">" -f1)
+    COMPREPLY=( $(compgen -W "$contacts $@" -- $cur) )
 }
 
 _egpg_contact() {
@@ -136,6 +141,57 @@ _egpg_contact() {
     local cmd="${COMP_WORDS[2]}"
     case $cmd in
         ls|list|show|find)
+            _egpg_complete_contacts
+            ;;
+        rm|del|delete)
+            _egpg_complete_contacts
+            ;;
+        exp|export)
+            if [[ $last == "-o" || $last == "--output" ]]; then
+                COMPREPLY=( $(compgen -f -- $cur) )
+            else
+                _egpg_complete_contacts "--output"
+            fi
+            ;;
+        imp|import|add)
+            [[ $last == $cmd ]] && COMPREPLY=( $(compgen -f -- $cur) )
+            ;;
+        fetch)
+            if [[ $last == $cmd ]]; then
+                COMPREPLY=( $(compgen -W "--homedir" -- $cur) )
+            elif [[ $last == "-d" || $last == "--homedir" ]]; then
+                _egpg_complete_dir ~/.gnupg
+            else
+                local homedir=~/.gnupg
+                if [[ "${COMP_WORDS[3]}" == "--homedir" ]]; then
+                    homedir="${COMP_WORDS[4]}"
+                fi
+                local keys=$(gpg2 --homedir "$homedir" -k --with-colons | grep "^uid:" | cut -d: -f10 | cut -d"<" -f2 | cut -d">" -f1)
+                COMPREPLY=( $(compgen -W "$keys" -- $cur) )
+            fi
+            ;;
+        certify)
+            if [[ $last == $cmd ]]; then
+                _egpg_complete_contacts
+            elif [[ $last == "-l" || $last == "--level" ]]; then
+                COMPREPLY=( $(compgen -W "unknown onfaith casual extensive" -- $cur) )
+            elif [[ $last == "-t" || $last == "--time" ]]; then
+                COMPREPLY=( $(compgen -W "1y" -- $cur) )
+            else
+                COMPREPLY=( $(compgen -W "--publish --level --time" -- $cur) )
+            fi
+            ;;
+        uncertify)
+            [[ $last == $cmd ]] && _egpg_complete_contacts
+            ;;
+        trust)
+            if [[ $last == $cmd ]]; then
+                _egpg_complete_contacts
+            elif [[ $last == "-l" || $last == "--level" ]]; then
+                COMPREPLY=( $(compgen -W "full marginal none unknown" -- $cur) )
+            elif [[ "${COMP_WORDS[$COMP_CWORD-2]}" != "--level" ]]; then
+                COMPREPLY=( $(compgen -W "--level" -- $cur) )
+            fi
             ;;
     esac
 }
