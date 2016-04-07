@@ -58,7 +58,7 @@ _egpg()
             ;;
         key)
             if [[ $COMP_CWORD == 2 ]]; then
-                local commands="generate list delete export import fetch renew revcert revoke pass help"
+                local commands="generate list delete export import fetch renew expiration revcert revoke pass help"
                 COMPREPLY=( $(compgen -W "$commands" -- $cur) )
             else
                 _egpg_key
@@ -82,6 +82,49 @@ _egpg_key() {
     local cmd="${COMP_WORDS[2]}"
     case $cmd in
         ls|list|show)
+            if [[ $last == $cmd ]]; then
+                COMPREPLY=( $(compgen -W "-r --raw -c --colons -a --all" -- $cur) )
+            fi
+            ;;
+        gen|generate)
+            if [[ $last != "-n" && $last != "--no-passphrase" ]]; then
+                COMPREPLY=( $(compgen -W "-n --no-passphrase" -- $cur) )
+            fi
+            ;;
+        rm|del|delete)
+            if [[ $last == $cmd ]]; then
+                local key_ids=$(egpg key ls -a | grep '^id: ' | cut -d' ' -f2)
+                COMPREPLY=( $(compgen -W "$key_ids" -- $cur) )
+            fi
+            ;;
+        exp|export)
+            if [[ $last == $cmd ]]; then
+                local key_ids=$(egpg key ls -a | grep '^id: ' | cut -d' ' -f2)
+                COMPREPLY=( $(compgen -W "$key_ids" -- $cur) )
+            fi
+            ;;
+        imp|import)
+            [[ $last == $cmd ]] && COMPREPLY=( $(compgen -f -- $cur) )
+            ;;
+        rev|revoke)
+            [[ $last == $cmd ]] && COMPREPLY=( $(compgen -f -X '!*.revoke' -- $cur) )
+            ;;
+        renew|expiration)
+            [[ $last == $cmd ]] && COMPREPLY=( $(compgen -W "$(date -d'1 year' +%F)" -- $cur) )
+            ;;
+        fetch)
+            if [[ $last == "-d" || $last == "--homedir" ]]; then
+                _egpg_complete_dir ~/.gnupg
+            elif [[ $last == "-k" || $last == "--key-id" ]]; then
+                local homedir=~/.gnupg
+                if [[ "${COMP_WORDS[$COMP_CWORD-3]}" == "-d" || "${COMP_WORDS[$COMP_CWORD-3]}" == "--homedir" ]]; then
+                    homedir="${COMP_WORDS[$COMP_CWORD-2]}"
+                fi
+                local secret_keys=$(gpg --homedir "$homedir" -K --with-colons | grep "^sec:" | cut -d: -f5)
+                COMPREPLY=( $(compgen -W "$secret_keys" -- $cur) )
+            else
+                COMPREPLY=( $(compgen -W "-d --homedir -k --key-id" -- $cur) )
+            fi
             ;;
     esac
 }
