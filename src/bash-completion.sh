@@ -48,9 +48,13 @@ _egpg()
             fi
             ;;
         open)
-            if [[ $last == 'open' ]]; then
-                COMPREPLY=( $(compgen -f -X '!*.sealed' -- $cur) )
-            fi
+            [[ $last == $cmd ]] && COMPREPLY=( $(compgen -f -X '!*.sealed' -- $cur) )
+            ;;
+        sign)
+            [[ $last == $cmd ]] && COMPREPLY=( $(compgen -f -X '*.signature' -- $cur) )
+            ;;
+        verify)
+            [[ $last == $cmd ]] && COMPREPLY=( $(compgen -f -X '*.signature' -- $cur) )
             ;;
     esac
 }
