@@ -12,7 +12,7 @@ test_expect_success 'egpg key pass' '
 
     echo "Test 1" > test1.txt &&
     egpg sign test1.txt &&
-    egpg verify test1.txt 2>&1 | grep "gpg: Good signature"
+    egpg verify test1.txt.signature 2>&1 | grep "gpg: Good signature"
 '
 
 test_done
