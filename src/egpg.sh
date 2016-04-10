@@ -43,6 +43,7 @@ cmd() {
         sign)             call cmd_sign "$@" ;;
         verify)           call cmd_verify "$@" ;;
         set)              call cmd_set "$@" ;;
+        default)          call cmd_default "$@" ;;
 
         --|gpg)           cmd_gpg "$@" ;;
         key)              cmd_key "$@" ;;
@@ -156,27 +157,37 @@ _EOF
 }
 
 config() {
+    # read the config file
+    local config_file="$EGPG_DIR/config.sh"
     ENV_GNUPGHOME="$GNUPGHOME"
-    export GNUPGHOME="$EGPG_DIR/.gnupg"
+    [[ -f "$config_file" ]] && source "$config_file"
+
+    # set defaults, if some configurations are missing
+    SHARE=${SHARE:-no}
+    KEYSERVER=${KEYSERVER:-hkp://keys.gnupg.net}
+    GNUPGHOME=${GNUPGHOME:-$EGPG_DIR/.gnupg}
+    [[ "$GNUPGHOME" == "default" ]] && GNUPGHOME="$ENV_GNUPGHOME"
+    DEBUG=${DEBUG:-no}
+
+    export GNUPGHOME
     export GPG_AGENT_INFO=$(cat "$EGPG_DIR/.gpg-agent-info" 2>/dev/null | cut -c 16-)
     export GPG_TTY=$(tty)
 
-    # read the config file
-    local config_file="$EGPG_DIR/config.sh"
+    # create the config file, if it does not exist
+    local gpghome="$GNUPGHOME"
+    [[ "GNUPGHOME" == "ENV_GNUPGHOME" ]] && gpghome='default'
     [[ -f "$config_file" ]] || cat <<-_EOF > "$config_file"
-# Push local changes to the keyserver network.
-# Leave it empty (or comment out) to disable.
-SHARE=
-#KEYSERVER=hkp://keys.gnupg.net
+# If yes, push local changes to the keyserver network.
+SHARE=$SHARE
+KEYSERVER="$KEYSERVER"
 
-# Enable debug output
-DEBUG=
+# GPG homedir to be used. If "default", then use the default one,
+# (whatever is in the environment $GNUPGHOME, usually ~/.gnupg).
+GNUPGHOME="$gpghome"
+
+# If true, print debug output.
+DEBUG=$DEBUG
 _EOF
-    source "$config_file"
-
-    # set defaults, if some configurations are missing
-    KEYSERVER=${KEYSERVER:-hkp://keys.gnupg.net}
-    DEBUG=${DEBUG:-}
 }
 
 main() {
