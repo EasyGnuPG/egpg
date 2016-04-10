@@ -2,7 +2,7 @@
 cmd_default_help() {
     cat <<-_EOF
     default
-        Make egpg the default GPG tool, use the default GNUPGHOME.
+        Use the default GNUPGHOME.
 
 _EOF
 
@@ -12,8 +12,8 @@ cmd_default() {
     [[ "$GNUPGHOME" == "$ENV_GNUPGHOME" ]] && fail "It is already using the default GNUPGHOME."
 
     sed -i "$EGPG_DIR/config.sh" -e "/GNUPGHOME=/c GNUPGHOME=default"
-    mv -v $ENV_GNUPGHOME $ENV_GNUPGHOME-old
-    mv -v $GNUPGHOME $ENV_GNUPGHOME
+    mv -v "$ENV_GNUPGHOME" "$ENV_GNUPGHOME-old"
+    mv -v "$GNUPGHOME" "$ENV_GNUPGHOME"
     export GNUPGHOME="$ENV_GNUPGHOME"
 }
 
