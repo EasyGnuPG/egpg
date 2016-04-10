@@ -14,6 +14,7 @@ _EOF
     call cmd_open help
     call cmd_sign help
     call cmd_verify help
+    call cmd_default help
     call cmd_set help
 
     cat <<-_EOF
