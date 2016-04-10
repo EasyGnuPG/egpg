@@ -72,6 +72,12 @@ Commands for handling the key\. For more details see \fBkey help\fR\.
 Commands for handling the contacts\. For more details see \fBcontact help\fR\.
 .
 .IP "\(bu" 4
+\fBdefault\fR
+.
+.IP
+Use the default GNUPGHOME\.
+.
+.IP "\(bu" 4
 \fBset\fR <option> \fIvalue\fR
 .
 .IP
@@ -797,6 +803,12 @@ gpg: next trustdb check due at 2017\-01\-05
 .
 .SS "Change the passphrase of the key:"
 user@laptop:~$ \fBegpg key pass\fR
+.
+.SS "Use the default GNUPGHOME:"
+user@laptop:~$ \fBegpg default\fR
+.
+.P
+Afterwards \fBegpg\fR will use the directory \fB~/\.gnupg\fR (or whatever is in the environment variable $GNUPGHOME) for the key and contacts\.
 .
 .SS "Send key to the keyserver network:"
 user@laptop:~$ \fBegpg key share\fR

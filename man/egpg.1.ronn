@@ -61,6 +61,10 @@ egpg(1) -- Easy GnuPG
 
     Commands for handling the contacts. For more details see `contact help`.
 
+* `default`
+
+    Use the default GNUPGHOME.
+
 * `set` \<option> <value>
 
     Change the settings.
@@ -535,6 +539,14 @@ used. For key commands the name of the file must be
 ### Change the passphrase of the key:
 
    user@laptop:~$ `egpg key pass`
+
+
+### Use the default GNUPGHOME:
+
+   user@laptop:~$ `egpg default`
+
+   Afterwards `egpg` will use the directory `~/.gnupg` (or whatever is
+   in the environment variable $GNUPGHOME) for the key and contacts.
 
 
 ### Send key to the keyserver network:

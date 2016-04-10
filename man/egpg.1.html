@@ -154,6 +154,9 @@
 <li><p><code>contact</code> <var>command</var> [<var>options</var>...]</p>
 
 <p>  Commands for handling the contacts. For more details see <code>contact help</code>.</p></li>
+<li><p><code>default</code></p>
+
+<p>  Use the default GNUPGHOME.</p></li>
 <li><p><code>set</code> &lt;option> <var>value</var></p>
 
 <p>  Change the settings.</p></li>
@@ -634,6 +637,13 @@ gpg: next trustdb check due at 2017-01-05
 <h3 id="Change-the-passphrase-of-the-key-">Change the passphrase of the key:</h3>
 
 <p>   user@laptop:~$ <code>egpg key pass</code></p>
+
+<h3 id="Use-the-default-GNUPGHOME-">Use the default GNUPGHOME:</h3>
+
+<p>   user@laptop:~$ <code>egpg default</code></p>
+
+<p>   Afterwards <code>egpg</code> will use the directory <code>~/.gnupg</code> (or whatever is
+   in the environment variable $GNUPGHOME) for the key and contacts.</p>
 
 <h3 id="Send-key-to-the-keyserver-network-">Send key to the keyserver network:</h3>
 
