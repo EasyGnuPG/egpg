@@ -21,7 +21,7 @@ _egpg()
     COMPREPLY=()
     local cur=$2
     if [[ $COMP_CWORD == 1 ]]; then
-        local commands="init migrate info seal open sign verify set key contact gpg help version"
+        local commands="init migrate info seal open sign verify set default key contact gpg help version"
         COMPREPLY=( $(compgen -W "$commands" -- $cur) )
         return
     fi
