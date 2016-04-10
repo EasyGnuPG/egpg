@@ -42,6 +42,21 @@ default-cache-ttl 300
 max-cache-ttl 999999
 _EOF
 
+    # create the config file
+    local config_file="$EGPG_DIR/config.sh"
+    [[ -f "$config_file" ]] || cat <<-_EOF > "$config_file"
+# If true, push local changes to the keyserver network.
+# Leave it empty (or comment out) to disable.
+SHARE=
+#KEYSERVER=hkp://keys.gnupg.net
+
+# GPG homedir. If "default", then the default one will be used,
+# (whatever is in the environment \$GNUPGHOME, usually ~/.gnupg).
+GNUPGHOME="$EGPG_DIR/.gnupg"
+
+# If true, print debug output.
+DEBUG=
+_EOF
     # setup environment variables
     _env_setup ~/.bashrc
 }

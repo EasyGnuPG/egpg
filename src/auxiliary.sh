@@ -90,7 +90,7 @@ fail() {
 }
 
 debug() {
-    [[ -z $DEBUG ]] && return
+    is_true $DEBUG || return
     echo "$@"
 }
 

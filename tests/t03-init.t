@@ -12,6 +12,7 @@ test_expect_success 'egpg init' '
     [[ ! -d "$HOME/.egpg" ]] &&
     egpg_init &&
     [[ -d "$HOME/.egpg" ]] &&
+    [[ -f "$HOME/.egpg/config.sh" ]] &&
     egpg 2>&1 | grep "Try first:  egpg.sh key gen"
 '
 
