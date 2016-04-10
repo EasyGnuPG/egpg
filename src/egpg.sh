@@ -19,7 +19,7 @@
 umask 077
 set -o pipefail
 
-VERSION="v0.7"
+VERSION="v0.8"
 
 LIBDIR="$(dirname "$0")"
 
