@@ -100,13 +100,13 @@ egpg(1) -- Easy GnuPG
 
     Delete the key.
 
-* `exp`,`export` [<key-id>]
+* `backup` [<key-id>]
 
-    Export key to file.
+    Backup key to file.
 
-* `imp`,`import` <file>
+* `restore` <file>
 
-    Import key from file.
+    Restore key from file.
 
 * `fetch` [-d,--homedir <gnupghome>] [-k,--key-id <key-id>]
 

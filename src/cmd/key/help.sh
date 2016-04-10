@@ -9,8 +9,8 @@ _EOF
     call cmd_key_gen help
     call cmd_key_list help
     call cmd_key_delete help
-    call cmd_key_export help
-    call cmd_key_import help
+    call cmd_key_backup help
+    call cmd_key_restore help
     call cmd_key_fetch help
     call cmd_key_renew help
     call cmd_key_revcert help

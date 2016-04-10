@@ -64,8 +64,8 @@ cmd_key() {
         gen|generate)     call cmd_key_gen "$@" ;;
         ''|ls|list|show)  call cmd_key_list "$@" ;;
         rm|del|delete)    call cmd_key_delete "$@" ;;
-        exp|export)       call cmd_key_export "$@" ;;
-        imp|import)       call cmd_key_import "$@" ;;
+        backup)           call cmd_key_backup "$@" ;;
+        restore)          call cmd_key_restore "$@" ;;
         fetch)            call cmd_key_fetch "$@" ;;
         renew|expiration) call cmd_key_renew "$@" ;;
         share)            call cmd_key_share "$@" ;;

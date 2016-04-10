@@ -1,20 +1,20 @@
-# Export key to file.
+# Backup key to file.
 
-cmd_key_export_help() {
+cmd_key_backup_help() {
     cat <<-_EOF
-    exp,export [<key-id>]
-        Export key to file.
+    backup [<key-id>]
+        Backup key to file.
 
 _EOF
 }
 
-cmd_key_export() {
+cmd_key_backup() {
     local key_id="$1"
     [[ -z $key_id ]] && get_gpg_key && key_id=$GPG_KEY
 
     gpg --armor --export $key_id > $key_id.key
     gpg --armor --export-secret-keys $key_id >> $key_id.key
-    echo "Key exported to: $key_id.key"
+    echo "Key saved to: $key_id.key"
 }
 
 #

@@ -1,22 +1,22 @@
-# Import key from file.
+# Restore key from file.
 
-cmd_key_import_help() {
+cmd_key_restore_help() {
     cat <<-_EOF
-    imp,import <file>
-        Import key from file.
+    restore <file>
+        Restore key from file.
 
 _EOF
 }
 
-cmd_key_import() {
+cmd_key_restore() {
     assert_no_valid_key
 
     local file="$1"
-    [[ -n "$file" ]] || fail "Usage:\n$(cmd_key_import_help)"
+    [[ -n "$file" ]] || fail "Usage:\n$(cmd_key_restore_help)"
     [[ -f "$file" ]] || fail "Cannot find file: $file"
 
-    # import
-    echo "Importing key from file: $file"
+    # restore
+    echo "Restoreing key from file: $file"
     gpg --import "$file"
 
     # set trust to 'ultimate'

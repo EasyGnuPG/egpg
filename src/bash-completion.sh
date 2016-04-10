@@ -58,7 +58,7 @@ _egpg()
             ;;
         key)
             if [[ $COMP_CWORD == 2 ]]; then
-                local commands="generate list delete export import fetch renew expiration revcert revoke pass help"
+                local commands="generate list delete backup restore fetch renew expiration revcert revoke pass help"
                 COMPREPLY=( $(compgen -W "$commands" -- $cur) )
             else
                 _egpg_key
@@ -97,13 +97,13 @@ _egpg_key() {
                 COMPREPLY=( $(compgen -W "$key_ids" -- $cur) )
             fi
             ;;
-        exp|export)
+        backup)
             if [[ $last == $cmd ]]; then
                 local key_ids=$(egpg key ls -a | grep '^id: ' | cut -d' ' -f2)
                 COMPREPLY=( $(compgen -W "$key_ids" -- $cur) )
             fi
             ;;
-        imp|import)
+        restore)
             [[ $last == $cmd ]] && COMPREPLY=( $(compgen -f -- $cur) )
             ;;
         rev|revoke)
