@@ -32,11 +32,8 @@ cmd_init() {
     export EGPG_DIR="$HOME/.egpg"
     [[ -n "$1" ]] && export EGPG_DIR="$1"
     mkdir -pv "$EGPG_DIR"
-
-    # setup $GNUPGHOME
-    GNUPGHOME="$EGPG_DIR/.gnupg"
-    mkdir -pv "$GNUPGHOME"
-    [[ -f "$GNUPGHOME/gpg-agent.conf" ]] || cat <<_EOF > "$GNUPGHOME/gpg-agent.conf"
+    mkdir -p "$EGPG_DIR/.gnupg"
+    [[ -f "$EGPG_DIR/gpg-agent.conf" ]] || cat <<_EOF > "$EGPG_DIR/gpg-agent.conf"
 pinentry-program /usr/bin/pinentry
 default-cache-ttl 300
 max-cache-ttl 999999
