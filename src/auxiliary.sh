@@ -2,9 +2,10 @@
 get_valid_keys(){
     local homedir="${1:-$GNUPGHOME}"
     local valid_keys=''
-    local secret_keys key_id keyinfo expiration
+    local secret_keys partial_keys key_id keyinfo expiration
     secret_keys=$(gpg --homedir="$homedir" --list-secret-keys --with-colons | grep '^sec' | cut -d: -f5)
-    for key_id in $secret_keys; do
+    partial_keys=$(ls $EGPG_DIR/*.key.* | sed -e "s#\.key\..*\$##" -e "s#^.*/##" | uniq)
+    for key_id in $secret_keys $partial_keys; do
         keyinfo=$(gpg --homedir="$homedir" --list-keys --with-colons $key_id | grep '^pub:u:')
         [[ -z $keyinfo ]] && continue
         expiration=$(echo "$keyinfo" | cut -d: -f7)
