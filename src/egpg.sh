@@ -27,7 +27,9 @@ source "$LIBDIR/auxiliary.sh"
 source "$LIBDIR/platform.sh"
 
 cmd_version() {
-    echo "egpg:  EasyGnuPG  $VERSION    (hosted at: https://github.com/dashohoxha/egpg) "
+    echo
+    echo "EasyGnuPG $VERSION    ( https://github.com/dashohoxha/egpg )"
+    echo
 }
 
 cmd() {
@@ -182,6 +184,9 @@ KEYSERVER="$KEYSERVER"
 # GPG homedir to be used. If "default", then use the default one,
 # (whatever is in the environment $GNUPGHOME, usually ~/.gnupg).
 GNUPGHOME="$gpghome"
+
+# Path of the dongle.
+DONGLE="$DONGLE"
 
 # If true, print debug output.
 DEBUG=$DEBUG

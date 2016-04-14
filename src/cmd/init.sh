@@ -51,6 +51,9 @@ SHARE=
 # (whatever is in the environment \$GNUPGHOME, usually ~/.gnupg).
 GNUPGHOME="$EGPG_DIR/.gnupg"
 
+# Path of the dongle.
+DONGLE=
+
 # If true, print debug output.
 DEBUG=
 _EOF
