@@ -17,6 +17,8 @@ _EOF
     call cmd_key_rev help
     call cmd_key_pass help
     call cmd_key_share help
+    call cmd_key_split help
+    call cmd_key_join help
 }
 
 #

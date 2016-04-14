@@ -32,8 +32,6 @@ cmd_version() {
 
 cmd() {
     PROGRAM="${0##*/}"
-    COMMAND="$PROGRAM $1"
-
     local cmd="$1" ; shift
     case "$cmd" in
         migrate)          call cmd_migrate "$@" ;;
@@ -57,7 +55,6 @@ cmd() {
 cmd_gpg() { gpg "$@"; }
 
 cmd_key() {
-    COMMAND+=" $1"
     local cmd="$1" ; shift
     case "$cmd" in
         help)             call cmd_key_help "$@" ;;
@@ -72,13 +69,14 @@ cmd_key() {
         revcert)          call cmd_key_revcert "$@" ;;
         rev|revoke)       call cmd_key_rev "$@" ;;
         pass)             call cmd_key_pass "$@" ;;
+        split)            call cmd_key_split "$@" ;;
+        join)             call cmd_key_join "$@" ;;
         help)             call cmd_key_help "$@" ;;
         *)                call_ext cmd_key_$cmd "$@" ;;
     esac
 }
 
 cmd_contact() {
-    COMMAND+=" $1"
     local cmd="$1" ; shift
     case "$cmd" in
         ''|help)          call cmd_contact_help "$@" ;;
