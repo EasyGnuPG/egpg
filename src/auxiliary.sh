@@ -4,7 +4,7 @@ get_valid_keys(){
     local valid_keys=''
     local secret_keys partial_keys key_id keyinfo expiration
     secret_keys=$(gpg --homedir="$homedir" --list-secret-keys --with-colons | grep '^sec' | cut -d: -f5)
-    partial_keys=$(ls $EGPG_DIR/*.key.* | sed -e "s#\.key\..*\$##" -e "s#^.*/##" | uniq)
+    partial_keys=$(ls $EGPG_DIR/*.key.* 2>/dev/null | sed -e "s#\.key\..*\$##" -e "s#^.*/##" | uniq)
     for key_id in $secret_keys $partial_keys; do
         keyinfo=$(gpg --homedir="$homedir" --list-keys --with-colons $key_id | grep '^pub:u:')
         [[ -z $keyinfo ]] && continue
