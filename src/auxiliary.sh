@@ -52,6 +52,40 @@ assert_no_valid_key(){
     [[ -z $gpg_key ]] || fail "There is already a valid key.\nRevoke or delete it first."
 }
 
+# Copy the partial keys to a temporary workdir and combine them.
+combine_partial_keys_on_workdir() {
+    # get $GPG_KEY
+    get_gpg_key
+
+    # get partial keys on PC and dongle
+    local partial1 partial2
+    partial1=$(cd "$EGPG_DIR"; ls $GPG_KEY.key.[0-9][0-9][0-9] 2>/dev/null)
+    [[ -f "$EGPG_DIR/$partial1" ]] \
+        || fail "Could not find partial key for $GPG_KEY on $EGPG_DIR"
+    [[ -d "$DONGLE" ]] \
+        || fail "The dongle directory not found: $DONGLE\nMake sure that the dongle is connected and mounted."
+    [[ -d "$DONGLE/.egpg_key/" ]] \
+        || fail "Directory not found: $DONGLE"
+    partial2=$(cd "$DONGLE/.egpg_key"; ls $GPG_KEY.key.[0-9][0-9][0-9] 2>/dev/null)
+    [[ -f "$DONGLE/.egpg_key/$partial2" ]] \
+        || fail "Could not find partial key for $GPG_KEY on $DONGLE/.egpg_key/"
+
+    # combine the partials and import the full key
+    make_workdir
+    cp "$EGPG_DIR/$partial1" "$WORKDIR/"
+    cp "$DONGLE/.egpg_key/$partial2" "$WORKDIR/"
+    gfcombine "$WORKDIR/$partial1" "$WORKDIR/$partial2"
+}
+
+# Copy $GNUPGHOME to a temporary $WORKDIR and import there the
+# combined secret key.
+import_secret_key_on_workdir() {
+    combine_partial_keys_on_workdir
+    cp -a "$GNUPGHOME"/* "$WORKDIR"/
+    gpg --homedir "$WORKDIR" --import "$WORKDIR/$GPG_KEY.key" \
+        || fail "Could not import the combined key on $WORKDIR."
+}
+
 gpg_send_keys() {
     is_true $SHARE || return
     gpg --keyserver "$KEYSERVER" --send-keys "$@"

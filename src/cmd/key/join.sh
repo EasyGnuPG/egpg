@@ -9,31 +9,18 @@ _EOF
 }
 
 cmd_key_join() {
-    # get $GPG_KEY
-    get_gpg_key
+    # combine the partial keys
+    combine_partial_keys_on_workdir
 
-    # get partial keys on PC and dongle
-    local partial1 partial2
-    partial1=$(cd "$EGPG_DIR"; ls $GPG_KEY.key.* 2>/dev/null)
-    [[ -f "$EGPG_DIR/$partial1" ]] \
-        || fail "Could not find partial key for $GPG_KEY on $EGPG_DIR"
-    partial2=$(cd "$DONGLE/.egpg_key"; ls $GPG_KEY.key.* 2>/dev/null)
-    [[ -f "$DONGLE/.egpg_key/$partial2" ]] \
-        || fail "Could not find partial key for $GPG_KEY on $DONGLE/.egpg_key/"
-
-    # combine the partials and import the full key
-    make_workdir
-    cp "$EGPG_DIR/$partial1" "$WORKDIR/"
-    cp "$DONGLE/.egpg_key/$partial2" "$WORKDIR/"
-    gfcombine "$WORKDIR/$partial1" "$WORKDIR/$partial2"
-    local file="$WORKDIR/$GPG_KEY.key"
-    gpg --import "$file" || fail "Could not import the combined key."
+    # import the combined key
+    gpg --import "$WORKDIR/$GPG_KEY.key" \
+        || fail "Could not import the combined key."
+    rm -rf "$WORKDIR"    # clean up
 
     # remove the partials
-    rm -f "$EGPG_DIR/$partial1"
-    rm -f "$DONGLE/.egpg_key/$partial2"
-    # clean up
-    rm -rf "$WORKDIR"
+    rm -f "$EGPG_DIR"/$GPG_KEY.key.[0-9][0-9][0-9]
+    rm -f "$DONGLE"/.egpg_key/$GPG_KEY.key.[0-9][0-9][0-9]
+    rm -f $GPG_KEY.key.[0-9][0-9][0-9]
 
     # display a notice
     cat <<-_EOF
