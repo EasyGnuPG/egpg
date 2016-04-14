@@ -17,6 +17,10 @@ cmd_set() {
             sed -i "$EGPG_DIR/config.sh" -e "/SHARE=/c SHARE=$value"
             gpg_send_keys
             ;;
+        dongle)
+            local dongledir="$@"
+            sed -i "$EGPG_DIR/config.sh" -e "/DONGLE=/c DONGLE=\"$dongledir\""
+            ;;
         *)
             echo "Unknown option '$option'"
             ;;
