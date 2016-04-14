@@ -36,11 +36,12 @@ cmd_key_split() {
     # get the dongle dir
     if [[ -z "$dongledir" ]]; then
         local guess suggest
-        guess=$(df -h | grep '/dev/sdb1' | sed 's/ \+/:/g' | cut -d: -f6)
+        guess="$DONGLE"
+        [[ -z "$guess" ]] && guess=$(df -h | grep '/dev/sdb1' | sed 's/ \+/:/g' | cut -d: -f6)
         [[ -z "$guess" ]] && guess=$(df -h | grep '/dev/sdc1' | sed 's/ \+/:/g' | cut -d: -f6)
         [[ -n "$guess" ]] && suggest=" [$guess]"
         echo
-        read -e -p "Enter the dongle directory$suggest:   " dongledir
+        read -e -p "Enter the dongle directory$suggest: " dongledir
         echo
         dongledir=${dongledir:-$guess}
     fi
@@ -73,15 +74,15 @@ cmd_key_split() {
     # copy partials to the corresponding directories
     mv "$WORKDIR/$partial1" "$backupdir" \
         || fail "Could not copy partial key to the backup dir: $backupdir"
-    echo " - Backup partial key saved to:  $backupdir/$partial1"
+    echo " - Backup partial key saved to: $backupdir/$partial1"
     mkdir -p "$dongledir/.egpg_key/" \
         || fail "Could not create directory: $dongledir/.egpg_key/"
     mv "$WORKDIR/$partial2" "$dongledir/.egpg_key/" \
         || fail "Could not copy partial key to the dongle: $dongledir/.egpg_key/"
-    echo " - Dongle partial key saved to:  $dongledir/.egpg_key/$partial2"
+    echo " - Dongle partial key saved to: $dongledir/.egpg_key/$partial2"
     mv "$WORKDIR/$partial3" "$EGPG_DIR" \
         || fail "Could not copy partial key to: $EGPG_DIR"
-    echo " - Local partial key saved to:   $EGPG_DIR/$partial3"
+    echo " - Local partial key saved to:  $EGPG_DIR/$partial3"
     rm -rf "$WORKDIR"    # clean up
 
     # set DONGLE on the config file
