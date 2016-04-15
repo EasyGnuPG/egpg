@@ -9,13 +9,10 @@ _EOF
 }
 
 cmd_key_join() {
-    # combine the partial keys
-    combine_partial_keys_on_workdir
-
-    # import the combined key
-    gpg --import "$WORKDIR/$GPG_KEY.key" \
-        || fail "Could not import the combined key."
-    rm -rf "$WORKDIR"    # clean up
+    make_workdir
+    combine_partial_keys
+    gpg --import "$WORKDIR/$GPG_KEY.key" 2>/dev/null || fail "Could not import the combined key."
+    clear_workdir
 
     # remove the partials
     rm -f "$EGPG_DIR"/$GPG_KEY.key.[0-9][0-9][0-9]

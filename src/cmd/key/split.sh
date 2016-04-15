@@ -15,8 +15,7 @@ _EOF
 cmd_key_split() {
     # get the key and check that it is not already split
     get_gpg_key
-    local file=$(ls "$EGPG_DIR"/$GPG_KEY.key.* 2>/dev/null)
-    [[ -n "$file" ]] && fail "There is already a partial key for $GPG_KEY on $EGPG_DIR"
+    is_unsplit_key || fail "The key is already split."
 
     # get options
     local opts dongledir backupdir
@@ -54,7 +53,6 @@ cmd_key_split() {
     [[ -d "$backupdir" ]] || fail "Backup directory does not exist: $backupdir"
     [[ -w "$backupdir" ]] || fail "Backup directory is not writable: $backupdir"
 
-
     # export key to a tmp dir
     make_workdir
     local file="$WORKDIR/$GPG_KEY.key"
@@ -75,15 +73,18 @@ cmd_key_split() {
     mv "$WORKDIR/$partial1" "$backupdir" \
         || fail "Could not copy partial key to the backup dir: $backupdir"
     echo " - Backup partial key saved to: $backupdir/$partial1"
+
     mkdir -p "$dongledir/.egpg_key/" \
         || fail "Could not create directory: $dongledir/.egpg_key/"
     mv "$WORKDIR/$partial2" "$dongledir/.egpg_key/" \
         || fail "Could not copy partial key to the dongle: $dongledir/.egpg_key/"
     echo " - Dongle partial key saved to: $dongledir/.egpg_key/$partial2"
+
     mv "$WORKDIR/$partial3" "$EGPG_DIR" \
         || fail "Could not copy partial key to: $EGPG_DIR"
     echo " - Local partial key saved to:  $EGPG_DIR/$partial3"
-    rm -rf "$WORKDIR"    # clean up
+
+    clear_workdir
 
     # set DONGLE on the config file
     sed -i "$EGPG_DIR/config.sh" -e "/DONGLE=/c DONGLE=\"$dongledir\""
