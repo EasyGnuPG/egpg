@@ -14,9 +14,10 @@ cmd_sign() {
     [[ -f "$file" ]] || fail "Cannot find file '$file'"
 
     # sign
-    get_gpg_key
+    setup_gnupghome
     gpg --local-user $GPG_KEY \
         --detach-sign --armor --output "$file.signature" "$file"
+    reset_gnupghome
 }
 
 #
