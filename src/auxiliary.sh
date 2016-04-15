@@ -60,7 +60,7 @@ is_unsplit_key() {
 
 # Copy $GNUPGHOME to a temporary $WORKDIR
 # and import there the combined key (if it is split).
-setup_gnupghome() {
+gnupghome_setup() {
     workdir_make
     cp -a "$GNUPGHOME"/* "$WORKDIR"/
     GNUPGHOME_BAK="$GNUPGHOME"
@@ -72,7 +72,7 @@ setup_gnupghome() {
     combine_partial_keys
     gpg --import "$WORKDIR/$GPG_KEY.key" 2>/dev/null || fail "Could not import the combined key."
 }
-reset_gnupghome() {
+gnupghome_reset() {
     export GNUPGHOME="$GNUPGHOME_BAK"
     unset GNUPGHOME_BAK
     workdir_clear
