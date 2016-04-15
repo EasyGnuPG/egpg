@@ -12,10 +12,17 @@ cmd_key_delete() {
     local key_id="$1"
     [[ -z $key_id ]] && get_gpg_key && key_id=$GPG_KEY
 
-    local fingerprint
-    fingerprint=$(gpg --with-colons --fingerprint $key_id | grep '^fpr' | cut -d: -f10)
-    [[ -n "$fingerprint" ]] || fail "Key $key_id not found."
-    gpg --batch --delete-secret-and-public-keys "$fingerprint"
+    if is_unsplit_key $key_id; then
+        local fingerprint
+        fingerprint=$(gpg --with-colons --fingerprint $key_id | grep '^fpr' | cut -d: -f10)
+        [[ -n "$fingerprint" ]] || fail "Key $key_id not found."
+        gpg --batch --delete-secret-and-public-keys "$fingerprint"
+    else
+        # remove the partials
+        rm -f "$EGPG_DIR"/$key_id.key.[0-9][0-9][0-9]
+        rm -f "$DONGLE"/.egpg_key/$key_id.key.[0-9][0-9][0-9]
+        rm -f $key_id.key.[0-9][0-9][0-9]
+    fi
 }
 
 #
