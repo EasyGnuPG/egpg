@@ -16,40 +16,26 @@ a new key, by improving the entropy generation of the system."
     echo
     HAVEGED_STARTED="true"
 }
-
 haveged_stop() {
     [[ -z $HAVEGED_STARTED ]] && return
     sudo killall haveged
 }
 
+# Create a safe temp directory on $WORKDIR.
 make_workdir() {
-    local warn=1
-    [[ $1 == "nowarn" ]] && warn=0
-    local template="$PROGRAM.XXXXXXXXXXXXX"
-    if [[ -d /dev/shm && -w /dev/shm && -x /dev/shm ]]; then
-        WORKDIR="$(mktemp -d "/dev/shm/$template")"
-        remove_tmpfile() {
-            rm -rf "$WORKDIR"
-        }
-        trap remove_tmpfile INT TERM EXIT
-    else
-        if [[ $warn -eq 1 ]]; then
-            yesno "$(cat <<- _EOF
-Your system does not have /dev/shm, which means that it may
-be difficult to entirely erase the temporary non-encrypted
-password file after editing.
+    [[ -z "$WORKDIR" ]] || return
 
-Are you sure you would like to continue?
-_EOF
-                    )" || return
-        fi
-        WORKDIR="$(mktemp -d "${TMPDIR:-/tmp}/$template")"
-        shred_tmpfile() {
-            find "$WORKDIR" -type f -exec shred {} +
-            rm -rf "$WORKDIR"
-        }
-        trap shred_tmpfile INT TERM EXIT
-    fi
+    local tmpdir="${TMPDIR:-/tmp}"
+    [[ -d /dev/shm && -w /dev/shm && -x /dev/shm ]] && tmpdir="/dev/shm"
+    WORKDIR="$(mktemp -d "$tmpdir/$PROGRAM.XXXXXXXXXXXXX")"
+
+    trap clear_workdir INT TERM EXIT
+}
+clear_workdir() {
+    [[ -n "$WORKDIR" ]] || return
+    [[ -d "$WORKDIR" ]] && find "$WORKDIR" -type f -exec shred {} +
+    [[ -d "$WORKDIR" ]] && rm -rf "$WORKDIR"
+    unset WORKDIR
 }
 
 #
