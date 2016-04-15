@@ -35,7 +35,7 @@ cmd_key_fetch() {
     [[ -n "$key_id" ]] || fail "No valid key found."
 
     # export to tmp file
-    make_workdir
+    workdir_make
     local file="$WORKDIR/$key_id.key"
     gpg --homedir="$homedir" --armor --export $key_id > "$file"
     gpg --homedir="$homedir" --armor --export-secret-keys $key_id >> "$file"

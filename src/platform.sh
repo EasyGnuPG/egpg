@@ -22,16 +22,16 @@ haveged_stop() {
 }
 
 # Create a safe temp directory on $WORKDIR.
-make_workdir() {
+workdir_make() {
     [[ -z "$WORKDIR" ]] || return
 
     local tmpdir="${TMPDIR:-/tmp}"
     [[ -d /dev/shm && -w /dev/shm && -x /dev/shm ]] && tmpdir="/dev/shm"
     WORKDIR="$(mktemp -d "$tmpdir/$PROGRAM.XXXXXXXXXXXXX")"
 
-    trap clear_workdir INT TERM EXIT
+    trap workdir_clear INT TERM EXIT
 }
-clear_workdir() {
+workdir_clear() {
     [[ -n "$WORKDIR" ]] || return
     [[ -d "$WORKDIR" ]] && find "$WORKDIR" -type f -exec shred {} +
     [[ -d "$WORKDIR" ]] && rm -rf "$WORKDIR"

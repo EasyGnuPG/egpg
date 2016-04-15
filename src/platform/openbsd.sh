@@ -1,4 +1,4 @@
-make_workdir() {
+workdir_make() {
     [[ -n $WORKDIR ]] && return
     local warn=1
     [[ $1 == "nowarn" ]] && warn=0

@@ -1,4 +1,4 @@
-make_workdir() {
+workdir_make() {
     [[ -n $WORKDIR ]] && return
     unmount_tmpdir() {
 	[[ -n $WORKDIR && -d $WORKDIR && -n $DARWIN_RAMDISK_DEV ]] || return

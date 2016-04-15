@@ -54,7 +54,7 @@ cmd_key_split() {
     [[ -w "$backupdir" ]] || fail "Backup directory is not writable: $backupdir"
 
     # export key to a tmp dir
-    make_workdir
+    workdir_make
     local file="$WORKDIR/$GPG_KEY.key"
     gpg --armor --export $GPG_KEY > "$file"
     gpg --armor --export-secret-keys $GPG_KEY >> "$file"
@@ -84,7 +84,7 @@ cmd_key_split() {
         || fail "Could not copy partial key to: $EGPG_DIR"
     echo " - Local partial key saved to:  $EGPG_DIR/$partial3"
 
-    clear_workdir
+    workdir_clear
 
     # set DONGLE on the config file
     sed -i "$EGPG_DIR/config.sh" -e "/DONGLE=/c DONGLE=\"$dongledir\""
