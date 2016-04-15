@@ -52,12 +52,36 @@ assert_no_valid_key(){
     [[ -z $gpg_key ]] || fail "There is already a valid key.\nRevoke or delete it first."
 }
 
-# Copy the partial keys to a temporary workdir and combine them.
-combine_partial_keys_on_workdir() {
-    # get $GPG_KEY
-    get_gpg_key
+# Return true if the key is not split.
+is_unsplit_key() {
+    local key_id=${1:-$GPG_KEY}
+    [[ -n $(gpg --list-secret-keys --with-colons $key_id 2>/dev/null) ]]
+}
 
-    # get partial keys on PC and dongle
+# Copy $GNUPGHOME to a temporary $WORKDIR
+# and import there the combined key (if it is split).
+setup_gnupghome() {
+    make_workdir
+    cp -a "$GNUPGHOME"/* "$WORKDIR"/
+    GNUPGHOME_BAK="$GNUPGHOME"
+    export GNUPGHOME="$WORKDIR"
+
+    get_gpg_key    # get $GPG_KEY
+    is_unsplit_key && return
+
+    combine_partial_keys
+    gpg --import "$WORKDIR/$GPG_KEY.key" 2>/dev/null || fail "Could not import the combined key."
+}
+reset_gnupghome() {
+    export GNUPGHOME="$GNUPGHOME_BAK"
+    unset GNUPGHOME_BAK
+    clear_workdir
+}
+
+combine_partial_keys() {
+    get_gpg_key    # get $GPG_KEY
+
+    # get the partial keys from PC and dongle
     local partial1 partial2
     partial1=$(cd "$EGPG_DIR"; ls $GPG_KEY.key.[0-9][0-9][0-9] 2>/dev/null)
     [[ -f "$EGPG_DIR/$partial1" ]] \
@@ -70,20 +94,10 @@ combine_partial_keys_on_workdir() {
     [[ -f "$DONGLE/.egpg_key/$partial2" ]] \
         || fail "Could not find partial key for $GPG_KEY on $DONGLE/.egpg_key/"
 
-    # combine the partials and import the full key
-    make_workdir
+    # copy the partials to workdir and combine them
     cp "$EGPG_DIR/$partial1" "$WORKDIR/"
     cp "$DONGLE/.egpg_key/$partial2" "$WORKDIR/"
     gfcombine "$WORKDIR/$partial1" "$WORKDIR/$partial2"
-}
-
-# Copy $GNUPGHOME to a temporary $WORKDIR and import there the
-# combined secret key.
-import_secret_key_on_workdir() {
-    combine_partial_keys_on_workdir
-    cp -a "$GNUPGHOME"/* "$WORKDIR"/
-    gpg --homedir "$WORKDIR" --import "$WORKDIR/$GPG_KEY.key" \
-        || fail "Could not import the combined key on $WORKDIR."
 }
 
 gpg_send_keys() {
