@@ -30,7 +30,7 @@ cmd_key_split() {
             --) shift; break ;;
         esac
     done
-    [[ $err -eq 0 ]] || fail "Usage:\n$(cmd_key_split_help)"
+    [[ $err == 0 ]] || fail "Usage:\n$(cmd_key_split_help)"
 
     # get the dongle dir
     if [[ -z "$dongledir" ]]; then
@@ -72,17 +72,17 @@ cmd_key_split() {
     # copy partials to the corresponding directories
     mv "$WORKDIR/$partial1" "$backupdir" \
         || fail "Could not copy partial key to the backup dir: $backupdir"
-    echo " - Backup partial key saved to: $backupdir/$partial1"
+    echo " * Backup partial key saved to: $backupdir/$partial1"
 
     mkdir -p "$dongledir/.egpg_key/" \
         || fail "Could not create directory: $dongledir/.egpg_key/"
     mv "$WORKDIR/$partial2" "$dongledir/.egpg_key/" \
         || fail "Could not copy partial key to the dongle: $dongledir/.egpg_key/"
-    echo " - Dongle partial key saved to: $dongledir/.egpg_key/$partial2"
+    echo " * Dongle partial key saved to: $dongledir/.egpg_key/$partial2"
 
     mv "$WORKDIR/$partial3" "$EGPG_DIR" \
         || fail "Could not copy partial key to: $EGPG_DIR"
-    echo " - Local partial key saved to:  $EGPG_DIR/$partial3"
+    echo " * Local  partial key saved to: $EGPG_DIR/$partial3"
 
     workdir_clear
 
@@ -96,12 +96,12 @@ cmd_key_split() {
     # display a notice
     cat <<-_EOF
 
-The key was split successfully. Whenever you need to use the key (to
-sign, seal, open, etc.) connect first the dongle to the PC.
+The key was split successfully. Whenever you need to use the key
+(to sign, seal, open, etc.) connect first the dongle to the PC.
 
-Make sure to move the backup out of the PC (for example on the
-cloud). You will need it to recover the key in case that you loose the
-dongle or the PC (but it cannot help you if you loose both of them).
+Make sure to move the backup out of the PC (for example on the cloud).
+You will need it to recover the key in case that you loose the dongle
+or the PC (but it cannot help you if you loose both of them).
 
 _EOF
 }
