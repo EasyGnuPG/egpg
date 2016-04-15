@@ -113,8 +113,6 @@ cmd_key_gen() {
     echo -e "\nExcellent! You created a fresh GPG key. Here's what it looks like:"
     call cmd_key_list
 
-    return 0
-
     # generate a revokation certificate
     call cmd_key_revcert "This revocation certificate was generated when the key was created."
 

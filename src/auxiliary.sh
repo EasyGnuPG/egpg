@@ -102,7 +102,9 @@ combine_partial_keys() {
 
 gpg_send_keys() {
     is_true $SHARE || return
+    gnupghome_setup
     gpg --keyserver "$KEYSERVER" --send-keys "$@"
+    gnupghome_reset
 }
 
 get_new_passphrase() {
