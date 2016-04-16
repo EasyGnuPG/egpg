@@ -2,8 +2,11 @@
 
 cmd_key_restore_help() {
     cat <<-_EOF
-    restore <file>
-        Restore key from file.
+    restore <file> [-u,--unsplit] \\
+                   [-d,--dongledir <dir>] [-b,--backupdir <dir>]
+        Restore key from file. By default it will be split into
+        3 partial keys: one saved locally, one on the dongle,
+        and one to be used as a backup.
 
 _EOF
 }
@@ -11,18 +14,47 @@ _EOF
 cmd_key_restore() {
     assert_no_valid_key
 
+    local opts split=1 dongledir backupdir=$(pwd)
+    opts="$(getopt -o ud:b: -l unsplit,dongledir:,backupdir: -n "$PROGRAM" -- "$@")"
+    local err=$?
+    eval set -- "$opts"
+    while true; do
+        case $1 in
+            -u|--unsplit) split=0; shift ;;
+            -d|--dongledir) dongledir="$2"; shift 2 ;;
+            -b|--backupdir) backupdir="$2"; shift 2 ;;
+            --) shift; break ;;
+        esac
+    done
+    [[ $err == 0 ]] || fail "Usage:\n$(cmd_key_restore_help)"
+
     local file="$1"
     [[ -n "$file" ]] || fail "Usage:\n$(cmd_key_restore_help)"
     [[ -f "$file" ]] || fail "Cannot find file: $file"
 
+    if [[ $split == 1 ]]; then
+        call_fn set_dongle "$dongledir"
+        [[ -d "$backupdir" ]] || fail "Backup directory does not exist: $backupdir"
+        [[ -w "$backupdir" ]] || fail "Backup directory is not writable: $backupdir"
+    fi
+
     # restore
-    echo "Restoreing key from file: $file"
-    gpg --import "$file"
+    echo "Restoring key from file: $file"
+    gpg --import "$file" 2>/dev/null || fail "Failed to import file: $file"
 
     # set trust to 'ultimate'
     local key_id=$(gpg --with-fingerprint --with-colons "$file" | grep '^sec' | cut -d: -f5)
     local commands=$(echo "trust|5|y|quit" | tr '|' "\n")
     script -c "gpg --batch --command-fd=0 --key-edit $key_id <<< \"$commands\" " /dev/null > /dev/null
+
+    # split the key into partial keys
+    if [[ $split == 1 ]]; then
+        local options=''
+        [[ -n $DONGLE ]] && options+=" -d $DONGLE"
+        [[ -n $backupdir ]] && options+=" -b $backupdir"
+        call cmd_key_split $options
+    fi
+
 }
 
 #

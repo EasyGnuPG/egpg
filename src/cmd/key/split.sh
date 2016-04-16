@@ -16,6 +16,7 @@ cmd_key_split() {
     # get the key and check that it is not already split
     get_gpg_key
     is_unsplit_key || fail "\nThe key is already split.\n"
+    echo -e "\nSplitting the key: $GPG_KEY\n"
 
     # get options
     local opts dongledir backupdir

@@ -8,7 +8,6 @@ set_dongle() {
         [[ -z "$guess" ]] && guess=$(df -h | grep '/dev/sdb1' | sed 's/ \+/:/g' | cut -d: -f6)
         [[ -z "$guess" ]] && guess=$(df -h | grep '/dev/sdc1' | sed 's/ \+/:/g' | cut -d: -f6)
         [[ -n "$guess" ]] && suggest=" [$guess]"
-        echo
         read -e -p "Enter the dongle directory$suggest: " dongledir
         echo
         dongledir=${dongledir:-$guess}
