@@ -1,3 +1,33 @@
+# Auxiliary functions.
+
+yesno() {
+    local response
+    read -r -p "$1 [y/N] " response
+    [[ $response == [yY] ]] || return 1
+}
+
+fail() {
+    echo -e "$@" >&2
+    exit 1
+}
+
+debug() {
+    is_true $DEBUG || return
+    echo "$@"
+}
+
+is_true() {
+    local var="${1,,}"
+    [[ $var == 1 ]] && return
+    [[ $var == 'yes' ]] && return
+    [[ $var == 'true' ]] && return
+    [[ $var == 'enabled' ]] && return
+}
+
+is_false() {
+    ! is_true "$@"
+}
+
 # Return the ids of the keys that are not revoked and not expired.
 get_valid_keys(){
     local homedir="${1:-$GNUPGHOME}"
@@ -101,98 +131,6 @@ combine_partial_keys() {
     gfcombine "$WORKDIR/$partial1" "$WORKDIR/$partial2"
 }
 
-gpg_send_keys() {
-    is_true $SHARE || return
-    gnupghome_setup
-    gpg --keyserver "$KEYSERVER" --send-keys "$@"
-    gnupghome_reset
-}
-
-get_new_passphrase() {
-    local passphrase passphrase_again
-    while true; do
-        read -r -p "Enter passphrase for the new key: " -s passphrase || return
-        echo
-        read -r -p "Retype the passphrase of the key: " -s passphrase_again || return
-        echo
-        if [[ "$passphrase" == "$passphrase_again" ]]; then
-            PASSPHRASE="$passphrase"
-            break
-        else
-            echo "Error: the entered passphrases do not match."
-        fi
-    done
-}
-
-get_passphrase() {
-    [[ -v PASSPHRASE ]] && return
-    read -r -p "Passphrase: " -s PASSPHRASE || return
-    [[ -t 0 ]] && echo
-}
-
-yesno() {
-    local response
-    read -r -p "$1 [y/N] " response
-    [[ $response == [yY] ]] || return 1
-}
-
-fail() {
-    echo -e "$@" >&2
-    exit 1
-}
-
-debug() {
-    is_true $DEBUG || return
-    echo "$@"
-}
-
-is_true() {
-    local var="${1,,}"
-    [[ $var == 1 ]] && return
-    [[ $var == 'yes' ]] && return
-    [[ $var == 'true' ]] && return
-    [[ $var == 'enabled' ]] && return
-}
-
-is_false() {
-    ! is_true "$@"
-}
-
-print_key() {
-    local id info fpr uid time1 time2 u start end exp
-
-    id=$1
-    info=$(gpg --list-keys --fingerprint --with-sig-check --with-colons $id)
-
-    echo "id: $id"
-
-    # uid
-    echo "$info" | grep -E '^uid:[^r]:' | cut -d: -f10 | \
-        while read uid; do echo "uid: $uid"; done
-
-    # fpr
-    fpr=$(echo "$info" | grep '^fpr:' | cut -d: -f10 | sed 's/..../\0 /g')
-    echo "fpr: $fpr"
-
-    # trust
-    t=$(echo "$info" | grep '^pub:' | cut -d: -f9)
-    case "$t" in u) t='ultimate';; f) t='full';; m) t='marginal';; n) t='none';; *) t='unknown';; esac
-    [[ $t == 'unknown' ]] || echo "trust: $t"
-
-    # keys
-    echo "$info" | grep -E '^(pub|sub):[^r]:' | cut -d: -f5,6,7,12 | while IFS=: read id time1 time2 u; do
-        start=$(date -d @$time1 +%F)
-        end='never'; [[ -n $time2 ]] && end=$(date -d @$time2 +%F)
-        exp=''; [[ -n $time2 ]] && [ $(date +%s) -gt $time2 ] && exp='expired'
-        case "$u" in a) u='auth';; s) u='sign';; e) u='encr';; *) u='cert';; esac
-        echo "$u: $id $start $end $exp"
-    done
-
-    # verifications
-    echo "$info" | grep '^sig:!:' | grep -v "$id" | cut -d: -f5,10 | uniq | \
-        while IFS=: read id uid; do echo "certified by: $uid ($id)"; done
-}
-
 #
 # This file is part of EasyGnuPG.  EasyGnuPG is a wrapper around GnuPG
 # to simplify its operations.  Copyright (C) 2016 Dashamir Hoxha
@@ -209,3 +147,4 @@ print_key() {
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see http://www.gnu.org/licenses/
+#

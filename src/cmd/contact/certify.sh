@@ -46,7 +46,7 @@ cmd_contact_certify() {
         gpg --lsign-key $cert_opts "$contact"
     else
         gpg --sign-key $cert_opts "$contact"
-        gpg_send_keys "$contact"
+        call_fn gpg_send_keys "$contact"
     fi
 }
 

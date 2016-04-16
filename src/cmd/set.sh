@@ -15,7 +15,7 @@ cmd_set() {
             local value=$1
             SHARE=$value
             sed -i "$EGPG_DIR/config.sh" -e "/SHARE=/c SHARE=$value"
-            gpg_send_keys
+            call_fn gpg_send_keys
             ;;
         dongle)
             local dongledir="$@"

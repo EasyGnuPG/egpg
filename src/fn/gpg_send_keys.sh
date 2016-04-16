@@ -1,25 +1,10 @@
-# Revoke the key.
+# Send the given keys to keyserver network.
 
-cmd_key_rev_help() {
-    cat <<-_EOF
-    rev,revoke [<revocation-certificate>]
-        Cancel the key by publishing the given revocation certificate.
-
-_EOF
-}
-
-cmd_key_rev() {
-    local revoke_cert="$1"
-    get_gpg_key
-    [[ -n "$revoke_cert" ]] || revoke_cert="$GNUPGHOME/$GPG_KEY.revoke"
-    [[ -f "$revoke_cert" ]] || fail "Revocation certificate not found: $revoke_cert"
-
-    yesno "
-Revocation will make your current key useless. You'll need
-to generate a new one. Are you sure about this?" || return 1
-
-    gpg --import "$revoke_cert"
-    call_fn gpg_send_keys $GPG_KEY
+gpg_send_keys() {
+    is_true $SHARE || return
+    gnupghome_setup
+    gpg --keyserver "$KEYSERVER" --send-keys "$@"
+    gnupghome_reset
 }
 
 #

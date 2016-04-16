@@ -100,8 +100,24 @@ cmd_key_gen() {
     call cmd_key_revcert "This revocation certificate was generated when the key was created."
 
     # send the key to keyserver
-    gpg_send_keys $GPG_KEY
+    call_fn gpg_send_keys $GPG_KEY
     return 0
+}
+
+get_new_passphrase() {
+    local passphrase passphrase_again
+    while true; do
+        read -r -p "Enter passphrase for the new key: " -s passphrase || return
+        echo
+        read -r -p "Retype the passphrase of the key: " -s passphrase_again || return
+        echo
+        if [[ "$passphrase" == "$passphrase_again" ]]; then
+            PASSPHRASE="$passphrase"
+            break
+        else
+            echo "Error: the entered passphrases do not match."
+        fi
+    done
 }
 
 #
