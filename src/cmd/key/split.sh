@@ -31,12 +31,8 @@ cmd_key_split() {
     done
     [[ $err == 0 ]] || fail "Usage:\n$(cmd_key_split_help)"
 
-    # check $dongle and set $DONGLE
-    call_fn set_dongle "$dongle"
-
-    # check the backup dir
-    [[ -d "$backup" ]] || fail "Backup directory does not exist: $backup"
-    [[ -w "$backup" ]] || fail "Backup directory is not writable: $backup"
+    # check options
+    call_fn check_split_options "$backup" "$dongle"
 
     # export key to a tmp dir
     workdir_make

@@ -1,7 +1,7 @@
-# Check the given dongle and set it to DONGLE.
+# Check the given backup and dongle options. Set dongle to DONGLE.
 
-set_dongle() {
-    local dongle="$1"
+check_split_options() {
+    local backup="$1" dongle="$2"
     if [[ -z "$dongle" ]]; then
         local guess suggest
         guess="$DONGLE"
@@ -19,6 +19,10 @@ set_dongle() {
 
     # set DONGLE on the config file
     sed -i "$EGPG_DIR/config.sh" -e "/DONGLE=/c DONGLE=\"$DONGLE\""
+
+    # check the $backup option
+    [[ -d "$backup" ]] || fail "Backup directory does not exist: $backup"
+    [[ -w "$backup" ]] || fail "Backup directory is not writable: $backup"
 }
 
 #

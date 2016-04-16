@@ -42,11 +42,8 @@ cmd_key_gen() {
     [[ -n "$real_name" ]] || read -e -p "Real Name to be associated with the key: " real_name
     real_name=${real_name:-anonymous}
 
-    if [[ $split == 1 ]]; then
-        call_fn set_dongle "$dongle"
-        [[ -d "$backup" ]] || fail "Backup directory does not exist: $backup"
-        [[ -w "$backup" ]] || fail "Backup directory is not writable: $backup"
-    fi
+    # check split options
+    [[ $split == 1 ]] && call_fn check_split_options "$backup" "$dongle"
 
     local PARAMETERS="
         Key-Type: RSA

@@ -29,11 +29,8 @@ cmd_key_restore() {
     [[ -n "$file" ]] || fail "Usage:\n$(cmd_key_restore_help)"
     [[ -f "$file" ]] || fail "Cannot find file: $file"
 
-    if [[ $split == 1 ]]; then
-        call_fn set_dongle "$dongle"
-        [[ -d "$backup" ]] || fail "Backup directory does not exist: $backup"
-        [[ -w "$backup" ]] || fail "Backup directory is not writable: $backup"
-    fi
+    # check split options
+    [[ $split == 1 ]] && call_fn check_split_options "$backup" "$dongle"
 
     # restore
     echo "Restoring key from file: $file"
