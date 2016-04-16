@@ -31,7 +31,7 @@ cmd_key_list() {
         get_gpg_key
         secret_keys=$GPG_KEY
     else
-        secret_keys=$(gpg --list-secret-keys --with-colons | grep '^sec' | cut -d: -f5)
+        secret_keys=$(get_valid_keys)
     fi
 
     [[ $raw == 1 ]] && \
