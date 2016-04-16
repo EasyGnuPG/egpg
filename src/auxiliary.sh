@@ -25,6 +25,7 @@ No valid key found.
 
 Try first:  $(basename $0) key gen
        or:  $(basename $0) key fetch
+       or:  $(basename $0) key restore
 "
 
     # check for key expiration

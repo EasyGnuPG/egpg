@@ -108,6 +108,14 @@ call() {
     fi
 }
 
+call_fn() {
+    local fn=$1; shift
+    local file="$LIBDIR/fn/$fn.sh"
+    [[ -f "$file" ]] || fail "Cannot find function file: $file"
+    source "$file"
+    $fn "$@"
+}
+
 call_ext() {
     local cmd=$1; shift
 

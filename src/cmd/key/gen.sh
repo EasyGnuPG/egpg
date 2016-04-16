@@ -49,24 +49,7 @@ cmd_key_gen() {
     real_name=${real_name:-anonymous}
 
     if [[ $split == 1 ]]; then
-        # get the dongle dir
-        if [[ -z "$dongledir" ]]; then
-            local guess suggest
-            guess="$DONGLE"
-            [[ -z "$guess" ]] && guess=$(df -h | grep '/dev/sdb1' | sed 's/ \+/:/g' | cut -d: -f6)
-            [[ -z "$guess" ]] && guess=$(df -h | grep '/dev/sdc1' | sed 's/ \+/:/g' | cut -d: -f6)
-            [[ -n "$guess" ]] && suggest=" [$guess]"
-            echo
-            read -e -p "Enter the dongle directory$suggest: " dongledir
-            echo
-            dongledir=${dongledir:-$guess}
-        fi
-        [[ -n "$dongledir" ]] || fail "You need a dongle to save the partial key."
-        [[ -d "$dongledir" ]] || fail "Dongle directory does not exist: $dongledir"
-        [[ -w "$dongledir" ]] || fail "Dongle directory is not writable: $dongledir"
-        dongledir=${dongledir%/}
-
-        # check the backup dir
+        call_fn set_dongle "$dongledir"
         [[ -d "$backupdir" ]] || fail "Backup directory does not exist: $backupdir"
         [[ -w "$backupdir" ]] || fail "Backup directory is not writable: $backupdir"
     fi
@@ -105,7 +88,7 @@ cmd_key_gen() {
     # split the key into partial keys
     if [[ $split == 1 ]]; then
         local options=''
-        [[ -n $dongledir ]] && options+=" -d $dongledir"
+        [[ -n $DONGLE ]] && options+=" -d $DONGLE"
         [[ -n $backupdir ]] && options+=" -b $backupdir"
         call cmd_key_split $options
     fi

@@ -15,7 +15,7 @@ _EOF
 cmd_key_split() {
     # get the key and check that it is not already split
     get_gpg_key
-    is_unsplit_key || fail "The key is already split."
+    is_unsplit_key || fail "\nThe key is already split.\n"
 
     # get options
     local opts dongledir backupdir
@@ -32,22 +32,8 @@ cmd_key_split() {
     done
     [[ $err == 0 ]] || fail "Usage:\n$(cmd_key_split_help)"
 
-    # get the dongle dir
-    if [[ -z "$dongledir" ]]; then
-        local guess suggest
-        guess="$DONGLE"
-        [[ -z "$guess" ]] && guess=$(df -h | grep '/dev/sdb1' | sed 's/ \+/:/g' | cut -d: -f6)
-        [[ -z "$guess" ]] && guess=$(df -h | grep '/dev/sdc1' | sed 's/ \+/:/g' | cut -d: -f6)
-        [[ -n "$guess" ]] && suggest=" [$guess]"
-        echo
-        read -e -p "Enter the dongle directory$suggest: " dongledir
-        echo
-        dongledir=${dongledir:-$guess}
-    fi
-    [[ -n "$dongledir" ]] || fail "You need a dongle to save the partial key."
-    [[ -d "$dongledir" ]] || fail "Dongle directory does not exist: $dongledir"
-    [[ -w "$dongledir" ]] || fail "Dongle directory is not writable: $dongledir"
-    dongledir=${dongledir%/}
+    # check $dongledir and set $DONGLE
+    call_fn set_dongle "$dongledir"
 
     # check the backup dir
     [[ -d "$backupdir" ]] || fail "Backup directory does not exist: $backupdir"
@@ -74,20 +60,17 @@ cmd_key_split() {
         || fail "Could not copy partial key to the backup dir: $backupdir"
     echo " * Backup partial key saved to: $backupdir/$partial1"
 
-    mkdir -p "$dongledir/.egpg_key/" \
-        || fail "Could not create directory: $dongledir/.egpg_key/"
-    mv "$WORKDIR/$partial2" "$dongledir/.egpg_key/" \
-        || fail "Could not copy partial key to the dongle: $dongledir/.egpg_key/"
-    echo " * Dongle partial key saved to: $dongledir/.egpg_key/$partial2"
+    mkdir -p "$DONGLE/.egpg_key/" \
+        || fail "Could not create directory: $DONGLE/.egpg_key/"
+    mv "$WORKDIR/$partial2" "$DONGLE/.egpg_key/" \
+        || fail "Could not copy partial key to the dongle: $DONGLE/.egpg_key/"
+    echo " * Dongle partial key saved to: $DONGLE/.egpg_key/$partial2"
 
     mv "$WORKDIR/$partial3" "$EGPG_DIR" \
         || fail "Could not copy partial key to: $EGPG_DIR"
     echo " * Local  partial key saved to: $EGPG_DIR/$partial3"
 
     workdir_clear
-
-    # set DONGLE on the config file
-    sed -i "$EGPG_DIR/config.sh" -e "/DONGLE=/c DONGLE=\"$dongledir\""
 
     # delete the secret key
     local fingerprint=$(gpg --list-keys --with-colons --fingerprint $GPG_KEY | grep '^fpr:' | cut -d: -f10)
