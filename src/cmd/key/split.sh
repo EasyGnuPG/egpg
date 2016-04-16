@@ -2,12 +2,10 @@
 
 cmd_key_split_help() {
     cat <<-_EOF
-    split [-d,--dongledir <dir>] [-b,--backupdir <dir>]
-        Split the key into 3 partial keys; one of them is kept on the
-        PC, one of them is stored on a dongle (removable device, usb),
-        and the other one is used as a backup. After this, the dongle
-        with the partial key has to be connected to the PC whenever we
-        need to use the key (to sign or decrypt).
+    split [-d,--dongle <dir>] [-b,--backup <dir>]
+        Split the key into 3 partial keys and store one of them on the
+        dongle (removable device, usb), keep the other one locally,
+        and use the third one as a backup.
 
 _EOF
 }
@@ -15,30 +13,30 @@ _EOF
 cmd_key_split() {
     # get the key and check that it is not already split
     get_gpg_key
-    is_unsplit_key || fail "\nThe key is already split.\n"
+    is_full_key || fail "\nThe key is already split.\n"
     echo -e "\nSplitting the key: $GPG_KEY\n"
 
     # get options
-    local opts dongledir backupdir
-    backupdir=$(pwd)
-    opts="$(getopt -o d:b: -l dongledir:,backupdir: -n "$PROGRAM" -- "$@")"
+    local opts dongle backup
+    backup=$(pwd)
+    opts="$(getopt -o d:b: -l dongle:,backup: -n "$PROGRAM" -- "$@")"
     local err=$?
     eval set -- "$opts"
     while true; do
         case $1 in
-            -d|--dongledir) dongledir="$2"; shift 2 ;;
-            -b|--backupdir) backupdir="$2"; shift 2 ;;
+            -d|--dongle) dongle="$2"; shift 2 ;;
+            -b|--backup) backup="$2"; shift 2 ;;
             --) shift; break ;;
         esac
     done
     [[ $err == 0 ]] || fail "Usage:\n$(cmd_key_split_help)"
 
-    # check $dongledir and set $DONGLE
-    call_fn set_dongle "$dongledir"
+    # check $dongle and set $DONGLE
+    call_fn set_dongle "$dongle"
 
     # check the backup dir
-    [[ -d "$backupdir" ]] || fail "Backup directory does not exist: $backupdir"
-    [[ -w "$backupdir" ]] || fail "Backup directory is not writable: $backupdir"
+    [[ -d "$backup" ]] || fail "Backup directory does not exist: $backup"
+    [[ -w "$backup" ]] || fail "Backup directory is not writable: $backup"
 
     # export key to a tmp dir
     workdir_make
@@ -57,9 +55,9 @@ cmd_key_split() {
     partial3=$(echo $partials | cut -d' ' -f3)
 
     # copy partials to the corresponding directories
-    mv "$WORKDIR/$partial1" "$backupdir" \
-        || fail "Could not copy partial key to the backup dir: $backupdir"
-    echo " * Backup partial key saved to: $backupdir/$partial1"
+    mv "$WORKDIR/$partial1" "$backup" \
+        || fail "Could not copy partial key to the backup dir: $backup"
+    echo " * Backup partial key saved to: $backup/$partial1"
 
     mkdir -p "$DONGLE/.egpg_key/" \
         || fail "Could not create directory: $DONGLE/.egpg_key/"

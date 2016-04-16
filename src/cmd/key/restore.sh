@@ -2,11 +2,8 @@
 
 cmd_key_restore_help() {
     cat <<-_EOF
-    restore <file> [-u,--unsplit] \\
-                   [-d,--dongledir <dir>] [-b,--backupdir <dir>]
-        Restore key from file. By default it will be split into
-        3 partial keys: one saved locally, one on the dongle,
-        and one to be used as a backup.
+    restore <file>
+        Restore key from file.
 
 _EOF
 }
@@ -14,15 +11,15 @@ _EOF
 cmd_key_restore() {
     assert_no_valid_key
 
-    local opts split=1 dongledir backupdir=$(pwd)
-    opts="$(getopt -o ud:b: -l unsplit,dongledir:,backupdir: -n "$PROGRAM" -- "$@")"
+    local opts split=1 dongle backup=$(pwd)
+    opts="$(getopt -o fd:b: -l full,dongle:,backup: -n "$PROGRAM" -- "$@")"
     local err=$?
     eval set -- "$opts"
     while true; do
         case $1 in
-            -u|--unsplit) split=0; shift ;;
-            -d|--dongledir) dongledir="$2"; shift 2 ;;
-            -b|--backupdir) backupdir="$2"; shift 2 ;;
+            -f|--full) split=0; shift ;;
+            -d|--dongle) dongle="$2"; shift 2 ;;
+            -b|--backup) backup="$2"; shift 2 ;;
             --) shift; break ;;
         esac
     done
@@ -33,9 +30,9 @@ cmd_key_restore() {
     [[ -f "$file" ]] || fail "Cannot find file: $file"
 
     if [[ $split == 1 ]]; then
-        call_fn set_dongle "$dongledir"
-        [[ -d "$backupdir" ]] || fail "Backup directory does not exist: $backupdir"
-        [[ -w "$backupdir" ]] || fail "Backup directory is not writable: $backupdir"
+        call_fn set_dongle "$dongle"
+        [[ -d "$backup" ]] || fail "Backup directory does not exist: $backup"
+        [[ -w "$backup" ]] || fail "Backup directory is not writable: $backup"
     fi
 
     # restore
@@ -51,10 +48,9 @@ cmd_key_restore() {
     if [[ $split == 1 ]]; then
         local options=''
         [[ -n $DONGLE ]] && options+=" -d $DONGLE"
-        [[ -n $backupdir ]] && options+=" -b $backupdir"
+        [[ -n $backup ]] && options+=" -b $backup"
         call cmd_key_split $options
     fi
-
 }
 
 #

@@ -1,21 +1,21 @@
-# Check the given dongledir and set it to DONGLE.
+# Check the given dongle and set it to DONGLE.
 
 set_dongle() {
-    local dongledir="$1"
-    if [[ -z "$dongledir" ]]; then
+    local dongle="$1"
+    if [[ -z "$dongle" ]]; then
         local guess suggest
         guess="$DONGLE"
         [[ -z "$guess" ]] && guess=$(df -h | grep '/dev/sdb1' | sed 's/ \+/:/g' | cut -d: -f6)
         [[ -z "$guess" ]] && guess=$(df -h | grep '/dev/sdc1' | sed 's/ \+/:/g' | cut -d: -f6)
         [[ -n "$guess" ]] && suggest=" [$guess]"
-        read -e -p "Enter the dongle directory$suggest: " dongledir
+        read -e -p "Enter the dongle directory$suggest: " dongle
         echo
-        dongledir=${dongledir:-$guess}
+        dongle=${dongle:-$guess}
     fi
-    [[ -n "$dongledir" ]] || fail "You need a dongle to save the partial key."
-    [[ -d "$dongledir" ]] || fail "Dongle directory does not exist: $dongledir"
-    [[ -w "$dongledir" ]] || fail "Dongle directory is not writable: $dongledir"
-    export DONGLE=${dongledir%/}
+    [[ -n "$dongle" ]] || fail "You need a dongle to save the partial key."
+    [[ -d "$dongle" ]] || fail "Dongle directory does not exist: $dongle"
+    [[ -w "$dongle" ]] || fail "Dongle directory is not writable: $dongle"
+    export DONGLE=${dongle%/}
 
     # set DONGLE on the config file
     sed -i "$EGPG_DIR/config.sh" -e "/DONGLE=/c DONGLE=\"$DONGLE\""

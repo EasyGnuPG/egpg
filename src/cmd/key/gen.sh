@@ -2,16 +2,10 @@
 
 cmd_key_gen_help() {
     cat <<-_EOF
-    gen,generate [<email> <name>] [-u,--unsplit] [-p,--passphrase] \\
-                 [-d,--dongledir <dir>] [-b,--backupdir <dir>]
+    gen,generate [<email> <name>]
         Create a new GPG key. If <email> and <name> are not given as
-        arguments, they will be asked interactively. The same for the
-        --dongledir option. The default for the --backupdir option is
-        the current working directory ($(pwd)).
-        By default the key is split into three partial keys (one
-        stored on the dongle, one locally, and one for backup) and no
-        passphrase is used.  These can be changed with the options
-        --unsplit and --passphrase.
+        arguments, they will be asked interactively. By default the
+        key will be split and no passphrase will be used.
 
 _EOF
 }
@@ -19,16 +13,16 @@ _EOF
 cmd_key_gen() {
     assert_no_valid_key
 
-    local opts split=1 pass dongledir backupdir=$(pwd)
-    opts="$(getopt -o upd:b: -l unsplit,passphrase,dongledir:,backupdir: -n "$PROGRAM" -- "$@")"
+    local opts split=1 pass dongle backup=$(pwd)
+    opts="$(getopt -o fpd:b: -l full,passphrase,dongle:,backup: -n "$PROGRAM" -- "$@")"
     local err=$?
     eval set -- "$opts"
     while true; do
         case $1 in
-            -u|--unsplit) split=0; shift ;;
+            -f|--full) split=0; shift ;;
             -p|--passphrase) pass=1; shift ;;
-            -d|--dongledir) dongledir="$2"; shift 2 ;;
-            -b|--backupdir) backupdir="$2"; shift 2 ;;
+            -d|--dongle) dongle="$2"; shift 2 ;;
+            -b|--backup) backup="$2"; shift 2 ;;
             --) shift; break ;;
         esac
     done
@@ -49,9 +43,9 @@ cmd_key_gen() {
     real_name=${real_name:-anonymous}
 
     if [[ $split == 1 ]]; then
-        call_fn set_dongle "$dongledir"
-        [[ -d "$backupdir" ]] || fail "Backup directory does not exist: $backupdir"
-        [[ -w "$backupdir" ]] || fail "Backup directory is not writable: $backupdir"
+        call_fn set_dongle "$dongle"
+        [[ -d "$backup" ]] || fail "Backup directory does not exist: $backup"
+        [[ -w "$backup" ]] || fail "Backup directory is not writable: $backup"
     fi
 
     local PARAMETERS="
@@ -89,7 +83,7 @@ cmd_key_gen() {
     if [[ $split == 1 ]]; then
         local options=''
         [[ -n $DONGLE ]] && options+=" -d $DONGLE"
-        [[ -n $backupdir ]] && options+=" -b $backupdir"
+        [[ -n $backup ]] && options+=" -b $backup"
         call cmd_key_split $options
     fi
 

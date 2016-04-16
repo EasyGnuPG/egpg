@@ -3,7 +3,7 @@
 cmd_key_join_help() {
     cat <<-_EOF
     join
-        Join two partial keys into a normal key and delete them.
+        Join two partial keys into a full key and delete the partials.
 
 _EOF
 }

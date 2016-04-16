@@ -84,7 +84,7 @@ assert_no_valid_key(){
 }
 
 # Return true if the key is not split.
-is_unsplit_key() {
+is_full_key() {
     local key_id=${1:-$GPG_KEY}
     [[ -n $(gpg --list-secret-keys --with-colons $key_id 2>/dev/null) ]]
 }
@@ -98,7 +98,7 @@ gnupghome_setup() {
     export GNUPGHOME="$WORKDIR"
 
     get_gpg_key    # get $GPG_KEY
-    is_unsplit_key && return
+    is_full_key && return
 
     combine_partial_keys
     gpg --import "$WORKDIR/$GPG_KEY.key" 2>/dev/null || fail "Could not import the combined key."
