@@ -2,8 +2,9 @@
 
 cmd_key_fetch_help() {
     cat <<-_EOF
-    fetch [-d,--homedir <gnupghome>] [-k,--key-id <key-id>]
-        Get a key from another gpg directory (by default from $GNUPGHOME).
+    fetch [-h,--homedir <gnupghome>] [-k,--key-id <key-id>]
+        Get a key from another gpg directory
+        (by default from $GNUPGHOME).
 
 _EOF
 }
@@ -11,14 +12,17 @@ _EOF
 cmd_key_fetch() {
     assert_no_valid_key
 
-    local opts homedir key_id
-    opts="$(getopt -o d:k: -l homedir:,key-id: -n "$PROGRAM" -- "$@")"
+    local opts homedir key_id split=1 dongle backup=$(pwd)
+    opts="$(getopt -o h:k:fd:b: -l homedir:,key_id:,full,dongle:,backup: -n "$PROGRAM" -- "$@")"
     local err=$?
     eval set -- "$opts"
     while true; do
         case $1 in
-            -d|--homedir) homedir="$2"; shift 2 ;;
+            -h|--homedir) homedir="$2"; shift 2 ;;
             -k|--key-id) key_id="$2"; shift 2 ;;
+            -f|--full) split=0; shift ;;
+            -d|--dongle) dongle="$2"; shift 2 ;;
+            -b|--backup) backup="$2"; shift 2 ;;
             --) shift; break ;;
         esac
     done
@@ -28,25 +32,31 @@ cmd_key_fetch() {
     [[ -n "$homedir" ]] || homedir="$ENV_GNUPGHOME"
     [[ -n "$homedir" ]] || fail "No gnupg directory to import from."
     [[ -d "$homedir" ]] || fail "Cannot find gnupg directory: $homedir"
-    echo "Importing key from: $homedir"
+    echo -e "\nImporting key from: $homedir\n"
 
     # get id of the key to be imported
     [[ -n "$key_id" ]] || key_id=$(get_valid_keys "$homedir" | cut -d' ' -f1)
     [[ -n "$key_id" ]] || fail "No valid key found."
 
-    # export to tmp file
-    workdir_make
-    local file="$WORKDIR/$key_id.key"
-    gpg --homedir="$homedir" --armor --export $key_id > "$file"
-    gpg --homedir="$homedir" --armor --export-secret-keys $key_id >> "$file"
+    # check split options
+    [[ $split == 1 ]] && call_fn check_split_options "$backup" "$dongle"
 
+    local egpghome="$GNUPGHOME"
+    gnupghome_setup "$homedir"
+    # export to tmp file
+    local file="$WORKDIR/$key_id.key"
+    gpg --armor --export $key_id > "$file"
+    gpg --armor --export-secret-keys $key_id >> "$file"
     # import from the tmp file
-    gpg --import "$file"
-    rm -rf "$WORKDIR"
+    gpg --homedir="$egpghome" --import "$file" 2>/dev/null || fail "Failed to import file: $file"
+    gnupghome_reset
 
     # set trust to ultimate
     local commands=$(echo "trust|5|y|quit" | tr '|' "\n")
     script -c "gpg --command-fd=0 --key-edit $key_id <<< \"$commands\" " /dev/null > /dev/null
+
+    # split the key into partial keys
+    [[ $split == 1 ]] && call_fn split_key $backup
 }
 
 #
