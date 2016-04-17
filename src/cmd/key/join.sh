@@ -9,14 +9,33 @@ _EOF
 }
 
 cmd_key_join() {
+    get_gpg_key    # get $GPG_KEY
+    is_full_key && fail "\nThe key is not split.\n"
+
+    # get the partial keys
+    local partial1 partial2
+    partial1=$(cd "$GNUPGHOME"; ls $GPG_KEY.key.[0-9][0-9][0-9] 2>/dev/null)
+    [[ -f "$GNUPGHOME/$partial1" ]] \
+        || fail "Could not find partial key for $GPG_KEY on $GNUPGHOME"
+    [[ -d "$DONGLE" ]] \
+        || fail "The dongle directory not found: $DONGLE\nMake sure that the dongle is connected and mounted."
+    [[ -d "$DONGLE/.gnupg/" ]] \
+        || fail "Directory not found: $DONGLE"
+    partial2=$(cd "$DONGLE/.gnupg"; ls $GPG_KEY.key.[0-9][0-9][0-9] 2>/dev/null)
+    [[ -f "$DONGLE/.gnupg/$partial2" ]] \
+        || fail "Could not find partial key for $GPG_KEY on $DONGLE/.gnupg/"
+
+    # combine partial keys and import the full key
     workdir_make
-    combine_partial_keys
+    cp "$GNUPGHOME/$partial1" "$WORKDIR/"
+    cp "$DONGLE/.gnupg/$partial2" "$WORKDIR/"
+    gfcombine "$WORKDIR/$partial1" "$WORKDIR/$partial2"
     gpg --import "$WORKDIR/$GPG_KEY.key" 2>/dev/null || fail "Could not import the combined key."
     workdir_clear
 
     # remove the partials
-    rm -f "$EGPG_DIR"/$GPG_KEY.key.[0-9][0-9][0-9]
-    rm -f "$DONGLE"/.egpg_key/$GPG_KEY.key.[0-9][0-9][0-9]
+    rm -f "$GNUPGHOME"/$partial1
+    rm -f "$DONGLE"/.gnupg/$partial2
     rm -f $GPG_KEY.key.[0-9][0-9][0-9]
 
     # display a notice

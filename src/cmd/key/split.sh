@@ -55,15 +55,15 @@ cmd_key_split() {
         || fail "Could not copy partial key to the backup dir: $backup"
     echo " * Backup partial key saved to: $backup/$partial1"
 
-    mkdir -p "$DONGLE/.egpg_key/" \
-        || fail "Could not create directory: $DONGLE/.egpg_key/"
-    mv "$WORKDIR/$partial2" "$DONGLE/.egpg_key/" \
-        || fail "Could not copy partial key to the dongle: $DONGLE/.egpg_key/"
-    echo " * Dongle partial key saved to: $DONGLE/.egpg_key/$partial2"
+    mkdir -p "$DONGLE/.gnupg/" \
+        || fail "Could not create directory: $DONGLE/.gnupg/"
+    mv "$WORKDIR/$partial2" "$DONGLE/.gnupg/" \
+        || fail "Could not copy partial key to the dongle: $DONGLE/.gnupg/"
+    echo " * Dongle partial key saved to: $DONGLE/.gnupg/$partial2"
 
-    mv "$WORKDIR/$partial3" "$EGPG_DIR" \
-        || fail "Could not copy partial key to: $EGPG_DIR"
-    echo " * Local  partial key saved to: $EGPG_DIR/$partial3"
+    mv "$WORKDIR/$partial3" "$GNUPGHOME" \
+        || fail "Could not copy partial key to: $GNUPGHOME"
+    echo " * Local  partial key saved to: $GNUPGHOME/$partial3"
 
     workdir_clear
 

@@ -18,8 +18,8 @@ cmd_key_delete() {
     gpg --batch --delete-secret-and-public-keys "$fingerprint"
 
     # remove any partials
-    rm -f "$EGPG_DIR"/$key_id.key.[0-9][0-9][0-9]
-    rm -f "$DONGLE"/.egpg_key/$key_id.key.[0-9][0-9][0-9]
+    rm -f "$GNUPGHOME"/$key_id.key.[0-9][0-9][0-9]
+    rm -f "$DONGLE"/.gnupg/$key_id.key.[0-9][0-9][0-9]
     rm -f $key_id.key.[0-9][0-9][0-9]
 }
 

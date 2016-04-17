@@ -30,13 +30,13 @@ is_false() {
 
 # Return the ids of the keys that are not revoked and not expired.
 get_valid_keys(){
-    local homedir="${1:-$GNUPGHOME}"
+    local gnupghome="${1:-$GNUPGHOME}"
     local valid_keys=''
     local secret_keys partial_keys key_id keyinfo expiration
-    secret_keys=$(gpg --homedir="$homedir" --list-secret-keys --with-colons | grep '^sec' | cut -d: -f5)
-    partial_keys=$(ls $EGPG_DIR/*.key.* 2>/dev/null | sed -e "s#\.key\..*\$##" -e "s#^.*/##" | uniq)
+    secret_keys=$(gpg --homedir="$gnupghome" --list-secret-keys --with-colons | grep '^sec' | cut -d: -f5)
+    partial_keys=$(ls "$gnupghome"/*.key.* 2>/dev/null | sed -e "s#\.key\..*\$##" -e "s#^.*/##" | uniq)
     for key_id in $secret_keys $partial_keys; do
-        keyinfo=$(gpg --homedir="$homedir" --list-keys --with-colons $key_id | grep '^pub:u:')
+        keyinfo=$(gpg --homedir="$gnupghome" --list-keys --with-colons $key_id | grep '^pub:u:')
         [[ -z $keyinfo ]] && continue
         expiration=$(echo "$keyinfo" | cut -d: -f7)
         [[ -n $expiration ]] && [[ $expiration -lt $(date +%s) ]] && continue
@@ -83,7 +83,7 @@ assert_no_valid_key(){
     [[ -z $gpg_key ]] || fail "There is already a valid key.\nRevoke or delete it first."
 }
 
-# Return true if the key is not split.
+# Return true if the key is a full key (not partial).
 is_full_key() {
     local key_id=${1:-$GPG_KEY}
     [[ -n $(gpg --list-secret-keys --with-colons $key_id 2>/dev/null) ]]
@@ -92,43 +92,36 @@ is_full_key() {
 # Copy $GNUPGHOME to a temporary $WORKDIR
 # and import there the combined key (if it is split).
 gnupghome_setup() {
+    local gnupghome=${1:-"$GNUPGHOME"}
     workdir_make
-    cp -a "$GNUPGHOME"/* "$WORKDIR"/
+    cp -a "$gnupghome"/* "$WORKDIR"/
     GNUPGHOME_BAK="$GNUPGHOME"
     export GNUPGHOME="$WORKDIR"
 
     get_gpg_key    # get $GPG_KEY
     is_full_key && return
 
-    combine_partial_keys
-    gpg --import "$WORKDIR/$GPG_KEY.key" 2>/dev/null || fail "Could not import the combined key."
+    # get the partial keys from PC and dongle
+    local partial1 partial2
+    partial1=$(cd "$GNUPGHOME"; ls $GPG_KEY.key.[0-9][0-9][0-9] 2>/dev/null)
+    [[ -f "$GNUPGHOME/$partial1" ]] \
+        || fail "Could not find partial key for $GPG_KEY on $gnupghome"
+    [[ -d "$DONGLE" ]] \
+        || fail "The dongle directory not found: $DONGLE\nMake sure that the dongle is connected and mounted."
+    [[ -d "$DONGLE/.gnupg/" ]] \
+        || fail "Directory not found: $DONGLE"
+    partial2=$(cd "$DONGLE/.gnupg"; ls $GPG_KEY.key.[0-9][0-9][0-9] 2>/dev/null)
+    [[ -f "$DONGLE/.gnupg/$partial2" ]] \
+        || fail "Could not find partial key for $GPG_KEY on $DONGLE/.gnupg/"
+
+    # copy the partial keys to workdir and combine them
+    gfcombine "$GNUPGHOME/$partial1" "$DONGLE/.gnupg/$partial2"
+    gpg --import "$GNUPGHOME/$GPG_KEY.key" 2>/dev/null || fail "Could not import the combined key."
 }
 gnupghome_reset() {
     export GNUPGHOME="$GNUPGHOME_BAK"
     unset GNUPGHOME_BAK
     workdir_clear
-}
-
-combine_partial_keys() {
-    get_gpg_key    # get $GPG_KEY
-
-    # get the partial keys from PC and dongle
-    local partial1 partial2
-    partial1=$(cd "$EGPG_DIR"; ls $GPG_KEY.key.[0-9][0-9][0-9] 2>/dev/null)
-    [[ -f "$EGPG_DIR/$partial1" ]] \
-        || fail "Could not find partial key for $GPG_KEY on $EGPG_DIR"
-    [[ -d "$DONGLE" ]] \
-        || fail "The dongle directory not found: $DONGLE\nMake sure that the dongle is connected and mounted."
-    [[ -d "$DONGLE/.egpg_key/" ]] \
-        || fail "Directory not found: $DONGLE"
-    partial2=$(cd "$DONGLE/.egpg_key"; ls $GPG_KEY.key.[0-9][0-9][0-9] 2>/dev/null)
-    [[ -f "$DONGLE/.egpg_key/$partial2" ]] \
-        || fail "Could not find partial key for $GPG_KEY on $DONGLE/.egpg_key/"
-
-    # copy the partials to workdir and combine them
-    cp "$EGPG_DIR/$partial1" "$WORKDIR/"
-    cp "$DONGLE/.egpg_key/$partial2" "$WORKDIR/"
-    gfcombine "$WORKDIR/$partial1" "$WORKDIR/$partial2"
 }
 
 #
