@@ -5,7 +5,8 @@ cmd_key_split_help() {
     split [-d,--dongle <dir>] [-b,--backup <dir>]
         Split the key into 3 partial keys and store one of them on the
         dongle (removable device, usb), keep the other one locally,
-        and use the third one as a backup.
+        and use the third one as a backup. Afterwards, whenever the
+        key needs to be used, the dongle has to be present.
 
 _EOF
 }
@@ -32,7 +33,7 @@ cmd_key_split() {
     [[ $err == 0 ]] || fail "Usage:\n$(cmd_key_split_help)"
 
     # check options
-    call_fn check_split_options "$backup" "$dongle"
+    check_split_options "$backup" "$dongle"
 
     # export key to a tmp dir
     workdir_make
@@ -85,6 +86,31 @@ You will need it to recover the key in case that you loose the dongle
 or the PC (but it cannot help you if you loose both of them).
 
 _EOF
+}
+
+check_split_options() {
+    local backup="$1" dongle="$2"
+    if [[ -z "$dongle" ]]; then
+        local guess suggest
+        guess="$DONGLE"
+        [[ -z "$guess" ]] && guess=$(df -h | grep '/dev/sdb1' | sed 's/ \+/:/g' | cut -d: -f6)
+        [[ -z "$guess" ]] && guess=$(df -h | grep '/dev/sdc1' | sed 's/ \+/:/g' | cut -d: -f6)
+        [[ -n "$guess" ]] && suggest=" [$guess]"
+        read -e -p "Enter the dongle directory$suggest: " dongle
+        echo
+        dongle=${dongle:-$guess}
+    fi
+    [[ -n "$dongle" ]] || fail "You need a dongle to save the partial key."
+    [[ -d "$dongle" ]] || fail "Dongle directory does not exist: $dongle"
+    [[ -w "$dongle" ]] || fail "Dongle directory is not writable: $dongle"
+    export DONGLE=${dongle%/}
+
+    # set DONGLE on the config file
+    sed -i "$EGPG_DIR/config.sh" -e "/DONGLE=/c DONGLE=\"$DONGLE\""
+
+    # check the $backup option
+    [[ -d "$backup" ]] || fail "Backup directory does not exist: $backup"
+    [[ -w "$backup" ]] || fail "Backup directory is not writable: $backup"
 }
 
 #

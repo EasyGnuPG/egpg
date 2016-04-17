@@ -2,10 +2,9 @@
 
 cmd_key_gen_help() {
     cat <<-_EOF
-    gen,generate [<email> <name>]
+    gen,generate [<email> <name>] [-n,--no-passphrase]
         Create a new GPG key. If <email> and <name> are not given as
-        arguments, they will be asked interactively. By default the
-        key will be split and no passphrase will be used.
+        arguments, they will be asked interactively.
 
 _EOF
 }
@@ -13,24 +12,19 @@ _EOF
 cmd_key_gen() {
     assert_no_valid_key
 
-    local opts split=1 pass dongle backup=$(pwd)
-    opts="$(getopt -o fpd:b: -l full,passphrase,dongle:,backup: -n "$PROGRAM" -- "$@")"
+    local opts pass=1
+    opts="$(getopt -o n -l no-passphrase -n "$PROGRAM" -- "$@")"
     local err=$?
     eval set -- "$opts"
     while true; do
         case $1 in
-            -f|--full) split=0; shift ;;
-            -p|--passphrase) pass=1; shift ;;
-            -d|--dongle) dongle="$2"; shift 2 ;;
-            -b|--backup) backup="$2"; shift 2 ;;
+            -n|--no-passphrase) pass=0; shift ;;
             --) shift; break ;;
         esac
     done
     [[ $err == 0 ]] || fail "Usage:\n$(cmd_key_gen_help)"
 
     local email=$1 real_name=$2
-    [[ -z $pass && $split == 0 ]] && pass=1
-    [[ -z $pass ]] && pass=0
 
     echo -e "\nCreating a new key.\n"
 
@@ -41,9 +35,6 @@ cmd_key_gen() {
 
     [[ -n "$real_name" ]] || read -e -p "Real Name to be associated with the key: " real_name
     real_name=${real_name:-anonymous}
-
-    # check split options
-    [[ $split == 1 ]] && call_fn check_split_options "$backup" "$dongle"
 
     local PARAMETERS="
         Key-Type: RSA
@@ -75,14 +66,6 @@ cmd_key_gen() {
     script -c "gpg --batch --command-fd=0 --edit-key $GPG_KEY <<< \"$commands\"" /dev/null >/dev/null
     while [[ -n $(ps ax | grep -e '--edit-key' | grep -v grep) ]]; do sleep 0.5; done
     haveged_stop
-
-    # split the key into partial keys
-    if [[ $split == 1 ]]; then
-        local options=''
-        [[ -n $DONGLE ]] && options+=" -d $DONGLE"
-        [[ -n $backup ]] && options+=" -b $backup"
-        call cmd_key_split $options
-    fi
 
     echo -e "\nExcellent! You created a fresh GPG key. Here's what it looks like:"
     call cmd_key_list

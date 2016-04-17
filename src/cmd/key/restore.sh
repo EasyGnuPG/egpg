@@ -11,26 +11,9 @@ _EOF
 cmd_key_restore() {
     assert_no_valid_key
 
-    local opts split=1 dongle backup=$(pwd)
-    opts="$(getopt -o fd:b: -l full,dongle:,backup: -n "$PROGRAM" -- "$@")"
-    local err=$?
-    eval set -- "$opts"
-    while true; do
-        case $1 in
-            -f|--full) split=0; shift ;;
-            -d|--dongle) dongle="$2"; shift 2 ;;
-            -b|--backup) backup="$2"; shift 2 ;;
-            --) shift; break ;;
-        esac
-    done
-    [[ $err == 0 ]] || fail "Usage:\n$(cmd_key_restore_help)"
-
     local file="$1"
     [[ -n "$file" ]] || fail "Usage:\n$(cmd_key_restore_help)"
     [[ -f "$file" ]] || fail "Cannot find file: $file"
-
-    # check split options
-    [[ $split == 1 ]] && call_fn check_split_options "$backup" "$dongle"
 
     # restore
     echo "Restoring key from file: $file"
@@ -40,14 +23,6 @@ cmd_key_restore() {
     local key_id=$(gpg --with-fingerprint --with-colons "$file" | grep '^sec' | cut -d: -f5)
     local commands=$(echo "trust|5|y|quit" | tr '|' "\n")
     script -c "gpg --batch --command-fd=0 --key-edit $key_id <<< \"$commands\" " /dev/null > /dev/null
-
-    # split the key into partial keys
-    if [[ $split == 1 ]]; then
-        local options=''
-        [[ -n $DONGLE ]] && options+=" -d $DONGLE"
-        [[ -n $backup ]] && options+=" -b $backup"
-        call cmd_key_split $options
-    fi
 }
 
 #
