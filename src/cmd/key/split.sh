@@ -51,16 +51,19 @@ cmd_key_split() {
     partial3=$(echo $partials | cut -d' ' -f3)
 
     # copy partials to the corresponding directories
+    rm -f "$backup"/$GPG_KEY.key.*
     mv "$WORKDIR/$partial1" "$backup" \
         || fail "Could not copy partial key to the backup dir: $backup"
     echo " * Backup partial key saved to: $backup/$partial1"
 
     mkdir -p "$DONGLE/.gnupg/" \
         || fail "Could not create directory: $DONGLE/.gnupg/"
+    rm -f "$DONGLE"/.gnupg/$GPG_KEY.key.*
     mv "$WORKDIR/$partial2" "$DONGLE/.gnupg/" \
         || fail "Could not copy partial key to the dongle: $DONGLE/.gnupg/"
     echo " * Dongle partial key saved to: $DONGLE/.gnupg/$partial2"
 
+    rm -f "$GNUPGHOME"/$GPG_KEY.key.*
     mv "$WORKDIR/$partial3" "$GNUPGHOME" \
         || fail "Could not copy partial key to: $GNUPGHOME"
     echo " * Local  partial key saved to: $GNUPGHOME/$partial3"
