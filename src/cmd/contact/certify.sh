@@ -43,11 +43,19 @@ cmd_contact_certify() {
 
     local cert_opts="--default-cert-level=$level --default-cert-expire=$time"
     if [[ $publish == 0 ]]; then
+        is_split_key && fail "This does not work with a split key."
         gpg --lsign-key $cert_opts "$contact"
-    else
-        gpg --sign-key $cert_opts "$contact"
-        call_fn gpg_send_keys "$contact"
+        return
     fi
+
+    local homedir="$GNUPGHOME"
+    gnupghome_setup
+    gpg --sign-key $cert_opts "$contact"
+    gpg --armor --export "$contact" > "$WORKDIR/contacts.asc"
+    gpg --homedir="$homedir" --import "$WORKDIR/contacts.asc"
+    gnupghome_reset
+
+    call_fn gpg_send_keys "$contact"
 }
 
 #
