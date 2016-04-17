@@ -89,6 +89,10 @@ is_full_key() {
     [[ -n $(gpg --list-secret-keys --with-colons $key_id 2>/dev/null) ]]
 }
 
+is_split_key() {
+    ! is_full_key "$@"
+}
+
 # Copy $GNUPGHOME to a temporary $WORKDIR
 # and import there the combined key (if it is split).
 gnupghome_setup() {

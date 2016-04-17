@@ -12,6 +12,19 @@ _EOF
 }
 
 cmd_key_renew() {
+    get_gpg_key
+    if is_split_key; then
+        cat <<-_EOF
+
+This key is split into partial keys.
+Try first:  $(basename $0) key join
+     then:  $(basename $0) key renew ...
+      and:  $(basename $0) key split
+
+_EOF
+        exit
+    fi
+
     local expdate="$@"
     if [[ -z "$expdate" ]]; then
         # default is 1 month
@@ -31,7 +44,6 @@ cmd_key_renew() {
     commands+=";save"
     commands=$(echo "$commands" | tr ';' "\n")
 
-    get_gpg_key
     script -c "gpg --command-fd=0 --key-edit $GPG_KEY <<< \"$commands\" " /dev/null > /dev/null
     call_fn gpg_send_keys $GPG_KEY
 
