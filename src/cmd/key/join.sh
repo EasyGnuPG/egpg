@@ -20,7 +20,7 @@ cmd_key_join() {
     [[ -d "$DONGLE" ]] \
         || fail "The dongle directory not found: $DONGLE\nMake sure that the dongle is connected and mounted."
     [[ -d "$DONGLE/.gnupg/" ]] \
-        || fail "Directory not found: $DONGLE"
+        || fail "Directory not found: $DONGLE/.gnupg"
     partial2=$(cd "$DONGLE/.gnupg"; ls $GPG_KEY.key.[0-9][0-9][0-9] 2>/dev/null)
     [[ -f "$DONGLE/.gnupg/$partial2" ]] \
         || fail "Could not find partial key for $GPG_KEY on $DONGLE/.gnupg/"

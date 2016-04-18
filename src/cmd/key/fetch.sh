@@ -12,7 +12,7 @@ cmd_key_fetch() {
     assert_no_valid_key
 
     local opts homedir key_id
-    opts="$(getopt -o d:k: -l homedir:,key_id: -n "$PROGRAM" -- "$@")"
+    opts="$(getopt -o d:k: -l homedir:,key-id: -n "$PROGRAM" -- "$@")"
     local err=$?
     eval set -- "$opts"
     while true; do

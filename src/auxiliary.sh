@@ -56,6 +56,7 @@ No valid key found.
 Try first:  $(basename $0) key gen
        or:  $(basename $0) key fetch
        or:  $(basename $0) key restore
+       or:  $(basename $0) key recover
 "
 
     # check for key expiration

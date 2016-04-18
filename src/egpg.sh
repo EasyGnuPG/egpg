@@ -73,6 +73,7 @@ cmd_key() {
         pass)             call cmd_key_pass "$@" ;;
         split)            call cmd_key_split "$@" ;;
         join)             call cmd_key_join "$@" ;;
+        recover)          call cmd_key_recover "$@" ;;
         help)             call cmd_key_help "$@" ;;
         *)                call_ext cmd_key_$cmd "$@" ;;
     esac

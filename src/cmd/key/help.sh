@@ -13,6 +13,7 @@ _EOF
     call cmd_key_restore help
     call cmd_key_split help
     call cmd_key_join help
+    call cmd_key_recover help
     call cmd_key_pass help
     call cmd_key_share help
     call cmd_key_renew help
