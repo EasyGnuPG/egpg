@@ -61,7 +61,7 @@ Try first:  $(basename $0) key gen
 
     # check for key expiration
     # an expired key can be renewed at any time, so only a warning is issued
-    local key_details exp
+    local key_details exp key_id
     key_details=$(gpg --list-keys --with-colons $GPG_KEY)
     key_ids=$(echo "$key_details" | grep -E '^pub|^sub' | cut -d: -f5)
     for key_id in $key_ids; do
