@@ -106,7 +106,7 @@ check_split_options() {
     export DONGLE=${dongle%/}
 
     # set DONGLE on the config file
-    sed -i "$EGPG_DIR/config.sh" -e "/DONGLE=/c DONGLE=\"$DONGLE\""
+    sed -i "$EGPG_DIR/config.sh" -e "/DONGLE=/c DONGLE='\"$DONGLE\"'"
 
     # check the $backup option
     [[ -d "$backup" ]] || fail "Backup directory does not exist: $backup"
