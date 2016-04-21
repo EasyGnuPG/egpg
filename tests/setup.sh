@@ -12,7 +12,8 @@ unset  EGPG_DIR
 
 export HOME="$SHARNESS_TRASH_DIRECTORY"
 export GNUPGHOME="$SHARNESS_TEST_DIRECTORY/gnupg/"
-export DONGLE="$HOME/dongle/"
+export DONGLE="$HOME/dongle"
+mkdir -p "$DONGLE"
 
 export KEY_ID="D44186C07EA858BD"
 
