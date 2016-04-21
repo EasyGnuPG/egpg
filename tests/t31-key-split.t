@@ -56,6 +56,13 @@ test_expect_success 'egpg key split -d -b' '
     check "$DONGLE/test" "$HOME/backup"
 '
 
+test_expect_success 'egpg key split (already split)' '
+    init &&
+    egpg set dongle "$DONGLE" &&
+    egpg key split | grep "The key was split successfully." &&
+    egpg key split 2>&1 | grep "The key is already split."
+'
+
 test_expect_success 'egpg key split (option checks)' '
     init &&
 
