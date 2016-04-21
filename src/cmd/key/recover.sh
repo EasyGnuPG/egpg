@@ -23,7 +23,9 @@ cmd_key_recover() {
     is_full_key $key_id && fail "\nThe key $key_id is already available as a full key.\n"
 
     # get the other partial key
-    local partial2=$(get_the_other_partial_key $key_id)
+    local partial2
+    partial2=$(get_the_other_partial_key $key_id)
+    [[ $? -ne 0 ]] && exit 1
     partial2=$(echo $partial2)
 
     # combine partial keys and import the full key
