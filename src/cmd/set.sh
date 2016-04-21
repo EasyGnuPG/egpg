@@ -23,7 +23,7 @@ cmd_set() {
             ;;
         dongle)
             local dongle="$@"
-            sed -i "$EGPG_DIR/config.sh" -e "/DONGLE=/c DONGLE='\"$dongle\"'"
+            sed -i "$EGPG_DIR/config.sh" -e "/DONGLE=/c DONGLE=\"$dongle\""
             ;;
         *)
             echo "Unknown option '$option'"
