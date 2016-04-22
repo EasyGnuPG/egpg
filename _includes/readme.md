@@ -46,7 +46,12 @@ The philosophic goals here are these:
 
         apt-get install haveged
 
- - It is also nice to have [parcimonie][4] installed (although not
+ - For spliting the key and using a dongle you will need [libgfshare][4].
+   In Debian based distros it can be installed with:
+
+        apt-get install libgfshare-bin
+
+ - It is also nice to have [parcimonie][5] installed (although not
    required):
 
         apt-get install parcimonie
@@ -62,8 +67,12 @@ The philosophic goals here are these:
 **egpg** presents a series of subcommands:
 
     egpg init
+
     egpg key gen <email> [<name>]
     egpg key ls
+
+    egpg contact search <name>
+    egpg contact ls
 
     egpg sign <file>
     egpg verify <file>
@@ -74,8 +83,9 @@ The philosophic goals here are these:
     egpg help
     egpg key help
     egpg contact help
+    egpg ext help
 
-For more details see the manual page: [http://dashohoxha.github.io/egpg/man/][5]
+For more details see the manual page: [http://dashohoxha.github.io/egpg/man/][6]
 
 These should be the minimal set required to use GPG effectively.
 
@@ -86,5 +96,6 @@ terminology, etc. is wellcome.
 [1]: http://brew.sh/
 [2]: https://gpgtools.org/
 [3]: http://www.issihosts.com/haveged/
-[4]: https://gaffer.ptitcanardnoir.org/intrigeri/code/parcimonie/
-[5]: http://dashohoxha.github.io/egpg/man/
+[4]: http://www.digital-scurf.org/software/libgfshare
+[5]: https://gaffer.ptitcanardnoir.org/intrigeri/code/parcimonie/
+[6]: http://dashohoxha.github.io/egpg/man/
