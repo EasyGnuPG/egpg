@@ -60,18 +60,6 @@ Sign a file\. The signature will be saved to <file\fB\.signature\fR>\.
 Verify the signature\. The signed file must be present as well\.
 .
 .IP "\(bu" 4
-\fBkey\fR \fIcommand\fR [\fIoptions\fR\.\.\.]
-.
-.IP
-Commands for handling the key\. For more details see \fBkey help\fR\.
-.
-.IP "\(bu" 4
-\fBcontact\fR \fIcommand\fR [\fIoptions\fR\.\.\.]
-.
-.IP
-Commands for handling the contacts\. For more details see \fBcontact help\fR\.
-.
-.IP "\(bu" 4
 \fBdefault\fR
 .
 .IP
@@ -82,6 +70,18 @@ Use the default GNUPGHOME\.
 .
 .IP
 Change the settings\.
+.
+.IP "\(bu" 4
+\fBkey\fR \fIcommand\fR [\fIoptions\fR\.\.\.]
+.
+.IP
+Commands for handling the key\. For more details see \fBkey help\fR\.
+.
+.IP "\(bu" 4
+\fBcontact\fR \fIcommand\fR [\fIoptions\fR\.\.\.]
+.
+.IP
+Commands for handling the contacts\. For more details see \fBcontact help\fR\.
 .
 .IP "\(bu" 4
 \fB\-\-\fR,\fBgpg\fR \.\.\.
@@ -106,22 +106,22 @@ Show version information\.
 .SH "KEY COMMANDS"
 .
 .IP "\(bu" 4
-\fBgen\fR,\fBgenerate\fR [\fIemail\fR \fIname\fR] [\-n,\-\-no\-passphrase]
-.
-.IP
-Create a new GPG key\. If \fIemail\fR and \fIname\fR are not given as arguments, they will be asked interactively\.
-.
-.IP "\(bu" 4
 [\fBls\fR,\fBlist\fR,\fBshow\fR] [\-r,\-\-raw | \-c,\-\-colons] [\-a,\-\-all]
 .
 .IP
 Show the details of the key (optionally in raw format or with colons)\. A list of all the keys can be displayed as well (including the revoked and expired ones)\.
 .
 .IP "\(bu" 4
-\fBrm\fR,\fBdel\fR,\fBdelete\fR [\fIkey\-id\fR]
+\fBgen\fR,\fBgenerate\fR [\fIemail\fR \fIname\fR] [\-n,\-\-no\-passphrase]
 .
 .IP
-Delete the key\.
+Create a new GPG key\. If \fIemail\fR and \fIname\fR are not given as arguments, they will be asked interactively\.
+.
+.IP "\(bu" 4
+\fBfetch\fR [\-d,\-\-homedir \fIgnupghome\fR] [\-k,\-\-key\-id \fIkey\-id\fR]
+.
+.IP
+Get a key from another gpg directory (by default from $GNUPGHOME)\.
 .
 .IP "\(bu" 4
 \fBbackup\fR [\fIkey\-id\fR]
@@ -136,10 +136,34 @@ Backup key to file\.
 Restore key from file\.
 .
 .IP "\(bu" 4
-\fBfetch\fR [\-d,\-\-homedir \fIgnupghome\fR] [\-k,\-\-key\-id \fIkey\-id\fR]
+\fBsplit\fR [\-d,\-\-dongle <dir>] [\-b,\-\-backup <dir>]
 .
 .IP
-Get a key from another gpg directory (by default from $GNUPGHOME)\.
+Split the key into 3 partial keys and store one of them on the dongle (removable device, usb), keep the other one locally, and use the third one as a backup\. Afterwards, whenever the key needs to be used, the dongle has to be present\.
+.
+.IP "\(bu" 4
+\fBjoin\fR
+.
+.IP
+Join two partial keys into a full key and delete the partials\.
+.
+.IP "\(bu" 4
+\fBrecover\fR <backup\-partial\.key\.xyz>
+.
+.IP
+Recover the key from the backup partial key and from the partial key of the home or the dongle\. This is useful when either the dongle or the home partial key is lost\.
+.
+.IP "\(bu" 4
+\fBpass\fR
+.
+.IP
+Change the passphrase\.
+.
+.IP "\(bu" 4
+\fBshare\fR
+.
+.IP
+Publish the key to the keyserver network\.
 .
 .IP "\(bu" 4
 \fBrenew\fR,\fBexpiration\fR [\fIdate\fR]
@@ -160,16 +184,10 @@ Generate a revocation certificate for the key\.
 Cancel the key by publishing the given revocation certificate\.
 .
 .IP "\(bu" 4
-\fBpass\fR
+\fBrm\fR,\fBdel\fR,\fBdelete\fR [\fIkey\-id\fR]
 .
 .IP
-Change the passphrase\.
-.
-.IP "\(bu" 4
-\fBshare\fR
-.
-.IP
-Publish the key to the keyserver network\.
+Delete the key\.
 .
 .IP "" 0
 .
@@ -227,7 +245,7 @@ Download contact from the keyserver network\.
 \fBcertify\fR \fIcontact\fR [\-p,\-\-publish] [\-l,\-\-level \fIlevel\fR] [\-t,\-\-time \fItime\fR]
 .
 .IP
-You have verified the identity of the contact (the details of the contact, name, email, etc\. are correct and belong to a real person)\. With the \-\-publish option you also share your certification with the world, so that your friends may rely on it if they wish\. The levels of certification are: 0 (unknown), 1 (onfaith), 2 (casual), 3 (extensive)\. The time of certification can be: 0 (unlimited), \fIn\fRd (\fIn\fR days), \fIn\fRw (\fIn\fR weeks), \fIn\fRm (\fIn\fR months), \fIn\fRy (\fIn\fR years)\.
+You have verified the identity of the contact (the details of the contact, name, email, etc\. are correct and belong to a real person)\. With the \-\-publish option you also share your certification with the world, so that your friends may rely on it if they wish\. The levels of certification are: \fB0\fR (\fBunknown\fR), \fB1\fR (\fBonfaith\fR), \fB2\fR (\fBcasual\fR), \fB3\fR (\fBextensive\fR)\. The time of certification can be: 0 (unlimited), \fIn\fRd (\fIn\fR days), \fIn\fRw (\fIn\fR weeks), \fIn\fRm (\fIn\fR months), \fIn\fRy (\fIn\fR years)\.
 .
 .IP "\(bu" 4
 \fBuncertify\fR \fIcontact\fR
@@ -239,7 +257,7 @@ Revoke the certification of a contact\.
 \fBtrust\fR \fIcontact\fR [\-l,\-\-level \fItrust\-level\fR]
 .
 .IP
-You have verified the identity of the contact and you also trust him to be able to verify correctly and honestly the identities of other people\. The trust levels are: 4 (full), 3 (marginal), 2 (none), 1 (unknown)
+You have verified the identity of the contact and you also trust him to be able to verify correctly and honestly the identities of other people\. The trust levels are: \fB4\fR (\fBfull\fR), \fB3\fR (\fBmarginal\fR), \fB2\fR (\fBnone\fR), \fB1\fR (\fBunknown\fR)
 .
 .IP "" 0
 .
@@ -365,7 +383,6 @@ user@laptop:~$ \fBegpg init\fR
 .nf
 
 mkdir: created directory ‘/home/user/\.egpg’
-mkdir: created directory ‘/home/user/\.egpg/\.gnupg’
 
 Appended the following lines to \'/home/user/\.bashrc\':
 \-\-\-\-\-\-\-\-\-\-\-\-\-\-\-8<\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-
@@ -376,21 +393,21 @@ if ! test \-f "$EGPG_DIR/\.gpg\-agent\-info" \e
 || ! kill \-0 $(cut \-d: \-f 2 "$EGPG_DIR/\.gpg\-agent\-info") 2>/dev/null
 then
     gpg\-agent \-\-daemon \-\-no\-grab \-\-quiet \e
-        \-\-options "$EGPG_DIR/\.gnupg/gpg\-agent\.conf" \e
+        \-\-options "$EGPG_DIR/gpg\-agent\.conf" \e
         \-\-pinentry\-program /usr/bin/pinentry \e
         \-\-write\-env\-file "$EGPG_DIR/\.gpg\-agent\-info" > /dev/null
 fi
 ### end egpg config
 \-\-\-\-\-\-\-\-\-\-\-\-\-\-\->8\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-
 Please realod it to enable the new config:
-    source /home/user/\.bashrc
+    source "/home/user/\.bashrc"
 .
 .fi
 .
 .IP "" 0
 .
 .P
-user@laptop:~$ \fBsource /home/user/\.bashrc\fR
+user@laptop:~$ \fBsource "/home/user/\.bashrc"\fR
 .
 .P
 user@laptop:~$ \fBegpg\fR
@@ -399,14 +416,16 @@ user@laptop:~$ \fBegpg\fR
 .
 .nf
 
-egpg:  EasyGnuPG  v0\.7    (hosted at: https://github\.com/dashohoxha/egpg)
+EasyGnuPG v0\.9    ( https://github\.com/dashohoxha/egpg )
+
 EGPG_DIR="/home/user/\.egpg"
 GNUPGHOME="/home/user/\.egpg/\.gnupg"
-GPG_AGENT_INFO=""
+DONGLE=""
+KEYSERVER="hkp://keys\.gnupg\.net"
+GPG_AGENT_INFO="/tmp/gpg\-05l0Kb/S\.gpg\-agent:13943:1"
 GPG_TTY="/dev/pts/8"
-SHARE=
-KEYSERVER=hkp://keys\.gnupg\.net
-DEBUG=
+SHARE=no
+DEBUG=no
 gpg: keyring `/home/user/\.egpg/\.gnupg/secring\.gpg\' created
 gpg: keyring `/home/user/\.egpg/\.gnupg/pubring\.gpg\' created
 gpg: /home/user/\.egpg/\.gnupg/trustdb\.gpg: trustdb created
@@ -415,6 +434,8 @@ No valid key found\.
 
 Try first:  egpg key gen
        or:  egpg key fetch
+       or:  egpg key restore
+       or:  egpg key recover
 .
 .fi
 .
@@ -429,33 +450,28 @@ user@laptop:~$ \fBegpg key gen test@example\.org "Test User"\fR
 
 Creating a new key\.
 
-
-Starting haveged which will greatly improve the speed of creating
-a new key, by improving the entropy generation of the system\.
-[sudo] password for user:
-
 Enter passphrase for the new key:
 Retype the passphrase of the key:
-gpg: key 71CF0068 marked as ultimately trusted
+gpg: key 0D6282D1 marked as ultimately trusted
 gpg: checking the trustdb
 gpg: 3 marginal(s) needed, 1 complete(s) needed, PGP trust model
 gpg: depth: 0  valid:   1  signed:   0  trust: 0\-, 0q, 0n, 0m, 0f, 1u
-gpg: next trustdb check due at 2016\-04\-16
+gpg: next trustdb check due at 2016\-05\-22
 
 Excellent! You created a fresh GPG key\. Here\'s what it looks like:
 
-id: 969BD1E171CF0068
+id: 4A8872C20D6282D1
 uid: Test User <test@example\.org>
-fpr: 12FB A098 4EAB 502F D8AC E9D0 969B D1E1 71CF 0068
+fpr: 515B 8C7D 8106 0DC6 E6E8 F28F 4A88 72C2 0D62 82D1
 trust: ultimate
-cert: 969BD1E171CF0068 2016\-03\-17 2016\-04\-16
-auth: 7FFAB0D2C6DC09C9 2016\-03\-17 2016\-04\-16
-sign: 839220600A4DEC7D 2016\-03\-17 2016\-04\-16
-encr: B11469C6A9EAE27E 2016\-03\-17 2016\-04\-16
+cert: 4A8872C20D6282D1 2016\-04\-22 2016\-05\-22
+auth: CEA9603E528CED7D 2016\-04\-22 2016\-05\-22
+sign: 253F0000B8264D90 2016\-04\-22 2016\-05\-22
+encr: A29A4814128F99FF 2016\-04\-22 2016\-05\-22
 
 Creating a revocation certificate\.
 Revocation certificate saved at:
-    "/home/user/\.egpg/\.gnupg/969BD1E171CF0068\.revoke"
+    "/home/user/\.egpg/4A8872C20D6282D1\.revoke"
 .
 .fi
 .
@@ -468,15 +484,25 @@ user@laptop:~$ \fBegpg info\fR
 .
 .nf
 
-egpg:  EasyGnuPG  v0\.7    (hosted at: https://github\.com/dashohoxha/egpg)
+EasyGnuPG v0\.9    ( https://github\.com/dashohoxha/egpg )
+
 EGPG_DIR="/home/user/\.egpg"
 GNUPGHOME="/home/user/\.egpg/\.gnupg"
-GPG_AGENT_INFO="/tmp/gpg\-hBW4UD/S\.gpg\-agent:29656:1"
+DONGLE=""
+KEYSERVER="hkp://keys\.gnupg\.net"
+GPG_AGENT_INFO="/tmp/gpg\-05l0Kb/S\.gpg\-agent:13943:1"
 GPG_TTY="/dev/pts/8"
-SHARE=
-KEYSERVER=hkp://keys\.gnupg\.net
-DEBUG=
-12FB A098 4EAB 502F D8AC E9D0 969B D1E1 71CF 0068
+SHARE=no
+DEBUG=no
+
+id: 4A8872C20D6282D1
+uid: Test User <test@example\.org>
+fpr: 515B 8C7D 8106 0DC6 E6E8 F28F 4A88 72C2 0D62 82D1
+trust: ultimate
+cert: 4A8872C20D6282D1 2016\-04\-22 2016\-05\-22
+auth: CEA9603E528CED7D 2016\-04\-22 2016\-05\-22
+sign: 253F0000B8264D90 2016\-04\-22 2016\-05\-22
+encr: A29A4814128F99FF 2016\-04\-22 2016\-05\-22
 .
 .fi
 .
@@ -489,14 +515,14 @@ user@laptop:~$ \fBegpg key\fR
 .
 .nf
 
-id: 969BD1E171CF0068
+id: 4A8872C20D6282D1
 uid: Test User <test@example\.org>
-fpr: 12FB A098 4EAB 502F D8AC E9D0 969B D1E1 71CF 0068
+fpr: 515B 8C7D 8106 0DC6 E6E8 F28F 4A88 72C2 0D62 82D1
 trust: ultimate
-cert: 969BD1E171CF0068 2016\-03\-17 2016\-04\-16
-auth: 7FFAB0D2C6DC09C9 2016\-03\-17 2016\-04\-16
-sign: 839220600A4DEC7D 2016\-03\-17 2016\-04\-16
-encr: B11469C6A9EAE27E 2016\-03\-17 2016\-04\-16
+cert: 4A8872C20D6282D1 2016\-04\-22 2016\-05\-22
+auth: CEA9603E528CED7D 2016\-04\-22 2016\-05\-22
+sign: 253F0000B8264D90 2016\-04\-22 2016\-05\-22
+encr: A29A4814128F99FF 2016\-04\-22 2016\-05\-22
 .
 .fi
 .
@@ -509,7 +535,7 @@ user@laptop:~$ \fBegpg key fpr\fR
 .
 .nf
 
-12FB A098 4EAB 502F D8AC E9D0 969B D1E1 71CF 0068
+515B 8C7D 8106 0DC6 E6E8 F28F 4A88 72C2 0D62 82D1
 .
 .fi
 .
@@ -522,14 +548,14 @@ user@laptop:~$ \fBegpg key renew 1 year\fR
 .
 .nf
 
-id: 969BD1E171CF0068
+id: 4A8872C20D6282D1
 uid: Test User <test@example\.org>
-fpr: 12FB A098 4EAB 502F D8AC E9D0 969B D1E1 71CF 0068
+fpr: 515B 8C7D 8106 0DC6 E6E8 F28F 4A88 72C2 0D62 82D1
 trust: ultimate
-cert: 969BD1E171CF0068 2016\-03\-17 2017\-04\-16
-auth: 7FFAB0D2C6DC09C9 2016\-03\-17 2017\-04\-16
-sign: 839220600A4DEC7D 2016\-03\-17 2017\-04\-16
-encr: B11469C6A9EAE27E 2016\-03\-17 2017\-04\-16
+cert: 4A8872C20D6282D1 2016\-04\-22 2017\-04\-22
+auth: CEA9603E528CED7D 2016\-04\-22 2017\-04\-22
+sign: 253F0000B8264D90 2016\-04\-22 2017\-04\-22
+encr: A29A4814128F99FF 2016\-04\-22 2017\-04\-22
 .
 .fi
 .
@@ -547,7 +573,7 @@ user@laptop:~$ \fBegpg seal test\.txt\fR
 
 You need a passphrase to unlock the secret key for
 user: "Test User <test@example\.org>"
-4096\-bit RSA key, ID 0A4DEC7D, created 2016\-03\-17 (main key ID 71CF0068)
+4096\-bit RSA key, ID B8264D90, created 2016\-04\-22 (main key ID 0D6282D1)
 .
 .fi
 .
@@ -561,11 +587,11 @@ user@laptop:~$ \fBegpg open test\.txt\.sealed\fR
 .nf
 
 user: "Test User <test@example\.org>"
-4096\-bit RSA key, ID A9EAE27E, created 2016\-03\-17 (main key ID 71CF0068)
+4096\-bit RSA key, ID 128F99FF, created 2016\-04\-22 (main key ID 0D6282D1)
 
-gpg: encrypted with 4096\-bit RSA key, ID A9EAE27E, created 2016\-03\-17
+gpg: encrypted with 4096\-bit RSA key, ID 128F99FF, created 2016\-04\-22
       "Test User <test@example\.org>"
-gpg: Signature made Thu 17 Mar 2016 04:00:59 PM CET using RSA key ID 0A4DEC7D
+gpg: Signature made Fri 22 Apr 2016 10:41:07 AM CEST using RSA key ID B8264D90
 gpg: Good signature from "Test User <test@example\.org>"
 .
 .fi
@@ -581,7 +607,7 @@ user@laptop:~$ \fBegpg sign test\.txt\fR
 
 You need a passphrase to unlock the secret key for
 user: "Test User <test@example\.org>"
-4096\-bit RSA key, ID 0A4DEC7D, created 2016\-03\-17 (main key ID 71CF0068)
+4096\-bit RSA key, ID B8264D90, created 2016\-04\-22 (main key ID 0D6282D1)
 .
 .fi
 .
@@ -594,7 +620,7 @@ user@laptop:~$ \fBegpg verify test\.txt\.signature\fR
 .
 .nf
 
-gpg: Signature made Thu 17 Mar 2016 04:02:42 PM CET using RSA key ID 0A4DEC7D
+gpg: Signature made Fri 22 Apr 2016 10:42:34 AM CEST using RSA key ID B8264D90
 gpg: Good signature from "Test User <test@example\.org>"
 .
 .fi
@@ -608,6 +634,7 @@ user@laptop:~$ \fBegpg contact search Dashamir\fR
 .
 .nf
 
+gpg: searching for "Dashamir" from hkp server keys\.gnupg\.net
 (1) Dashamir Hoxha <dashohoxha@gmail\.com>
       2048 bit RSA key C01D2DBD, created: 2015\-12\-27, expires: 2020\-12\-31
 (2) Dashamir Hoxha <dashohoxha@gmail\.com>
@@ -621,7 +648,7 @@ gpg: requesting key C01D2DBD from hkp server keys\.gnupg\.net
 gpg: key C01D2DBD: public key "Dashamir Hoxha <dashohoxha@gmail\.com>" imported
 gpg: 3 marginal(s) needed, 1 complete(s) needed, PGP trust model
 gpg: depth: 0  valid:   1  signed:   0  trust: 0\-, 0q, 0n, 0m, 0f, 1u
-gpg: next trustdb check due at 2017\-03\-17
+gpg: next trustdb check due at 2017\-04\-22
 gpg: Total number processed: 1
 gpg:               imported: 1  (RSA: 1)
 .
@@ -636,14 +663,14 @@ user@laptop:~$ \fBegpg contact ls\fR
 .
 .nf
 
-id: 969BD1E171CF0068
+id: 4A8872C20D6282D1
 uid: Test User <test@example\.org>
-fpr: 12FB A098 4EAB 502F D8AC E9D0 969B D1E1 71CF 0068
+fpr: 515B 8C7D 8106 0DC6 E6E8 F28F 4A88 72C2 0D62 82D1
 trust: ultimate
-cert: 969BD1E171CF0068 2016\-03\-17 2017\-03\-17
-auth: 7FFAB0D2C6DC09C9 2016\-03\-17 2017\-03\-17
-sign: 839220600A4DEC7D 2016\-03\-17 2016\-04\-16
-encr: B11469C6A9EAE27E 2016\-03\-17 2016\-04\-16
+cert: 4A8872C20D6282D1 2016\-04\-22 2017\-04\-22
+auth: CEA9603E528CED7D 2016\-04\-22 2017\-04\-22
+sign: 253F0000B8264D90 2016\-04\-22 2017\-04\-22
+encr: A29A4814128F99FF 2016\-04\-22 2017\-04\-22
 
 
 id: 562AC309C01D2DBD
@@ -675,7 +702,7 @@ fpr: 1EC0 8B86 1350 EE19 8053 7941 562A C309 C01D 2DBD
 trust: marginal
 cert: 562AC309C01D2DBD 2015\-12\-27 2020\-12\-31
 encr: 95B9FAD9DEF9A02A 2015\-12\-27 2020\-12\-31
-certified by: Test User <test@example\.org> (969BD1E171CF0068)
+certified by: Test User <test@example\.org> (4A8872C20D6282D1)
 .
 .fi
 .
@@ -705,18 +732,30 @@ user@laptop:~$ \fBegpg key revoke\fR
 
 Revocation will make your current key useless\. You\'ll need
 to generate a new one\. Are you sure about this? [y/N] y
-gpg: key 71CF0068: "Test User <test@example\.org>" revocation certificate imported
+gpg: key 0D6282D1: "Test User <test@example\.org>" revocation certificate imported
 gpg: Total number processed: 1
 gpg:    new key revocations: 1
 gpg: 3 marginal(s) needed, 1 complete(s) needed, PGP trust model
 gpg: depth: 0  valid:   1  signed:   0  trust: 0\-, 0q, 0n, 0m, 0f, 1u
-gpg: next trustdb check due at 2017\-03\-17
-dasho@MacBookPro:~/test$ egpg key ls
+gpg: next trustdb check due at 2017\-04\-22
+.
+.fi
+.
+.IP "" 0
+.
+.P
+user@laptop:~$ \fBegpg key ls\fR
+.
+.IP "" 4
+.
+.nf
 
 No valid key found\.
 
 Try first:  egpg key gen
        or:  egpg key fetch
+       or:  egpg key restore
+       or:  egpg key recover
 .
 .fi
 .
@@ -738,7 +777,6 @@ user@laptop:~$ \fBegpg init\fR
 .nf
 
 mkdir: created directory ‘/home/user/\.egpg’
-mkdir: created directory ‘/home/user/\.egpg/\.gnupg’
 
 Appended the following lines to \'/home/user/\.bashrc\':
 \-\-\-\-\-\-\-\-\-\-\-\-\-\-\-8<\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-
@@ -749,21 +787,21 @@ if ! test \-f "$EGPG_DIR/\.gpg\-agent\-info" \e
 || ! kill \-0 $(cut \-d: \-f 2 "$EGPG_DIR/\.gpg\-agent\-info") 2>/dev/null
 then
     gpg\-agent \-\-daemon \-\-no\-grab \-\-quiet \e
-        \-\-options "$EGPG_DIR/\.gnupg/gpg\-agent\.conf" \e
+        \-\-options "$EGPG_DIR/gpg\-agent\.conf" \e
         \-\-pinentry\-program /usr/bin/pinentry \e
         \-\-write\-env\-file "$EGPG_DIR/\.gpg\-agent\-info" > /dev/null
 fi
 ### end egpg config
 \-\-\-\-\-\-\-\-\-\-\-\-\-\-\->8\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-
 Please realod it to enable the new config:
-    source /home/user/\.bashrc
+    source "/home/user/\.bashrc"
 .
 .fi
 .
 .IP "" 0
 .
 .P
-user@laptop:~$ \fBsource /home/user/\.bashrc\fR
+user@laptop:~$ \fBsource "/home/user/\.bashrc"\fR
 .
 .P
 user@laptop:~$ \fBegpg migrate\fR
@@ -830,8 +868,46 @@ user@laptop:~$ \fBegpg set share yes\fR
 .P
 user@laptop:~$ \fBegpg key share\fR
 .
+.SS "Split the key and use a dongle"
+You can split a key into 3 partial keys, so that any 2 of them can be combined to recreate the original key (but a single one is not enough)\. EasyGnuPG takes advantage of this to save a partial key on the local machine and another partial on a dongle (usb, removable device)\. The third partial key is used as a backup, to recover the full key in case that the dongle or the computer is lost\.
+.
+.P
+user@laptop:~$ \fBegpg key split\fR
+.
+.IP "" 4
+.
+.nf
+
+Splitting the key: 155E526BA47364BC
+
+Enter the dongle directory: /media/user/sdb1
+
+ * Backup partial key saved to: /home/user/155E526BA47364BC\.key\.089
+ * Dongle partial key saved to: /media/user/sdb1/\.gnupg/155E526BA47364BC\.key\.113
+ * Local  partial key saved to: /home/user/\.egpg/\.gnupg/155E526BA47364BC\.key\.129
+
+The key was split successfully\. Whenever you need to use the key
+(to sign, seal, open, etc\.) connect first the dongle to the PC\.
+
+Make sure to move the backup out of the PC (for example on the cloud)\.
+You will need it to recover the key in case that you loose the dongle
+or the PC (but it cannot help you if you loose both of them)\.
+.
+.fi
+.
+.IP "" 0
+.
+.P
+user@laptop:~$ \fBegpg key recover 155E526BA47364BC\.key\.089\fR
+.
+.P
+user@laptop:~$ \fBegpg key join\fR
+.
+.P
+Spliting the key into partial keys makes key management safer and more robust\. In case that you loose the dongle the key is not deconspired, because a single partial key is not enough to reconstruct the full key\. The same goes for the backup partial key; you can store it on cloud and if somebody manages to get it, they still cannot get your key\. Similarly, if you loose the dongle or change the PC, you still can recover the key using the remaining partial key and the backup partial key\.
+.
 .SS "Run any gpg command but with the configuration settings of egpg:"
-user@laptop:~$ \fBegpg \-\- \-\-list\-secret\-keys\fR
+user@laptop:~$ \fBegpg gpg \-\-list\-secret\-keys\fR
 .
 .IP "" 4
 .
@@ -872,7 +948,7 @@ if ! test \-f "$EGPG_DIR/\.gpg\-agent\-info" \e
 || ! kill \-0 $(cut \-d: \-f 2 "$EGPG_DIR/\.gpg\-agent\-info") 2>/dev/null
 then
     gpg\-agent \-\-daemon \-\-no\-grab \-\-quiet \e
-        \-\-options "$EGPG_DIR/\.gnupg/gpg\-agent\.conf" \e
+        \-\-options "$EGPG_DIR/gpg\-agent\.conf" \e
         \-\-pinentry\-program /usr/bin/pinentry \e
         \-\-write\-env\-file "$EGPG_DIR/\.gpg\-agent\-info" > /dev/null
 fi
@@ -883,7 +959,7 @@ if ! test \-f "$EGPG_DIR/\.gpg\-agent\-info" \e
 || ! kill \-0 $(cut \-d: \-f 2 "$EGPG_DIR/\.gpg\-agent\-info") 2>/dev/null
 then
     gpg\-agent \-\-daemon \-\-no\-grab \-\-quiet \e
-        \-\-options "$EGPG_DIR/\.gnupg/gpg\-agent\.conf" \e
+        \-\-options "$EGPG_DIR/gpg\-agent\.conf" \e
         \-\-pinentry\-program /usr/bin/pinentry \e
         \-\-write\-env\-file "$EGPG_DIR/\.gpg\-agent\-info" > /dev/null
 fi
@@ -906,15 +982,23 @@ user@laptop:~$ \fBegpg\fR
 .
 .nf
 
-egpg:  EasyGnuPG  v0\.7    (hosted at: https://github\.com/dashohoxha/egpg)
+EasyGnuPG v0\.9    ( https://github\.com/dashohoxha/egpg )
+
 EGPG_DIR="/home/user/\.egpg"
 GNUPGHOME="/home/user/\.egpg/\.gnupg"
-GPG_AGENT_INFO="/tmp/gpg\-O9crSx/S\.gpg\-agent:11361:1"
-GPG_TTY="/dev/pts/4"
-SHARE=
-KEYSERVER=hkp://keys\.gnupg\.net
-DEBUG=
-1EC0 8B86 1350 EE19 8053 7941 562A C309 C01D 2DBD
+DONGLE=""
+KEYSERVER="hkp://keys\.gnupg\.net"
+GPG_AGENT_INFO="/tmp/gpg\-1OyoSv/S\.gpg\-agent:19657:1"
+GPG_TTY="/dev/pts/8"
+SHARE=no
+DEBUG=no
+
+No valid key found\.
+
+Try first:  egpg key gen
+       or:  egpg key fetch
+       or:  egpg key restore
+       or:  egpg key recover
 .
 .fi
 .
@@ -927,19 +1011,23 @@ user@laptop:~$ \fBegpg1\fR
 .
 .nf
 
-egpg:  EasyGnuPG  v0\.7    (hosted at: https://github\.com/dashohoxha/egpg)
+EasyGnuPG v0\.9    ( https://github\.com/dashohoxha/egpg )
+
 EGPG_DIR="/home/user/\.egpg1"
 GNUPGHOME="/home/user/\.egpg1/\.gnupg"
-GPG_AGENT_INFO="/tmp/gpg\-hkVMqs/S\.gpg\-agent:12523:1"
-GPG_TTY="/dev/pts/4"
-SHARE=
-KEYSERVER=hkp://keys\.gnupg\.net
-DEBUG=
+DONGLE=""
+KEYSERVER="hkp://keys\.gnupg\.net"
+GPG_AGENT_INFO="/tmp/gpg\-GzhOIA/S\.gpg\-agent:19661:1"
+GPG_TTY="/dev/pts/8"
+SHARE=no
+DEBUG=no
 
 No valid key found\.
 
 Try first:  egpg key gen
        or:  egpg key fetch
+       or:  egpg key restore
+       or:  egpg key recover
 .
 .fi
 .
@@ -952,26 +1040,30 @@ user@laptop:~$ \fBegpg2\fR
 .
 .nf
 
-egpg:  EasyGnuPG  v0\.7    (hosted at: https://github\.com/dashohoxha/egpg)
+EasyGnuPG v0\.9    ( https://github\.com/dashohoxha/egpg )
+
 EGPG_DIR="/home/user/\.egpg2"
 GNUPGHOME="/home/user/\.egpg2/\.gnupg"
-GPG_AGENT_INFO="/tmp/gpg\-YQuucs/S\.gpg\-agent:12525:1"
-GPG_TTY="/dev/pts/4"
-SHARE=
-KEYSERVER=hkp://keys\.gnupg\.net
-DEBUG=
+DONGLE=""
+KEYSERVER="hkp://keys\.gnupg\.net"
+GPG_AGENT_INFO="/tmp/gpg\-MMUdsA/S\.gpg\-agent:19663:1"
+GPG_TTY="/dev/pts/8"
+SHARE=no
+DEBUG=no
 
 No valid key found\.
 
 Try first:  egpg key gen
        or:  egpg key fetch
+       or:  egpg key restore
+       or:  egpg key recover
 .
 .fi
 .
 .IP "" 0
 .
 .SH "AUTHOR"
-Copyright (C) 2016 Dashamir Hoxha (dashohoxha@gmail\.com)\. The code is on GitHub at https://github\.com/dashohoxha/egpg\.
+Copyright (C) 2016 Dashamir Hoxha (dashohoxha@gmail\.com)\. The code is on GitHub at \fIhttps://github\.com/dashohoxha/egpg\fR\.
 .
 .SH "COPYLEFT"
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version\.
@@ -983,4 +1075,4 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 You should have received a copy of the GNU General Public License along with this program\. If not, see \fIhttp://www\.gnu\.org/licenses/\fR\.
 .
 .SH "SEE ALSO"
-\fBgpg2\fR(1), \fBhaveged\fR(8), \fBparcimonie\fR(1p)\.
+\fBgpg2\fR(1), \fBhaveged\fR(8), \fBparcimonie\fR(1p), \fBgfsplit\fR(1), \fBgfcombine\fR(1)\.
