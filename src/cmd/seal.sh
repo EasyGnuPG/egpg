@@ -28,10 +28,12 @@ cmd_seal() {
     done
 
     # sign and encrypt
+    gnupghome_setup
     gpg --auto-key-locate=local,cert,keyserver,pka \
         --keyserver "$KEYSERVER" $recipients \
         --sign --encrypt --armor \
         --output "$file.sealed" "$file"
+    gnupghome_reset
 
     [[ -f "$file.sealed" ]] && shred "$file"
 }

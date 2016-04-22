@@ -6,17 +6,20 @@ Usage: $(basename $0) key <command> [<options>]
 Commands to manage the key. They are listed below.
 
 _EOF
-    call cmd_key_gen help
     call cmd_key_list help
-    call cmd_key_delete help
+    call cmd_key_gen help
+    call cmd_key_fetch help
     call cmd_key_backup help
     call cmd_key_restore help
-    call cmd_key_fetch help
+    call cmd_key_split help
+    call cmd_key_join help
+    call cmd_key_recover help
+    call cmd_key_pass help
+    call cmd_key_share help
     call cmd_key_renew help
     call cmd_key_revcert help
     call cmd_key_rev help
-    call cmd_key_pass help
-    call cmd_key_share help
+    call cmd_key_delete help
 }
 
 #

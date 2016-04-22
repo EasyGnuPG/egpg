@@ -16,6 +16,11 @@ cmd_key_delete() {
     fingerprint=$(gpg --with-colons --fingerprint $key_id | grep '^fpr' | cut -d: -f10)
     [[ -n "$fingerprint" ]] || fail "Key $key_id not found."
     gpg --batch --delete-secret-and-public-keys "$fingerprint"
+
+    # remove any partials
+    rm -f "$GNUPGHOME"/$key_id.key.[0-9][0-9][0-9]
+    rm -f "$DONGLE"/.gnupg/$key_id.key.[0-9][0-9][0-9]
+    rm -f $key_id.key.[0-9][0-9][0-9]
 }
 
 #

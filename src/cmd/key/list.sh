@@ -31,7 +31,7 @@ cmd_key_list() {
         get_gpg_key
         secret_keys=$GPG_KEY
     else
-        secret_keys=$(gpg --list-secret-keys --with-colons | grep '^sec' | cut -d: -f5)
+        secret_keys=$(get_valid_keys)
     fi
 
     [[ $raw == 1 ]] && \
@@ -43,6 +43,7 @@ cmd_key_list() {
         return
 
     # display the details of each key
+    source "$LIBDIR/fn/print_key.sh"
     for gpg_key in $secret_keys; do
         echo
         print_key $gpg_key

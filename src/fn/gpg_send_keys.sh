@@ -1,32 +1,10 @@
-# Display info about the current configuration and settings.
+# Send the given keys to keyserver network.
 
-cmd_info_help() {
-    cat <<-_EOF
-    [info]
-        Display info about the current configuration and settings.
-
-_EOF
-}
-
-cmd_info() {
-    cmd_version
-    cat <<-_EOF
-EGPG_DIR="$EGPG_DIR"
-GNUPGHOME="$GNUPGHOME"
-DONGLE="$DONGLE"
-KEYSERVER="$KEYSERVER"
-GPG_AGENT_INFO="$GPG_AGENT_INFO"
-GPG_TTY="$GPG_TTY"
-SHARE=$SHARE
-DEBUG=$DEBUG
-_EOF
-
-    local platform_file="$LIBDIR/platform/$PLATFORM.sh"
-    [[ -f "$platform_file" ]] && echo "platform_file='$platform_file'"
-    local customize_file="$EGPG_DIR/customize.sh"
-    [[ -f "$customize_file" ]] && echo "customize_file='$customize_file'"
-
-    call cmd_key_list
+gpg_send_keys() {
+    is_true $SHARE || return
+    gnupghome_setup
+    gpg --keyserver "$KEYSERVER" --send-keys "$@"
+    gnupghome_reset
 }
 
 #

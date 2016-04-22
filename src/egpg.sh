@@ -27,13 +27,13 @@ source "$LIBDIR/auxiliary.sh"
 source "$LIBDIR/platform.sh"
 
 cmd_version() {
-    echo "egpg:  EasyGnuPG  $VERSION    (hosted at: https://github.com/dashohoxha/egpg) "
+    echo
+    echo "EasyGnuPG $VERSION    ( https://github.com/dashohoxha/egpg )"
+    echo
 }
 
 cmd() {
     PROGRAM="${0##*/}"
-    COMMAND="$PROGRAM $1"
-
     local cmd="$1" ; shift
     case "$cmd" in
         migrate)          call cmd_migrate "$@" ;;
@@ -57,7 +57,6 @@ cmd() {
 cmd_gpg() { gpg "$@"; }
 
 cmd_key() {
-    COMMAND+=" $1"
     local cmd="$1" ; shift
     case "$cmd" in
         help)             call cmd_key_help "$@" ;;
@@ -72,13 +71,15 @@ cmd_key() {
         revcert)          call cmd_key_revcert "$@" ;;
         rev|revoke)       call cmd_key_rev "$@" ;;
         pass)             call cmd_key_pass "$@" ;;
+        split)            call cmd_key_split "$@" ;;
+        join)             call cmd_key_join "$@" ;;
+        recover)          call cmd_key_recover "$@" ;;
         help)             call cmd_key_help "$@" ;;
         *)                call_ext cmd_key_$cmd "$@" ;;
     esac
 }
 
 cmd_contact() {
-    COMMAND+=" $1"
     local cmd="$1" ; shift
     case "$cmd" in
         ''|help)          call cmd_contact_help "$@" ;;
@@ -106,6 +107,14 @@ call() {
     then ${cmd}_help
     else $cmd "$@"
     fi
+}
+
+call_fn() {
+    local fn=$1; shift
+    local file="$LIBDIR/fn/$fn.sh"
+    [[ -f "$file" ]] || fail "Cannot find function file: $file"
+    source "$file"
+    $fn "$@"
 }
 
 call_ext() {
@@ -184,6 +193,9 @@ KEYSERVER="$KEYSERVER"
 # GPG homedir to be used. If "default", then use the default one,
 # (whatever is in the environment $GNUPGHOME, usually ~/.gnupg).
 GNUPGHOME="$gpghome"
+
+# Path of the dongle.
+DONGLE="$DONGLE"
 
 # If true, print debug output.
 DEBUG=$DEBUG

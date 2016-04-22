@@ -11,11 +11,19 @@ _EOF
 cmd_set() {
     local option=$1 ; shift
     case ${option,,} in
+        debug)
+            local value=$1
+            sed -i "$EGPG_DIR/config.sh" -e "/DEBUG=/c DEBUG=$value"
+            ;;
         share)
             local value=$1
             SHARE=$value
             sed -i "$EGPG_DIR/config.sh" -e "/SHARE=/c SHARE=$value"
-            gpg_send_keys
+            call_fn gpg_send_keys
+            ;;
+        dongle)
+            local dongle="$@"
+            sed -i "$EGPG_DIR/config.sh" -e "/DONGLE=/c DONGLE=\"$dongle\""
             ;;
         *)
             echo "Unknown option '$option'"

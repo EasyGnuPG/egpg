@@ -13,14 +13,16 @@ cmd_key_revcert() {
     local description=${1:-"Key is being revoked"}
 
     get_gpg_key
-    revoke_cert="$GNUPGHOME/$GPG_KEY.revoke"
+    revoke_cert="$EGPG_DIR/$GPG_KEY.revoke"
     rm -f "$revoke_cert"
 
+    gnupghome_setup
     local commands="y|1|$description||y"
     commands=$(echo "$commands" | tr '|' "\n")
     script -c "gpg --yes --command-fd=0 --output \"$revoke_cert\" --gen-revoke $GPG_KEY <<< \"$commands\" " /dev/null > /dev/null
     while [[ -n $(ps ax | grep -e '--gen-revoke' | grep -v grep) ]]; do sleep 0.5; done
     [[ -f "$revoke_cert" ]] &&  echo -e "Revocation certificate saved at: \n    \"$revoke_cert\""
+    gnupghome_reset
 }
 
 #

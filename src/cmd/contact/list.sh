@@ -37,6 +37,7 @@ cmd_contact_list() {
     # display the details of each key
     local ids
     ids=$(gpg --list-keys --with-colons "$@" | grep '^pub' | cut -d: -f5)
+    source "$LIBDIR/fn/print_key.sh"
     for id in $ids; do
         echo
         print_key $id

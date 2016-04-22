@@ -28,13 +28,13 @@ cmd_contact_fetch() {
     echo "Importing contacts from: $homedir"
 
     # export to tmp file
-    make_workdir
+    workdir_make
     local file="$WORKDIR/contacts.asc"
     gpg --homedir="$homedir" --armor --export "$@" > "$file"
 
     # import from the tmp file
     gpg --import "$file"
-    rm -rf $WORKDIR
+    workdir_clear
 }
 
 #

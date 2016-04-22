@@ -16,8 +16,8 @@ cmd_key_restore() {
     [[ -f "$file" ]] || fail "Cannot find file: $file"
 
     # restore
-    echo "Restoreing key from file: $file"
-    gpg --import "$file"
+    echo "Restoring key from file: $file"
+    gpg --import "$file" 2>/dev/null || fail "Failed to import file: $file"
 
     # set trust to 'ultimate'
     local key_id=$(gpg --with-fingerprint --with-colons "$file" | grep '^sec' | cut -d: -f5)

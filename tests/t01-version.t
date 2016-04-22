@@ -5,19 +5,19 @@ source "$(dirname "$0")"/setup.sh
 
 
 test_expect_success 'egpg version' '
-    egpg version | grep "egpg:  EasyGnuPG"
+    egpg version | grep "EasyGnuPG"
 '
 
 test_expect_success 'egpg v' '
-    egpg v | grep "egpg:  EasyGnuPG"
+    egpg v | grep "EasyGnuPG"
 '
 
 test_expect_success 'egpg -v' '
-    egpg -v | grep "egpg:  EasyGnuPG"
+    egpg -v | grep "EasyGnuPG"
 '
 
 test_expect_success 'egpg --version' '
-    egpg --version | grep "egpg:  EasyGnuPG"
+    egpg --version | grep "EasyGnuPG"
 '
 
 test_done

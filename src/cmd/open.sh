@@ -19,9 +19,11 @@ cmd_open() {
     [[ "$output" != "$file" ]] || fail "The given file does not end in '.sealed'."
 
     # decrypt and verify
+    gnupghome_setup
     gpg --keyserver "$KEYSERVER" \
         --keyserver-options auto-key-retrieve,verbose,honor-keyserver-url \
         --decrypt --output "$output" "$file"
+    gnupghome_reset
 }
 
 #

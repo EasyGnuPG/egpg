@@ -11,7 +11,7 @@ _EOF
 cmd_key_share() {
     get_gpg_key
     is_true $SHARE || fail "You must enable sharing first with:\n  $(basename $0) set share yes"
-    gpg_send_keys $GPG_KEY
+    call_fn gpg_send_keys $GPG_KEY
 }
 
 #
