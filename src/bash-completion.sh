@@ -58,7 +58,7 @@ _egpg()
             ;;
         key)
             if [[ $COMP_CWORD == 2 ]]; then
-                local commands="generate list delete backup restore fetch renew expiration revcert revoke pass help"
+                local commands="generate list delete backup restore fetch renew expiration revcert revoke pass split join recover help"
                 COMPREPLY=( $(compgen -W "$commands" -- $cur) )
             else
                 _egpg_key
@@ -70,6 +70,15 @@ _egpg()
                 COMPREPLY=( $(compgen -W "$commands" -- $cur) )
             else
                 _egpg_contact
+            fi
+            ;;
+        set)
+            if [[ $last == $cmd ]]; then
+                COMPREPLY=( $(compgen -W "debug share dongle" -- $cur) )
+            elif [[ $last == "debug" || $last == "share" ]]; then
+                COMPREPLY=( $(compgen -W "yes no" -- $cur) )
+            elif [[ $last == "dongle" ]]; then
+                COMPREPLY=( $(compgen -d -- $cur) )
             fi
             ;;
     esac
@@ -125,6 +134,16 @@ _egpg_key() {
             else
                 COMPREPLY=( $(compgen -W "--homedir --key-id" -- $cur) )
             fi
+            ;;
+        split)
+            if [[ $last == "-d" || $last == "--dongle" || $last == "-b" || $last == "--backup" ]]; then
+                COMPREPLY=( $(compgen -d -- $cur) )
+            else
+                COMPREPLY=( $(compgen -W "--dongle --backup" -- $cur) )
+            fi
+            ;;
+        recover)
+            [[ $last == $cmd ]] && COMPREPLY=( $(compgen -f -X '!*.key.[0-9][0-9][0-9]' -- $cur) )
             ;;
     esac
 }
@@ -196,4 +215,4 @@ _egpg_contact() {
     esac
 }
 
-complete -o filenames -F _egpg egpg egpg.sh
+complete -o filenames -F _egpg egpg egpg.sh src/egpg.sh
