@@ -2,21 +2,37 @@
 
 cmd_key_backup_help() {
     cat <<-_EOF
-    backup [<key-id>]
-        Backup key to file.
+    backup [<key-id>] [-q,--qrencode]
+        Backup key to text file. If the option --qrencode is given,
+        then a PDF file with 3D barcode will be generated as well.
 
 _EOF
 }
 
 cmd_key_backup() {
+    local opts qr=0
+    opts="$(getopt -o q -l qrencode -n "$PROGRAM" -- "$@")"
+    local err=$?
+    eval set -- "$opts"
+    while true; do
+        case $1 in
+            -q|--qrencode) qr=1; shift ;;
+            --) shift; break ;;
+        esac
+    done
+    [[ $err == 0 ]] || fail "Usage:\n$(cmd_key_backup_help)"
+
     local key_id="$1"
     [[ -z $key_id ]] && get_gpg_key && key_id=$GPG_KEY
 
     gnupghome_setup
     gpg --armor --export $key_id > $key_id.key
     gpg --armor --export-secret-keys $key_id >> $key_id.key
+    [[ $qr == 1 ]] && call_fn qrencode $key_id.key
     gnupghome_reset
-    echo "Key saved to: $key_id.key"
+    echo -e "Key saved to:\n    $key_id.key"
+    [[ $qr == 1 ]] && echo -e "    $key_id.key.pdf"
+
 }
 
 #

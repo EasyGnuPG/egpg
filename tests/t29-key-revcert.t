@@ -7,9 +7,9 @@ test_expect_success 'egpg key revcert' '
     egpg_init &&
     egpg_key_fetch &&
     egpg key revcert "test" &&
-    local key_id=$(egpg key | grep "^id: " | cut -d" " -f2) &&
-    local revoke_file="$EGPG_DIR/$key_id.revoke" &&
-    [[ -f "$revoke_file" ]]
+    local revoke_file="$EGPG_DIR/$KEY_ID.revoke" &&
+    [[ -f "$revoke_file" ]] &&
+    [[ -f "$revoke_file.pdf" ]]
 '
 
 test_done

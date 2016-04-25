@@ -109,7 +109,9 @@ _egpg_key() {
         backup)
             if [[ $last == $cmd ]]; then
                 local key_ids=$(egpg key ls -a | grep '^id: ' | cut -d' ' -f2)
-                COMPREPLY=( $(compgen -W "$key_ids" -- $cur) )
+                COMPREPLY=( $(compgen -W "$key_ids --qrencode" -- $cur) )
+            elif [[ $last != "--qrencode" ]]; then
+                COMPREPLY=( $(compgen -W "--qrencode" -- $cur) )
             fi
             ;;
         restore)

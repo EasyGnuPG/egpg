@@ -21,8 +21,11 @@ cmd_key_revcert() {
     commands=$(echo "$commands" | tr '|' "\n")
     script -c "gpg --yes --command-fd=0 --output \"$revoke_cert\" --gen-revoke $GPG_KEY <<< \"$commands\" " /dev/null > /dev/null
     while [[ -n $(ps ax | grep -e '--gen-revoke' | grep -v grep) ]]; do sleep 0.5; done
+    call_fn qrencode "$revoke_cert"
     [[ -f "$revoke_cert" ]] &&  echo -e "Revocation certificate saved at: \n    \"$revoke_cert\""
+    [[ -f "$revoke_cert.pdf" ]] &&  echo -e "    \"$revoke_cert.pdf\""
     gnupghome_reset
+    return 0
 }
 
 #

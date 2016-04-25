@@ -27,6 +27,43 @@ The philosophic goals here are these:
    proceed.
 
 
+## Installation
+
+    git clone https://github.com/dashohoxha/egpg
+    cd egpg/
+    sudo make install
+
+## Usage:
+
+**egpg** presents a series of subcommands:
+
+    egpg init
+
+    egpg key gen [<email> <name>]
+    egpg key ls
+
+    egpg contact search <name>
+    egpg contact ls
+
+    egpg sign <file>
+    egpg verify <file.signature>
+
+    egpg seal <file> [<recipient>+]
+    egpg open <file.sealed>
+
+    egpg help
+    egpg key help
+    egpg contact help
+    egpg ext help
+
+For more details see the manual page: [http://dashohoxha.github.io/egpg/man/][6]
+
+These should be the minimal set required to use GPG effectively.
+
+Any suggestions or discussions about supported operations, simplified
+terminology, etc. is wellcome.
+
+
 ## Requirements
 
  - You'll need `gpg2` installed. Most Linux distros have some variant
@@ -56,41 +93,9 @@ The philosophic goals here are these:
 
         apt-get install parcimonie
 
-## Installation
+ - For barcodes and pdf backups, these are also needed:
 
-    git clone https://github.com/dashohoxha/egpg
-    cd egpg/
-    sudo make install
-
-## Usage:
-
-**egpg** presents a series of subcommands:
-
-    egpg init
-
-    egpg key gen <email> [<name>]
-    egpg key ls
-
-    egpg contact search <name>
-    egpg contact ls
-
-    egpg sign <file>
-    egpg verify <file>
-
-    egpg seal <file> [<recipient>+]
-    egpg open <file.sealed>
-
-    egpg help
-    egpg key help
-    egpg contact help
-    egpg ext help
-
-For more details see the manual page: [http://dashohoxha.github.io/egpg/man/][6]
-
-These should be the minimal set required to use GPG effectively.
-
-Any suggestions or discussions about supported operations, simplified
-terminology, etc. is wellcome.
+        apt-get install qrencode imagemagic zbar-tools
 
 
 [1]: http://brew.sh/

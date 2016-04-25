@@ -187,9 +187,10 @@
 <li><p><code>fetch</code> [-d,--homedir <var>gnupghome</var>] [-k,--key-id <var>key-id</var>]</p>
 
 <p>  Get a key from another gpg directory (by default from $GNUPGHOME).</p></li>
-<li><p><code>backup</code> [<var>key-id</var>]</p>
+<li><p><code>backup</code> [<var>key-id</var>] [-q,--qrencode]</p>
 
-<p>  Backup key to file.</p></li>
+<p>  Backup key to text file. If the option --qrencode is given, then a
+  PDF file with 3D barcode will be generated as well.</p></li>
 <li><p><code>restore</code> <var>file</var></p>
 
 <p>  Restore key from file.</p></li>

@@ -99,9 +99,10 @@ egpg(1) -- Easy GnuPG
 
     Get a key from another gpg directory (by default from $GNUPGHOME).
 
-* `backup` [<key-id>]
+* `backup` [<key-id>] [-q,--qrencode]
 
-    Backup key to file.
+    Backup key to text file. If the option --qrencode is given, then a
+    PDF file with 3D barcode will be generated as well.
 
 * `restore` <file>
 
