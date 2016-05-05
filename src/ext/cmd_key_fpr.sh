@@ -2,14 +2,34 @@
 
 cmd_key_fpr_help() {
     cat <<-_EOF
-    key fpr
-        Show the fingerprint of the key.
+    key fpr [-q,--qrencode]
+        Show the fingerprint of the key.  With the option --qrencode
+        it will be converted to a 2D barcode image.
 
 _EOF
 }
 
 cmd_key_fpr() {
-    echo $(call cmd_key_list | grep '^fpr:' | cut -d: -f2)
+    local opts qr=0
+    opts="$(getopt -o q -l qrencode -n "$PROGRAM" -- "$@")"
+    local err=$?
+    eval set -- "$opts"
+    while true; do
+        case $1 in
+            -q|--qrencode) qr=1; shift ;;
+            --) shift; break ;;
+        esac
+    done
+    [[ $err == 0 ]] || fail "Usage:\n$(cmd_key_fpr_help)"
+
+    local fpr=$(call cmd_key_list | grep '^fpr:' | cut -d: -f2)
+    [[ $qr == 0 ]] && echo $fpr && exit 0
+
+    fpr=${fpr// /}
+    local key_id=${fpr:24}
+    echo $fpr | qrencode -o $key_id.png
+    echo -e "\nFingerprint barcode saved to: $key_id.png\n"
+    display $key_id.png
 }
 
 #
