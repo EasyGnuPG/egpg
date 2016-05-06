@@ -33,8 +33,8 @@ cmd_init() {
     [[ -n "$1" ]] && export EGPG_DIR="$1"
     mkdir -pv "$EGPG_DIR"
     mkdir -p "$EGPG_DIR/.gnupg"
-    [[ -f "$EGPG_DIR/gpg-agent.conf" ]] || cat <<_EOF > "$EGPG_DIR/gpg-agent.conf"
-pinentry-program /usr/bin/pinentry
+    [[ -f "$EGPG_DIR/.gnupg/gpg-agent.conf" ]] || cat <<_EOF > "$EGPG_DIR/.gnupg/gpg-agent.conf"
+pinentry-program /usr/bin/pinentry-tty
 default-cache-ttl 300
 max-cache-ttl 999999
 _EOF
@@ -66,18 +66,8 @@ _env_setup() {
     [[ -f "$env_file" ]] && sed -i "$env_file" -e '/^### start egpg config/,/^### end egpg config/d'
     cat <<_EOF >> "$env_file"
 ### start egpg config
+export GPG_TTY=\$(tty)
 export EGPG_DIR="$EGPG_DIR"
-_EOF
-    cat <<'_EOF' >> "$env_file"
-# Does ".gpg-agent-info" exist and points to gpg-agent process accepting signals?
-if ! test -f "$EGPG_DIR/.gpg-agent-info" \
-|| ! kill -0 $(cut -d: -f 2 "$EGPG_DIR/.gpg-agent-info") 2>/dev/null
-then
-    gpg-agent --daemon --no-grab --quiet \
-        --options "$EGPG_DIR/gpg-agent.conf" \
-        --pinentry-program /usr/bin/pinentry \
-        --write-env-file "$EGPG_DIR/.gpg-agent-info" > /dev/null
-fi
 ### end egpg config
 _EOF
     echo -e "\nAppended the following lines to '$env_file':\n---------------8<---------------"
