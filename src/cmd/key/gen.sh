@@ -44,38 +44,31 @@ cmd_key_gen() {
         Name-Email: $email
         Subkey-Type: RSA
         Subkey-Length: 4096
-        Subkey-Usage: auth
+        Subkey-Usage: encrypt
         Expire-Date: 1m
-        Preferences: SHA512 SHA384 SHA256 SHA224 AES256 AES192 AES CAST5 ZLIB BZIP2 ZIP Uncompressed
         "
     if [[ $pass == 1 ]]; then
         get_new_passphrase
-        [[ -n "$PASSPHRASE" ]] && PARAMETERS+="Passphrase: $PASSPHRASE"
+        PARAMETERS+="Passphrase: $PASSPHRASE"
     else
-        PASSPHRASE=''
+        PARAMETERS+="%no-protection"
     fi
 
     # generate the key
     haveged_start
-    gpg --quiet --batch --gen-key <<< "$PARAMETERS"
-    [[ $? != 0 ]] && fail "Failed to generate a key."
-    # set up some sub keys, in order not to use the base key day-to-day
-    get_gpg_key
-    local commands="addkey|4|4096|1m|addkey|6|4096|1m|save"
-    commands=$(echo "$commands" | tr '|' "\n")
-    script -c "gpg --batch --command-fd=0 --edit-key $GPG_KEY <<< \"$commands\"" /dev/null >/dev/null
-    while [[ -n $(ps ax | grep -e '--edit-key' | grep -v grep) ]]; do sleep 0.5; done
+    echo -e "$PARAMETERS" | gpg --quiet --batch --gen-key 2>/dev/null
     haveged_stop
 
-    echo -e "\nExcellent! You created a fresh GPG key. Here's what it looks like:"
+    # show the key
     call cmd_key_list
 
-    # generate a revokation certificate
-    call cmd_key_revcert "This revocation certificate was generated when the key was created."
-
-    # send the key to keyserver
-    call_fn gpg_send_keys $GPG_KEY
-    return 0
+    # revokation certificate
+    revcert="$GNUPGHOME/openpgp-revocs.d/$FPR.rev"
+    if [[ -f "$revcert" ]]; then
+        call_fn qrencode "$revcert"
+        echo -e "Revocation certificate is at: \n    \"$revcert\""
+        [[ -f "$revcert.pdf" ]] &&  echo -e "    \"$revcert.pdf\""
+    fi
 }
 
 get_new_passphrase() {

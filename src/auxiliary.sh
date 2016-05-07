@@ -33,10 +33,10 @@ get_valid_keys(){
     local gnupghome="${1:-$GNUPGHOME}"
     local valid_keys=''
     local secret_keys partial_keys key_id keyinfo expiration
-    secret_keys=$(gpg --homedir="$gnupghome" --list-secret-keys --with-colons | grep '^sec' | cut -d: -f5)
+    secret_keys=$(gpg --quiet --homedir="$gnupghome" --list-secret-keys --with-colons | grep '^sec' | cut -d: -f5)
     partial_keys=$(ls "$gnupghome"/*.key.* 2>/dev/null | sed -e "s#\.key\..*\$##" -e "s#^.*/##" | uniq)
     for key_id in $secret_keys $partial_keys; do
-        keyinfo=$(gpg --homedir="$gnupghome" --list-keys --with-colons $key_id | grep '^pub:u:')
+        keyinfo=$(gpg --quiet --homedir="$gnupghome" --list-keys --with-colons $key_id | grep '^pub:u:')
         [[ -z $keyinfo ]] && continue
         expiration=$(echo "$keyinfo" | cut -d: -f7)
         [[ -n $expiration ]] && [[ $expiration -lt $(date +%s) ]] && continue
@@ -59,6 +59,9 @@ Try first:  $(basename $0) key gen
        or:  $(basename $0) key recover
 "
 
+    # get the fingerprint
+    FPR=$(gpg --list-keys --fingerprint --with-sig-check --with-colons $GPG_KEY | grep '^fpr:' | cut -d: -f10)
+
     # check for key expiration
     # an expired key can be renewed at any time, so only a warning is issued
     local key_details exp key_id
@@ -66,6 +69,7 @@ Try first:  $(basename $0) key gen
     key_ids=$(echo "$key_details" | grep -E '^pub|^sub' | cut -d: -f5)
     for key_id in $key_ids; do
         exp=$(echo "$key_details" | grep -E ":$key_id:" | cut -d: -f7)
+        [[ -z $exp ]] && continue
         if [[ $exp -lt $(date +%s) ]]; then
             echo -e "\nThe key $key_id has expired on $(date -d @$exp +%F).\nPlease renew it with:  $(basename $0) key renew\n"
             break

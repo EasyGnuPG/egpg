@@ -34,9 +34,15 @@ cmd_init() {
     mkdir -pv "$EGPG_DIR"
     mkdir -p "$EGPG_DIR/.gnupg"
     [[ -f "$EGPG_DIR/.gnupg/gpg-agent.conf" ]] || cat <<_EOF > "$EGPG_DIR/.gnupg/gpg-agent.conf"
+quiet
 pinentry-program /usr/bin/pinentry-tty
+allow-loopback-pinentry
 default-cache-ttl 300
 max-cache-ttl 999999
+_EOF
+    [[ -f "$EGPG_DIR/.gnupg/gpg.conf" ]] || cat <<_EOF > "$EGPG_DIR/.gnupg/gpg.conf"
+keyid-format long
+default-cert-expire 1y
 _EOF
 
     # create the config file
@@ -68,6 +74,7 @@ _env_setup() {
 ### start egpg config
 export GPG_TTY=\$(tty)
 export EGPG_DIR="$EGPG_DIR"
+#export GNUPGHOME="$EGPG_DIR/.gnupg"
 ### end egpg config
 _EOF
     echo -e "\nAppended the following lines to '$env_file':\n---------------8<---------------"
