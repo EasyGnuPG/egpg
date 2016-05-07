@@ -28,7 +28,7 @@ cmd_key_list() {
 
     local secret_keys
     if [[ $all == 0 ]]; then
-        get_gpg_key 2>/dev/null
+        get_gpg_key
         secret_keys=$GPG_KEY
     else
         secret_keys=$(get_valid_keys)

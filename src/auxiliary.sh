@@ -33,10 +33,10 @@ get_valid_keys(){
     local gnupghome="${1:-$GNUPGHOME}"
     local valid_keys=''
     local secret_keys partial_keys key_id keyinfo expiration
-    secret_keys=$(gpg --quiet --homedir="$gnupghome" --list-secret-keys --with-colons | grep '^sec' | cut -d: -f5)
+    secret_keys=$(gpg --homedir="$gnupghome" --list-secret-keys --with-colons | grep '^sec' | cut -d: -f5)
     partial_keys=$(ls "$gnupghome"/*.key.* 2>/dev/null | sed -e "s#\.key\..*\$##" -e "s#^.*/##" | uniq)
     for key_id in $secret_keys $partial_keys; do
-        keyinfo=$(gpg --quiet --homedir="$gnupghome" --list-keys --with-colons $key_id | grep '^pub:u:')
+        keyinfo=$(gpg --homedir="$gnupghome" --list-keys --with-colons $key_id | grep '^pub:u:')
         [[ -z $keyinfo ]] && continue
         expiration=$(echo "$keyinfo" | cut -d: -f7)
         [[ -n $expiration ]] && [[ $expiration -lt $(date +%s) ]] && continue

@@ -9,10 +9,10 @@ _EOF
 }
 
 cmd_key_rev() {
-    local revoke_cert="$1"
+    local revcert="$1"
     get_gpg_key
-    [[ -n "$revoke_cert" ]] || revoke_cert="$EGPG_DIR/$GPG_KEY.revoke"
-    [[ -f "$revoke_cert" ]] || fail "Revocation certificate not found: $revoke_cert"
+    [[ -n "$revcert" ]] || revcert="$GNUPGHOME/openpgp-revocs.d/$FPR.rev"
+    [[ -f "$revcert" ]] || fail "Revocation certificate not found: $revcert"
 
     if is_split_key; then
         cat <<-_EOF
@@ -26,10 +26,13 @@ _EOF
     fi
 
     yesno "
-Revocation will make your current key useless. You'll need
-to generate a new one. Are you sure about this?" || return 1
+Revocation will make your current key useless.
+You'll need to generate a new one.
+Are you sure about this?" || return 1
 
-    gpg --import "$revoke_cert"
+    # import the revocation vertificate
+    sed -i "$revcert" -e "s/^:---/---/"
+    gpg --import "$revcert"
     call_fn gpg_send_keys $GPG_KEY
 }
 

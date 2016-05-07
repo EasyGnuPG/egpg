@@ -1,4 +1,4 @@
-gpg() { "$(which gpg2)" "$@" ; }
+gpg() { "$(which gpg2)" --quiet "$@" ; }
 export -f gpg
 
 getopt() { "$(which getopt)" "$@" ; }
