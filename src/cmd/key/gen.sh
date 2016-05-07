@@ -67,7 +67,7 @@ cmd_key_gen() {
     if [[ -f "$revcert" ]]; then
         call_fn qrencode "$revcert"
         echo -e "Revocation certificate is at: \n    \"$revcert\""
-        [[ -f "$revcert.pdf" ]] &&  echo -e "    \"$revcert.pdf\""
+        [[ -f "$revcert.pdf" ]] &&  echo -e "    \"$revcert.pdf\"\n"
     fi
 }
 

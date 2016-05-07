@@ -9,21 +9,31 @@ _EOF
 }
 
 cmd_key_revcert() {
-    echo "Creating a revocation certificate."
+    echo -e "\nCreating a revocation certificate.\n"
     local description=${1:-"Key is being revoked"}
 
     get_gpg_key
-    revoke_cert="$EGPG_DIR/$GPG_KEY.revoke"
-    rm -f "$revoke_cert"
+    revcert="$GNUPGHOME/openpgp-revocs.d/$FPR.rev"
+    rm -f "$revcert"
 
     gnupghome_setup
     local commands="y|1|$description||y"
     commands=$(echo "$commands" | tr '|' "\n")
-    script -c "gpg --yes --command-fd=0 --output \"$revoke_cert\" --gen-revoke $GPG_KEY <<< \"$commands\" " /dev/null > /dev/null
+    echo -e "$commands" | gpg --yes --no-tty --command-fd=0 --output "$revcert" --gen-revoke $GPG_KEY
     while [[ -n $(ps ax | grep -e '--gen-revoke' | grep -v grep) ]]; do sleep 0.5; done
-    call_fn qrencode "$revoke_cert"
-    [[ -f "$revoke_cert" ]] &&  echo -e "Revocation certificate saved at: \n    \"$revoke_cert\""
-    [[ -f "$revoke_cert.pdf" ]] &&  echo -e "    \"$revoke_cert.pdf\""
+    if [[ -f "$revcert" ]]; then
+        echo -e "\nRevocation certificate saved at: \n    \"$revcert\""
+        call_fn qrencode "$revcert"
+        [[ -f "$revcert.pdf" ]] &&  echo -e "    \"$revcert.pdf\"\n"
+        cat <<-_EOF
+Please move it to a medium which you can hide away; if Mallory gets
+access to this certificate he can use it to make your key unusable.
+It is smart to print this certificate and store it away, just in case
+your media become unreadable.  But have some caution:  The print system of
+your machine might store the data and make it available to others!
+
+_EOF
+    fi
     gnupghome_reset
     return 0
 }
