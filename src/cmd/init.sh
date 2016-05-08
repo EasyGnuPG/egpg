@@ -14,33 +14,24 @@ cmd_init() {
     test $(which haveged) || fail "You should install haveged:\n    sudo apt-get install haveged"
     test $(which parcimonie) || echo "It is recommended to install parcimonie:\n    sudo apt-get install parcimonie"
 
-    # check for an existing directory
-    if [[ -d $EGPG_DIR ]]; then
-        if yesno "There is an old directory '$EGPG_DIR'. Do you want to erase it?"; then
-            # stop the gpg-agent if it is running
-            if [[ -f "$EGPG_DIR/.gpg-agent-info" ]]; then
-                kill -9 $(cut -d: -f 2 "$EGPG_DIR/.gpg-agent-info") 2>/dev/null
-                rm -rf $(dirname $(cut -d: -f 1 "$EGPG_DIR/.gpg-agent-info")) 2>/dev/null
-                rm "$EGPG_DIR/.gpg-agent-info"
-            fi
-            # erase the old directory
-            [[ -d "$EGPG_DIR" ]] && rm -rfv "$EGPG_DIR"
-        fi
-    fi
+    # erase any existing directory
+    [[ -d "$EGPG_DIR" ]] \
+        && yesno "There is an old directory '$EGPG_DIR'. Do you want to erase it?" \
+        && rm -rfv "$EGPG_DIR"
 
     # create the new $EGPG_DIR
     export EGPG_DIR="$HOME/.egpg"
     [[ -n "$1" ]] && export EGPG_DIR="$1"
     mkdir -pv "$EGPG_DIR"
     mkdir -p "$EGPG_DIR/.gnupg"
-    [[ -f "$EGPG_DIR/.gnupg/gpg-agent.conf" ]] || cat <<_EOF > "$EGPG_DIR/.gnupg/gpg-agent.conf"
+    [[ -f "$EGPG_DIR/.gnupg/gpg-agent.conf" ]] || cat <<-_EOF > "$EGPG_DIR/.gnupg/gpg-agent.conf"
 quiet
 pinentry-program /usr/bin/pinentry-tty
 allow-loopback-pinentry
 default-cache-ttl 300
 max-cache-ttl 999999
 _EOF
-    [[ -f "$EGPG_DIR/.gnupg/gpg.conf" ]] || cat <<_EOF > "$EGPG_DIR/.gnupg/gpg.conf"
+    [[ -f "$EGPG_DIR/.gnupg/gpg.conf" ]] || cat <<-_EOF > "$EGPG_DIR/.gnupg/gpg.conf"
 keyid-format long
 default-cert-expire 1y
 _EOF
@@ -70,7 +61,7 @@ _EOF
 _env_setup() {
     local env_file="$1"
     [[ -f "$env_file" ]] && sed -i "$env_file" -e '/^### start egpg config/,/^### end egpg config/d'
-    cat <<_EOF >> "$env_file"
+    cat <<-_EOF >> "$env_file"
 ### start egpg config
 export GPG_TTY=\$(tty)
 export EGPG_DIR="$EGPG_DIR"

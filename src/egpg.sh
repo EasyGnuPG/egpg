@@ -183,7 +183,6 @@ config() {
     DEBUG=${DEBUG:-no}
 
     export GNUPGHOME
-    export GPG_AGENT_INFO=$(cat "$EGPG_DIR/.gpg-agent-info" 2>/dev/null | cut -c 16-)
     export GPG_TTY=$(tty)
 
     # create the config file, if it does not exist
