@@ -6,7 +6,7 @@ source "$(dirname "$0")"/setup.sh
 test_expect_success 'egpg key backup' '
     egpg_init &&
     egpg_key_fetch &&
-    egpg key backup | grep "Key saved to: $KEY_ID.key" &&
+    egpg key backup | grep "Key saved to" &&
     [[ -f "$KEY_ID.key" ]]
 '
 
