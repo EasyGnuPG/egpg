@@ -46,7 +46,7 @@ cmd_key_fetch() {
 
     # set trust to ultimate
     local commands=$(echo "trust|5|y|quit" | tr '|' "\n")
-    script -c "gpg --command-fd=0 --key-edit $key_id <<< \"$commands\" " /dev/null > /dev/null
+    echo -e "$commands" | gpg --no-tty --command-fd=0 --key-edit $key_id
 }
 
 #
