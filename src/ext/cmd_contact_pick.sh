@@ -1,16 +1,16 @@
-# Read the barcode of the fingerprint and receive the key
+# Read the barcode of the fingerprint and receive the contact details
 # from the keyserver network.
 
-cmd_key_pick_help() {
+cmd_contact_pick_help() {
     cat <<-_EOF
-    key pick [-i,--image <imagefile>]
+    contact pick [-i,--image <imagefile>]
         Read fingerprint as a 2D barcode from camera or from image
         and receive the given contact from the keyserver network.
 
 _EOF
 }
 
-cmd_key_pick() {
+cmd_contact_pick() {
     local opts image fpr
     opts="$(getopt -o i: -l image: -n "$PROGRAM" -- "$@")"
     local err=$?
@@ -21,7 +21,7 @@ cmd_key_pick() {
             --) shift; break ;;
         esac
     done
-    [[ $err == 0 ]] || fail "Usage:\n$(cmd_key_pick_help)"
+    [[ $err == 0 ]] || fail "Usage:\n$(cmd_contact_pick_help)"
 
     # get fingerprint from image or from camera barcode
     if [[ -n "$image" ]]; then
