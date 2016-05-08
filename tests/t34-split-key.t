@@ -60,7 +60,7 @@ test_expect_success 'egpg key del' '
 
 test_expect_success 'egpg key backup' '
     init &&
-    egpg key backup | grep "Key saved to: $KEY_ID.key" &&
+    egpg key backup | grep "Key saved to" &&
     [[ -f "$KEY_ID.key" ]]
 '
 

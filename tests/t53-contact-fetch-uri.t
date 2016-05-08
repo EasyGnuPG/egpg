@@ -6,8 +6,8 @@ source "$(dirname "$0")"/setup.sh
 test_expect_success 'egpg contact fetch-uri' '
     egpg_init &&
 
-    local contact_1="https://github.com/dashohoxha/egpg/raw/master/tests/gnupg/6073B549.gpg.asc" &&
-    local contact_2="https://github.com/dashohoxha/egpg/raw/master/tests/gnupg/DA94668A.gpg.asc" &&
+    local contact_1="https://github.com/dashohoxha/egpg/raw/gnupg-2.0/tests/gnupg/6073B549.gpg.asc" &&
+    local contact_2="https://github.com/dashohoxha/egpg/raw/gnupg-2.0/tests/gnupg/DA94668A.gpg.asc" &&
 
     egpg contact fetch-uri $contact_1 $contact_2 &&
     [[ $(egpg contact ls | grep "^id: " | wc -l) == 2 ]]
