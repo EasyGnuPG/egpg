@@ -23,6 +23,10 @@ VERSION="v0.9"
 
 LIBDIR="$(dirname "$0")"
 
+# make sure that these variables do not inherit values from the environment
+WORKDIR=''
+GPG_KEY=''
+
 source "$LIBDIR/auxiliary.sh"
 source "$LIBDIR/platform.sh"
 
