@@ -26,16 +26,12 @@ _EOF
     fi
 
     local expdate="$@"
-    if [[ -z "$expdate" ]]; then
-        # default is 1 month
-        time="1m"
-    else
-        # calculate the number of days from now until the given time
-        local expday=$(date -d "$expdate" +%s)
-        local today=$(date -d $(date +%F) +%s)
+    [[ -z "$expdate" ]] && expdate="1 month"
 
-        time=$(( ( $expday - $today ) / 86400 ))
-    fi
+    # calculate the number of days from now until the given time
+    local expday=$(date -d "$expdate" +%s)
+    local today=$(date -d $(date +%F) +%s)
+    time=$(( ( $expday - $today ) / 86400 ))
 
     local commands=";expire;$time;y;key 1;expire;$time;y;key 1;save"
     commands=$(echo "$commands" | tr ';' "\n")
