@@ -37,14 +37,9 @@ _EOF
         time=$(( ( $expday - $today ) / 86400 ))
     fi
 
-    local commands=";expire;$time;y"
-    commands+=";key 1;expire;$time;y;key 1"
-    commands+=";key 2;expire;$time;y;key 2"
-    commands+=";key 3;expire;$time;y;key 3"
-    commands+=";save"
+    local commands=";expire;$time;y;key 1;expire;$time;y;key 1;save"
     commands=$(echo "$commands" | tr ';' "\n")
-
-    script -c "gpg --command-fd=0 --key-edit $GPG_KEY <<< \"$commands\" " /dev/null > /dev/null
+    echo -e "$commands" | gpg --no-tty --command-fd=0 --key-edit $GPG_KEY 2>/dev/null
     call_fn gpg_send_keys $GPG_KEY
 
     call cmd_key_list

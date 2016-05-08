@@ -1,4 +1,7 @@
-gpg() { "$(which gpg2)" --quiet "$@" ; }
+gpg() {
+    is_true $DEBUG && echo "$(which gpg2)" --quiet "$@"
+    "$(which gpg2)" --quiet "$@"
+}
 export -f gpg
 
 getopt() { "$(which getopt)" "$@" ; }

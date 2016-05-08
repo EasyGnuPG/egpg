@@ -59,6 +59,9 @@ cmd_key_gen() {
     echo -e "$PARAMETERS" | gpg --quiet --batch --gen-key 2>/dev/null
     haveged_stop
 
+    # restrict expiration time to 1 month from now
+    call cmd_key_renew
+
     # show the key
     call cmd_key_list
 
