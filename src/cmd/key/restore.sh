@@ -20,9 +20,9 @@ cmd_key_restore() {
     gpg --import "$file" 2>/dev/null || fail "Failed to import file: $file"
 
     # set trust to 'ultimate'
-    local key_id=$(gpg --with-fingerprint --with-colons "$file" | grep '^sec' | cut -d: -f5)
+    local key_id=$(gpg --with-fingerprint --with-colons "$file" | grep '^pub:' | cut -d: -f5)
     local commands=$(echo "trust|5|y|quit" | tr '|' "\n")
-    script -c "gpg --batch --command-fd=0 --key-edit $key_id <<< \"$commands\" " /dev/null > /dev/null
+    echo -e "$commands" | gpg --no-tty --batch --command-fd=0 --edit-key $key_id
 }
 
 #
