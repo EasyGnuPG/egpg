@@ -62,9 +62,6 @@ cmd_key_gen() {
     # restrict expiration time to 1 month from now
     call cmd_key_renew
 
-    # show the key
-    call cmd_key_list
-
     # revokation certificate
     revcert="$GNUPGHOME/openpgp-revocs.d/$FPR.rev"
     if [[ -f "$revcert" ]]; then
