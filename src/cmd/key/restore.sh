@@ -2,8 +2,8 @@
 
 cmd_key_restore_help() {
     cat <<-_EOF
-    restore <file>
-        Restore key from file.
+    restore <file.tgz>
+        Restore key from backup file.
 
 _EOF
 }
@@ -15,14 +15,21 @@ cmd_key_restore() {
     [[ -n "$file" ]] || fail "Usage:\n$(cmd_key_restore_help)"
     [[ -f "$file" ]] || fail "Cannot find file: $file"
 
-    # restore
     echo "Restoring key from file: $file"
-    gpg --import "$file" 2>/dev/null || fail "Failed to import file: $file"
+
+    workdir_make
+    tar xz -C "$WORKDIR" --file=$file || fail "Could not open archive: $file"
+    # restore private keys
+    cp "$WORKDIR"/*/*.key "$GNUPGHOME"/private-keys-v1.d/
+    # restore public keys
+    local pub_key=$(ls "$WORKDIR"/*/*.pub)
+    gpg --import "$pub_key" || fail "Failed to import public key."
 
     # set trust to 'ultimate'
-    local key_id=$(gpg --with-fingerprint --with-colons "$file" | grep '^pub:' | cut -d: -f5)
+    local key_id=$(basename "${pub_key%.pub}")
     local commands=$(echo "trust|5|y|quit" | tr '|' "\n")
     echo -e "$commands" | gpg --no-tty --batch --command-fd=0 --edit-key $key_id
+    workdir_clear
 }
 
 #

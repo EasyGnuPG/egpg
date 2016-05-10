@@ -13,11 +13,12 @@ cmd_key_delete() {
     [[ -z $key_id ]] && get_gpg_key && key_id=$GPG_KEY
 
     local fingerprint
-    fingerprint=$(gpg --with-colons --fingerprint $key_id | grep '^fpr' | cut -d: -f10)
+    fingerprint=$(get_fingerprint $key_id)
     [[ -n "$fingerprint" ]] || fail "Key $key_id not found."
     # delete secret keys
-    local key_grips=$(gpg --list-keys --with-keygrip --with-colons $GPG_KEY | grep '^grp:' | cut -d: -f10)
-    for grip in $key_grips; do rm -f "$GNUPGHOME"/private-keys-v1.d/$grip.key; done
+    for grip in $(get_keygrips $GPG_KEY); do
+        rm -f "$GNUPGHOME"/private-keys-v1.d/$grip.key
+    done
     # delete public keys
     gpg --delete-keys --batch --yes "$fingerprint"
 

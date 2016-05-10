@@ -91,11 +91,30 @@ assert_no_valid_key(){
 # Return true if the key is a full key (not partial).
 is_full_key() {
     local key_id=${1:-$GPG_KEY}
+    [[ -n $key_id ]] || return 1
     [[ -n $(gpg --list-secret-keys --with-colons $key_id 2>/dev/null) ]]
 }
 
 is_split_key() {
     ! is_full_key "$@"
+}
+
+get_fingerprint() {
+    local key_id=${1:-$GPG_KEY}
+    [[ -n $key_id ]] || return 1
+
+    local fingerprint
+    fingerprint=$(gpg --with-colons --fingerprint $key_id | grep '^fpr' | cut -d: -f10)
+    echo $fingerprint
+}
+
+get_keygrips() {
+    local key_id=${1:-$GPG_KEY}
+    [[ -n $key_id ]] || return 1
+
+    local keygrips
+    keygrips=$(gpg --list-keys --with-keygrip --with-colons $key_id | grep '^grp:' | cut -d: -f10)
+    echo $keygrips
 }
 
 # Copy $GNUPGHOME to a temporary $WORKDIR
