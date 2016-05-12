@@ -25,20 +25,9 @@ cmd_key_backup() {
     local key_id="$1"
     [[ -z $key_id ]] && get_gpg_key && key_id=$GPG_KEY
 
-    gnupghome_setup
-    mkdir -p "$WORKDIR"/$key_id/
-    gpg --armor --export $key_id > "$WORKDIR"/$key_id/$key_id.pub
-    for grip in $(get_keygrips $GPG_KEY); do
-        cp "$GNUPGHOME"/private-keys-v1.d/$grip.key "$WORKDIR"/$key_id/
-    done
-    cat <<-_EOF > "$WORKDIR"/$key_id/README.txt
-Restore private keys by copying *.key to \$GNUPGHOME/private-keys-v1.d/
-Restore public keys with: gpg2 --import *.pub
-Then set the trust of the key to ultimate with: gpg2 --edit-key <key-id>
-_EOF
-    tar cz -C "$WORKDIR" --file=$key_id.tgz $key_id/
-    gnupghome_reset
-    echo -e "Key saved to: $key_id.tgz"
+    local file=$key_id.tgz
+    call_fn backup_key $key_id $file
+    [[ -f $file ]] && echo -e "Key saved to: $file"
 
 }
 

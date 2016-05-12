@@ -1,22 +1,22 @@
-# Restore key from file.
+# Backup the given key id to the given file.
 
-cmd_key_restore_help() {
-    cat <<-_EOF
-    restore <file.tgz>
-        Restore key from backup file.
+backup_key() {
+    local key_id=$1
+    local backup_file="$2"
 
+    workdir_make
+    mkdir -p "$WORKDIR"/$key_id/
+    gpg --armor --export $key_id > "$WORKDIR"/$key_id/$key_id.pub
+    for grip in $(get_keygrips $key_id); do
+        cp "$GNUPGHOME"/private-keys-v1.d/$grip.key "$WORKDIR"/$key_id/
+    done
+    cat <<-_EOF > "$WORKDIR"/$key_id/README.txt
+Restore private keys by copying *.key to \$GNUPGHOME/private-keys-v1.d/
+Restore public keys with: gpg2 --import *.pub
+Then set the trust of the key to ultimate with: gpg2 --edit-key <key-id>
 _EOF
-}
-
-cmd_key_restore() {
-    assert_no_valid_key
-
-    local file="$1"
-    [[ -n "$file" ]] || fail "Usage:\n$(cmd_key_restore_help)"
-    [[ -f "$file" ]] || fail "Cannot find file: $file"
-
-    echo "Restoring key from file: $file"
-    call_fn restore_key $file
+    tar cz -C "$WORKDIR" --file="$backup_file" $key_id/
+    workdir_clear
 }
 
 #

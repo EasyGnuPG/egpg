@@ -1,22 +1,21 @@
-# Restore key from file.
+# Restore key from the given backup file.
 
-cmd_key_restore_help() {
-    cat <<-_EOF
-    restore <file.tgz>
-        Restore key from backup file.
-
-_EOF
-}
-
-cmd_key_restore() {
-    assert_no_valid_key
-
+restore_key() {
     local file="$1"
-    [[ -n "$file" ]] || fail "Usage:\n$(cmd_key_restore_help)"
-    [[ -f "$file" ]] || fail "Cannot find file: $file"
 
-    echo "Restoring key from file: $file"
-    call_fn restore_key $file
+    workdir_make
+    tar xz -C "$WORKDIR" --file=$file || fail "Could not open archive: $file"
+    # restore private keys
+    cp "$WORKDIR"/*/*.key "$GNUPGHOME"/private-keys-v1.d/
+    # restore public keys
+    local pub_key=$(ls "$WORKDIR"/*/*.pub)
+    gpg --import "$pub_key" || fail "Failed to import public key."
+
+    # set trust to 'ultimate'
+    local key_id=$(basename "${pub_key%.pub}")
+    local commands=$(echo "trust|5|y|quit" | tr '|' "\n")
+    echo -e "$commands" | gpg --no-tty --batch --command-fd=0 --edit-key $key_id
+    workdir_clear
 }
 
 #
