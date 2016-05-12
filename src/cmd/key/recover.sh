@@ -33,7 +33,7 @@ cmd_key_recover() {
     cp "$partial1" "$WORKDIR/"
     cp "$partial2" "$WORKDIR/"
     gfcombine "$WORKDIR"/$key_id.key.*
-    gpg --import "$WORKDIR"/$key_id.key 2>/dev/null || fail "Could not import the combined key."
+    call_fn restore_key "$WORKDIR"/$key_id.key
     workdir_clear
 
     # remove the partials

@@ -132,19 +132,19 @@ gnupghome_setup() {
     # get the partial keys from PC and dongle
     local partial1 partial2
     partial1=$(cd "$GNUPGHOME"; ls $GPG_KEY.key.[0-9][0-9][0-9] 2>/dev/null)
-    [[ -f "$GNUPGHOME/$partial1" ]] \
+    [[ -f "$GNUPGHOME"/$partial1 ]] \
         || fail "Could not find partial key for $GPG_KEY on $gnupghome"
     [[ -d "$DONGLE" ]] \
         || fail "The dongle directory not found: $DONGLE\nMake sure that the dongle is connected and mounted."
-    [[ -d "$DONGLE/.gnupg/" ]] \
+    [[ -d "$DONGLE"/.gnupg/ ]] \
         || fail "Directory not found: $DONGLE"
-    partial2=$(cd "$DONGLE/.gnupg"; ls $GPG_KEY.key.[0-9][0-9][0-9] 2>/dev/null)
-    [[ -f "$DONGLE/.gnupg/$partial2" ]] \
+    partial2=$(cd "$DONGLE"/.gnupg; ls $GPG_KEY.key.[0-9][0-9][0-9] 2>/dev/null)
+    [[ -f "$DONGLE"/.gnupg/$partial2 ]] \
         || fail "Could not find partial key for $GPG_KEY on $DONGLE/.gnupg/"
 
     # copy the partial keys to workdir and combine them
-    gfcombine "$GNUPGHOME/$partial1" "$DONGLE/.gnupg/$partial2"
-    call_fn restore_key "$GNUPGHOME/$GPG_KEY.key"
+    gfcombine "$GNUPGHOME"/$partial1 "$DONGLE"/.gnupg/$partial2
+    call_fn restore_key "$GNUPGHOME"/$GPG_KEY.key
 }
 gnupghome_reset() {
     export GNUPGHOME="$GNUPGHOME_BAK"
