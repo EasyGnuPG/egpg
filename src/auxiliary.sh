@@ -144,7 +144,7 @@ gnupghome_setup() {
 
     # copy the partial keys to workdir and combine them
     gfcombine "$GNUPGHOME/$partial1" "$DONGLE/.gnupg/$partial2"
-    gpg --import "$GNUPGHOME/$GPG_KEY.key" 2>/dev/null || fail "Could not import the combined key."
+    call_fn restore_key "$GNUPGHOME/$GPG_KEY.key"
 }
 gnupghome_reset() {
     export GNUPGHOME="$GNUPGHOME_BAK"

@@ -15,7 +15,6 @@ restore_key() {
     local key_id=$(basename "${pub_key%.pub}")
     local commands=$(echo "trust|5|y|quit" | tr '|' "\n")
     echo -e "$commands" | gpg --no-tty --batch --command-fd=0 --edit-key $key_id
-    workdir_clear
 }
 
 #

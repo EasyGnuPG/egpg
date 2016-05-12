@@ -38,8 +38,8 @@ cmd_key_split() {
     # export key to a tmp dir
     workdir_make
     local file="$WORKDIR/$GPG_KEY.key"
-    gpg --armor --export $GPG_KEY > "$file"
-    gpg --armor --export-secret-keys $GPG_KEY >> "$file"
+    call_fn backup_key $GPG_KEY "$file"
+    [[ -f "$file" ]] || fail "Could not make key backup."
 
     # split and get the partial names
     gfsplit -n2 -m3 "$file"
@@ -71,9 +71,10 @@ cmd_key_split() {
 
     workdir_clear
 
-    # delete the secret key
-    local fingerprint=$(gpg --list-keys --with-colons --fingerprint $GPG_KEY | grep '^fpr:' | cut -d: -f10)
-    gpg --batch --delete-secret-keys $fingerprint
+    # delete the secret keys
+    for grip in $(get_keygrips $GPG_KEY); do
+        rm -f "$GNUPGHOME"/private-keys-v1.d/$grip.key
+    done
 
     # display a notice
     cat <<-_EOF

@@ -16,7 +16,6 @@ Restore public keys with: gpg2 --import *.pub
 Then set the trust of the key to ultimate with: gpg2 --edit-key <key-id>
 _EOF
     tar cz -C "$WORKDIR" --file="$backup_file" $key_id/
-    workdir_clear
 }
 
 #

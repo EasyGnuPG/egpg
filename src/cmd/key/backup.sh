@@ -26,7 +26,9 @@ cmd_key_backup() {
     [[ -z $key_id ]] && get_gpg_key && key_id=$GPG_KEY
 
     local file=$key_id.tgz
+    gnupghome_setup
     call_fn backup_key $key_id $file
+    gnupghome_reset
     [[ -f $file ]] && echo -e "Key saved to: $file"
 
 }

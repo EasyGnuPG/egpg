@@ -27,10 +27,10 @@ cmd_key_join() {
 
     # combine partial keys and import the full key
     workdir_make
-    cp "$GNUPGHOME/$partial1" "$WORKDIR/"
-    cp "$DONGLE/.gnupg/$partial2" "$WORKDIR/"
-    gfcombine "$WORKDIR/$partial1" "$WORKDIR/$partial2"
-    gpg --import "$WORKDIR/$GPG_KEY.key" 2>/dev/null || fail "Could not import the combined key."
+    cp "$GNUPGHOME"/$partial1 "$WORKDIR/"
+    cp "$DONGLE"/.gnupg/$partial2 "$WORKDIR/"
+    gfcombine "$WORKDIR"/$partial1 "$WORKDIR"/$partial2
+    call_fn restore_key "$WORKDIR"/$GPG_KEY.key 2>/dev/null || fail "Could not import the combined key."
     workdir_clear
 
     # remove the partials
