@@ -4,6 +4,7 @@ cmd_key2dongle_help() {
     cat <<-_EOF
     key2dongle [<dongle-dir>] [-r,--reverse]
         Move the sign/cert/main key to dongle.
+        With option --reverse move it back to GNUPGHOME.
 
 _EOF
 }

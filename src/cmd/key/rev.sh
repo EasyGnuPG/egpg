@@ -14,16 +14,11 @@ cmd_key_rev() {
     [[ -n "$revcert" ]] || revcert="$GNUPGHOME/openpgp-revocs.d/$FPR.rev"
     [[ -f "$revcert" ]] || fail "Revocation certificate not found: $revcert"
 
-    if is_split_key; then
-        cat <<-_EOF
-
+    is_full_key || fail "
 This key is split into partial keys.
 Try first:  $(basename $0) key join
      then:  $(basename $0) key revoke
-
-_EOF
-        exit
-    fi
+"
 
     yesno "
 Revocation will make your current key useless.

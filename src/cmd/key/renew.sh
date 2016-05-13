@@ -13,17 +13,12 @@ _EOF
 
 cmd_key_renew() {
     get_gpg_key
-    if is_split_key; then
-        cat <<-_EOF
-
+    is_full_key || fail "
 This key is split into partial keys.
 Try first:  $(basename $0) key join
      then:  $(basename $0) key renew ...
       and:  $(basename $0) key split
-
-_EOF
-        exit
-    fi
+"
 
     local expdate="$@"
     [[ -z "$expdate" ]] && expdate="1 month"
