@@ -10,18 +10,13 @@ _EOF
 
 cmd_key_pass() {
     get_gpg_key
-    if is_full_key; then
-        gpg --passwd $GPG_KEY 2>/dev/null
-    else
-        cat <<-_EOF
-
+    is_full_key || fail "
 This key is split into partial keys.
 Try first:  $(basename $0) key join
      then:  $(basename $0) key pass
       and:  $(basename $0) key split
-
-_EOF
-    fi
+"
+    gpg --batch --passwd $GPG_KEY
 }
 
 #
