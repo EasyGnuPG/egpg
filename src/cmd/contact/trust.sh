@@ -35,8 +35,9 @@ cmd_contact_trust() {
         *) fail "Unknown trust level: $level" ;;
     esac
 
-    local commands=$(echo "trust|$level|quit" | tr '|' "\n")
-    script -c "gpg --command-fd=0 --edit-key \"$contact\" <<< \"$commands\" " /dev/null > /dev/null
+    local commands=$(echo "$level|quit" | tr '|' "\n")
+    echo -e "$commands" | gpg --no-tty --command-fd=0 --edit-key "$contact" trust 2>/dev/null
+    call cmd_contact_list "$contact" | grep -e "^uid:" -e "^trust:" -e "^\$"
 }
 
 #
