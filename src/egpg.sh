@@ -23,9 +23,11 @@ VERSION="v0.9"
 
 LIBDIR="$(dirname "$0")"
 
-# make sure that these variables do not inherit values from the environment
-WORKDIR=''
-GPG_KEY=''
+# make sure that these global variables
+# do not inherit values from the environment
+unset WORKDIR
+unset GPG_KEY
+unset FPR
 
 source "$LIBDIR/auxiliary.sh"
 source "$LIBDIR/platform.sh"

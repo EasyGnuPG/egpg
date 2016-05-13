@@ -108,7 +108,7 @@ get_fingerprint() {
     [[ -n $key_id ]] || return 1
 
     local fingerprint
-    fingerprint=$(gpg --with-colons --fingerprint $key_id | grep '^fpr' | cut -d: -f10)
+    fingerprint=$(gpg --with-colons --fingerprint $key_id | grep '^fpr' | cut -d: -f10 | head -n 1)
     echo $fingerprint
 }
 

@@ -41,21 +41,16 @@ cmd_contact_certify() {
         *) fail "Unknown verification level: $level" ;;
     esac
 
-    local cert_opts="--default-cert-level=$level --default-cert-expire=$time"
-    if [[ $publish == 0 ]]; then
-        is_split_key && fail "This does not work with a split key."
-        gpg --lsign-key $cert_opts "$contact"
-        return
-    fi
-
+    local fingerprint=$(get_fingerprint "$contact")
     local homedir="$GNUPGHOME"
     gnupghome_setup
-    gpg --sign-key $cert_opts "$contact"
-    gpg --armor --export "$contact" > "$WORKDIR/contacts.asc"
-    gpg --homedir="$homedir" --import "$WORKDIR/contacts.asc"
+    gpg --batch --default-cert-level=$level --default-cert-expire=$time \
+        --quick-sign-key $fingerprint
+    gpg --armor --export $fingerprint > "$WORKDIR/contact.asc"
+    gpg --homedir="$homedir" --import "$WORKDIR/contact.asc"
     gnupghome_reset
 
-    call_fn gpg_send_keys "$contact"
+    [[ $publish == 1 ]] && call_fn gpg_send_keys "$contact"
 }
 
 #

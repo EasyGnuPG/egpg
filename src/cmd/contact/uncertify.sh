@@ -9,8 +9,8 @@ _EOF
 }
 
 cmd_contact_uncertify() {
-    echo "Try the command: $(basename $0) -- --key-edit $@"
-    echo "and then use the commands: revsig and/or delsig"
+    echo "Try the command: $(basename $0) gpg --key-edit $@"
+    echo "and then use the commands: revsig and delsig"
 }
 
 #
