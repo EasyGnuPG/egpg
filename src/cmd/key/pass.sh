@@ -11,8 +11,7 @@ _EOF
 cmd_key_pass() {
     get_gpg_key
     if is_full_key; then
-        local commands=$(echo "passwd;save" | tr ';' "\n")
-        echo -e "$commands" | gpg --no-tty --command-fd=0 --key-edit $GPG_KEY
+        gpg --passwd $GPG_KEY 2>/dev/null
     else
         cat <<-_EOF
 
