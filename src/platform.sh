@@ -1,3 +1,5 @@
+# Platform dependent functions.
+
 gpg() {
     is_true $DEBUG && echo "$(which gpg2)" --quiet "$@"
     "$(which gpg2)" --quiet "$@"

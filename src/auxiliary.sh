@@ -28,6 +28,10 @@ is_false() {
     ! is_true "$@"
 }
 
+gpg_version() {
+    gpg --version | head -n 1 | cut -d" " -f3
+}
+
 # Return the ids of the keys that are not revoked and not expired.
 get_valid_keys(){
     local gnupghome="${1:-$GNUPGHOME}"
