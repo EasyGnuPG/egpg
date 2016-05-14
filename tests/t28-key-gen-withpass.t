@@ -4,7 +4,7 @@ test_description='Command: key gen'
 source "$(dirname "$0")"/setup.sh
 
 test_expect_success 'Make sure `haveged` is started' '
-    [[ -n "$(ps ax | grep -v grep | grep haveged)" ]]
+    [[ -n "$(ps ax | grep -v grep | grep -v defunct | grep haveged)" ]]
 '
 
 test_expect_success 'init' '
@@ -14,7 +14,7 @@ test_expect_success 'init' '
 '
 
 test_expect_success 'egpg key gen' '
-    echo <<-_EOF | egpg key gen test1@example.org "Test 1" 2>&1 | grep "Excellent! You created a fresh GPG key." &&
+    echo <<-_EOF | egpg key gen test1@example.org "Test 1" 2>&1 &&
 123456
 123456
 _EOF

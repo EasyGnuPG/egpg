@@ -7,7 +7,7 @@ test_expect_success 'egpg key backup' '
     egpg_init &&
     egpg_key_fetch &&
     egpg key backup | grep "Key saved to" &&
-    [[ -f "$KEY_ID.key" ]]
+    [[ -f "$KEY_ID.tgz" ]]
 '
 
 test_expect_success 'egpg key restore (key exists)' '
@@ -24,7 +24,7 @@ test_expect_success 'egpg key restore (non existing file)' '
 '
 
 test_expect_success 'egpg key restore' '
-    egpg key restore "$KEY_ID.key" &&
+    egpg key restore "$KEY_ID.tgz" &&
     [[ $(egpg key | grep "^id: " | cut -d" " -f2) == $KEY_ID ]]
 '
 

@@ -24,4 +24,16 @@ test_expect_success 'egpg key del <key-id>' '
     egpg key 2>&1 | grep -e "No valid key found."
 '
 
+test_expect_success 'egpg key rm' '
+    egpg_key_fetch &&
+    egpg key rm &&
+    egpg key 2>&1 | grep -e "No valid key found."
+'
+
+test_expect_success 'egpg key delete' '
+    egpg_key_fetch &&
+    egpg key delete &&
+    egpg key 2>&1 | grep -e "No valid key found."
+'
+
 test_done
