@@ -46,7 +46,7 @@ SHARE=
 
 # GPG homedir. If "default", then the default one will be used,
 # (whatever is in the environment \$GNUPGHOME, usually ~/.gnupg).
-GNUPGHOME="$EGPG_DIR/.gnupg"
+GNUPGHOME="$(realpath "$EGPG_DIR")/.gnupg"
 
 # Path of the dongle.
 DONGLE=
@@ -64,8 +64,8 @@ _env_setup() {
     cat <<-_EOF >> "$env_file"
 ### start egpg config
 export GPG_TTY=\$(tty)
-export EGPG_DIR="$EGPG_DIR"
-#export GNUPGHOME="$EGPG_DIR/.gnupg"
+export EGPG_DIR="$(realpath "$EGPG_DIR")"
+#export GNUPGHOME="$(realpath "$EGPG_DIR")/.gnupg"
 ### end egpg config
 _EOF
     echo -e "\nAppended the following lines to '$env_file':\n---------------8<---------------"

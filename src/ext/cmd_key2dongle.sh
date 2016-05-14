@@ -55,7 +55,7 @@ Try first:  $(basename $0) key join
     [[ -w "$dongle" ]] || fail "Dongle directory is not writable: $dongle"
 
     # set DONGLE on the config file
-    export DONGLE=${dongle%/}
+    export DONGLE=$(realpath "${dongle%/}")
     sed -i "$EGPG_DIR/config.sh" -e "/DONGLE=/c DONGLE=\"$DONGLE\""
 
     if [[ $reverse == 0 ]]; then

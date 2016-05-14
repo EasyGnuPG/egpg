@@ -104,7 +104,7 @@ check_split_options() {
     [[ -n "$dongle" ]] || fail "You need a dongle to save the partial key."
     [[ -d "$dongle" ]] || fail "Dongle directory does not exist: $dongle"
     [[ -w "$dongle" ]] || fail "Dongle directory is not writable: $dongle"
-    export DONGLE=${dongle%/}
+    export DONGLE=$(realpath "${dongle%/}")
 
     # set DONGLE on the config file
     sed -i "$EGPG_DIR/config.sh" -e "/DONGLE=/c DONGLE=\"$DONGLE\""

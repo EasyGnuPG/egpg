@@ -23,6 +23,7 @@ cmd_set() {
             ;;
         dongle)
             local dongle="$@"
+            dongle=$(realpath "$dongle")
             sed -i "$EGPG_DIR/config.sh" -e "/DONGLE=/c DONGLE=\"$dongle\""
             ;;
         *)
