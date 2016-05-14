@@ -11,20 +11,20 @@ test_expect_success 'key backup (no valid key)' '
 test_expect_success 'key backup' '
     egpg_key_fetch &&
     egpg key backup | grep "Key saved to" &&
-    [[ -f "$KEY_ID.key" ]]
+    [[ -f "$KEY_ID.tgz" ]]
 '
 
 test_expect_success 'key backup <key-id>' '
-    rm -f "$KEY_ID.key" &&
+    rm -f "$KEY_ID.tgz" &&
     egpg key backup $KEY_ID | grep "Key saved to" &&
-    [[ -f "$KEY_ID.key" ]]
+    [[ -f "$KEY_ID.tgz" ]]
 '
 
 test_expect_success 'key backup -q' '
-    rm -f "$KEY_ID.key" &&
-    egpg key backup -q | grep "$KEY_ID.key.pdf" &&
-    [[ -f "$KEY_ID.key" ]] &&
-    [[ -f "$KEY_ID.key.pdf" ]]
+    rm -f "$KEY_ID.tgz" &&
+    egpg key backup -q | grep "$KEY_ID.tgz.base64.pdf" &&
+    [[ -f "$KEY_ID.tgz" ]] &&
+    [[ -f "$KEY_ID.tgz.base64.pdf" ]]
 '
 
 test_done

@@ -31,6 +31,13 @@ cmd_key_backup() {
     gnupghome_reset
     [[ -f $file ]] && echo -e "Key saved to: $file"
 
+    if [[ $qr == 1 ]]; then
+        base64 $file > $file.base64
+        call_fn qrencode $file.base64
+        rm -f $file.base64
+        [[ -f $file.base64.pdf ]] \
+            && echo -e "              $file.base64.pdf"
+    fi
 }
 
 #
