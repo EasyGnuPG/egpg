@@ -25,9 +25,7 @@ LIBDIR="$(dirname "$0")"
 
 # make sure that these global variables
 # do not inherit values from the environment
-unset WORKDIR
-unset GPG_KEY
-unset FPR
+unset WORKDIR GPG_KEY FPR
 
 source "$LIBDIR/auxiliary.sh"
 source "$LIBDIR/platform.sh"
@@ -175,6 +173,7 @@ config() {
     # read the config file
     local config_file="$EGPG_DIR/config.sh"
     ENV_GNUPGHOME="$GNUPGHOME"
+    unset SHARE KEYSERVER GNUPGHOME DONGLE DEBUG
     [[ -f "$config_file" ]] && source "$config_file"
 
     # set defaults, if some configurations are missing
