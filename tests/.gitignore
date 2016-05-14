@@ -1,6 +1,5 @@
 gnupg/random_seed
-gnupg/.gpg-agent-info
-gnupg/private-keys-v1.d
+gnupg/S.gpg-agent
 test-results/
 trash directory.*
 trash/

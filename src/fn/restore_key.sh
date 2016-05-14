@@ -5,8 +5,12 @@ restore_key() {
 
     workdir_make
     tar xz -C "$WORKDIR" --file=$file || fail "Could not open archive: $file"
+
     # restore private keys
+    mkdir -p "$GNUPGHOME"/private-keys-v1.d/
+    chmod 600 "$GNUPGHOME"/private-keys-v1.d/
     cp "$WORKDIR"/*/*.key "$GNUPGHOME"/private-keys-v1.d/
+
     # restore public keys
     local pub_key=$(ls "$WORKDIR"/*/*.pub)
     gpg --import "$pub_key" || fail "Failed to import public key."

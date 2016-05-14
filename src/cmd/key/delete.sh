@@ -16,7 +16,7 @@ cmd_key_delete() {
     fingerprint=$(get_fingerprint $key_id)
     [[ -n "$fingerprint" ]] || fail "Key $key_id not found."
     # delete secret keys
-    for grip in $(get_keygrips $GPG_KEY); do
+    for grip in $(get_keygrips $key_id); do
         rm -f "$GNUPGHOME"/private-keys-v1.d/$grip.key
     done
     # delete public keys

@@ -208,6 +208,9 @@ _EOF
 }
 
 main() {
+    local gnupg_version=$(gpg_version)
+    [[ ${gnupg_version%.*} == "2.1" ]] || fail "These scripts are supposed to work with GnuPG 2.1"
+
     # handle some basic commands
     case "$1" in
         v|-v|version|--version)  shift; cmd_version "$@" ; exit 0 ;;

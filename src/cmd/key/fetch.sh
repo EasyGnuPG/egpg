@@ -35,25 +35,14 @@ cmd_key_fetch() {
     [[ -n "$key_id" ]] || fail "No valid key found."
 
     workdir_make
-    local version=$(gpg_version)
-    version=${version%.*}
-    if [[ $version == 2.0 ]]; then
-        local file="$WORKDIR/$key_id.key"
-        # export to tmp file
-        gpg --homedir="$homedir" --armor --export $key_id > "$file"
-        gpg --homedir="$homedir" --armor --export-secret-keys $key_id >> "$file"
-        # import from the tmp file
-        gpg --import "$file" 2>/dev/null || fail "Failed to import file: $file"
-    elif [[ $version == 2.1 ]]; then
-        local file="$WORKDIR/$key_id.tgz"
-        # backup to tmp file
-        local gnupghome="$GNUPGHOME"
-        GNUPGHOME="$homedir"
-        call_fn backup_key $key_id "$file"
-        # restore from tmp file
-        GNUPGHOME="$gnupghome"
-        call_fn restore_key "$file"
-    fi
+    local file="$WORKDIR/$key_id.tgz"
+    # backup to tmp file
+    local gnupghome="$GNUPGHOME"
+    GNUPGHOME="$homedir"
+    call_fn backup_key $key_id "$file"
+    # restore from tmp file
+    GNUPGHOME="$gnupghome"
+    call_fn restore_key "$file"
     workdir_clear
 
     # set trust to ultimate
