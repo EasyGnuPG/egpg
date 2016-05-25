@@ -16,7 +16,7 @@ cmd_key_restore() {
     [[ -f "$file" ]] || fail "Cannot find file: $file"
 
     echo "Restoring key from file: $file"
-    call_fn restore_key $file
+    call_fn restore_key $file 2>/dev/null || fail "Could not restore the key."
 }
 
 #

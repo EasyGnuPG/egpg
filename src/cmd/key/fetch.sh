@@ -42,7 +42,7 @@ cmd_key_fetch() {
     call_fn backup_key $key_id "$file"
     # restore from tmp file
     GNUPGHOME="$gnupghome"
-    call_fn restore_key "$file"
+    call_fn restore_key "$file" 2>/dev/null || fail "Could not fetch the key."
     workdir_clear
 
     # set trust to ultimate

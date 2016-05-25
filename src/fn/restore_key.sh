@@ -4,7 +4,7 @@ restore_key() {
     local file="$1"
 
     workdir_make
-    tar xz -C "$WORKDIR" --file=$file || fail "Could not open archive: $file"
+    tar xz -C "$WORKDIR" --file=$file || return 1
 
     # restore private keys
     mkdir -p "$GNUPGHOME"/private-keys-v1.d/
