@@ -7,6 +7,7 @@ yesno() {
 }
 
 fail() {
+    workdir_clear
     echo -e "$@" >&2
     exit 1
 }
