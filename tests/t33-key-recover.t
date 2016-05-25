@@ -46,7 +46,7 @@ test_expect_success 'egpg key recover (check backup file extension)' '
 test_expect_success 'egpg key recover (corrupted backup)' '
     split &&
     mv "$(pwd)"/$KEY_ID.key.* "$(pwd)"/$KEY_ID.key.123 &&
-    egpg key recover "$(pwd)"/$KEY_ID.key.123 2>&1 | grep "Could not import the combined key."
+    egpg key recover "$(pwd)"/$KEY_ID.key.123 2>&1 | grep "Could not recover the key."
 '
 
 test_expect_success 'egpg key recover (key not split)' '
