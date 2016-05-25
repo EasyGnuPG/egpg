@@ -11,8 +11,12 @@ egpg() { "$EGPG" "$@" ; }
 unset  EGPG_DIR
 
 export HOME="$SHARNESS_TRASH_DIRECTORY"
+
+# set $GNUPGHOME
 cp -a "$SHARNESS_TEST_DIRECTORY"/gnupg/ "$HOME"/.gnupg
 export GNUPGHOME="$HOME"/.gnupg
+chown $(whoami): -R "$GNUPGHOME"
+
 export DONGLE="$HOME"/dongle
 mkdir -p "$DONGLE"
 
@@ -41,7 +45,7 @@ egpg_migrate() {
 }
 
 send_gpg_commands_from_stdin() {
-    echo "command-fd 0" >> "$HOME"/.egpg/.gnupg/gpg.conf
+    echo "command-fd 0" >> "$GNUPGHOME"/gpg.conf
 }
 
 setup_autopin() {
