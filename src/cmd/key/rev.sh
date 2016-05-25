@@ -25,7 +25,7 @@ Revocation will make your current key useless.
 You'll need to generate a new one.
 Are you sure about this?" || return 1
 
-    # import the revocation vertificate
+    # import the revocation certificate
     sed -i "$revcert" -e "s/^:---/---/"
     gpg --import "$revcert"
     call_fn gpg_send_keys $GPG_KEY

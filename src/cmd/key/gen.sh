@@ -74,9 +74,9 @@ cmd_key_gen() {
 get_new_passphrase() {
     local passphrase passphrase_again
     while true; do
-        read -r -p "Enter passphrase for the new key: " -s passphrase || return
+        read -r -p "Enter passphrase for the new key: " -s passphrase || return 1
         echo
-        read -r -p "Retype the passphrase of the key: " -s passphrase_again || return
+        read -r -p "Retype the passphrase of the key: " -s passphrase_again || return 1
         echo
         if [[ "$passphrase" == "$passphrase_again" ]]; then
             PASSPHRASE="$passphrase"

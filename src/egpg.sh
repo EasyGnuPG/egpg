@@ -134,7 +134,7 @@ call_ext() {
     elif [[ -f "$LIBDIR/ext/$cmd.sh" ]];           then load "$LIBDIR/ext/$cmd.sh"
     else
         echo -e "Unknown command '$cmd'.\nTry:  $(basename $0) help"
-        return
+        return 1
     fi
 
     debug running: $cmd "$@"

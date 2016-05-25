@@ -1,7 +1,7 @@
 # Send the given keys to keyserver network.
 
 gpg_send_keys() {
-    is_true $SHARE || return
+    is_true $SHARE || return 0
     gnupghome_setup
     gpg --keyserver "$KEYSERVER" --send-keys "$@"
     gnupghome_reset

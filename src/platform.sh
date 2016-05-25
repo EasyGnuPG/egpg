@@ -13,7 +13,7 @@ shred() { "$(which shred)" -f -z -u "$@" ; }
 export -f shred
 
 haveged_start() {
-    [[ -z "$(ps ax | grep -v grep | grep haveged)" ]] || return
+    [[ -z "$(ps ax | grep -v grep | grep -v defunct | grep haveged)" ]] || return 0
     echo "
 Starting haveged which will greatly improve the speed of creating
 a new key, by improving the entropy generation of the system."
@@ -22,13 +22,13 @@ a new key, by improving the entropy generation of the system."
     HAVEGED_STARTED="true"
 }
 haveged_stop() {
-    [[ -z $HAVEGED_STARTED ]] && return
+    [[ -z $HAVEGED_STARTED ]] && return 0
     sudo killall haveged
 }
 
 # Create a safe temp directory on $WORKDIR.
 workdir_make() {
-    [[ -z "$WORKDIR" ]] || return
+    [[ -z "$WORKDIR" ]] || return 0
 
     local tmpdir="${TMPDIR:-/tmp}"
     [[ -d /dev/shm && -w /dev/shm && -x /dev/shm ]] && tmpdir="/dev/shm"
@@ -37,7 +37,7 @@ workdir_make() {
     trap workdir_clear INT TERM EXIT
 }
 workdir_clear() {
-    [[ -n "$WORKDIR" ]] || return
+    [[ -n "$WORKDIR" ]] || return 0
     [[ -d "$WORKDIR" ]] && find "$WORKDIR" -type f -exec shred {} +
     [[ -d "$WORKDIR" ]] && rm -rf "$WORKDIR"
     unset WORKDIR

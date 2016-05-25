@@ -36,7 +36,6 @@ your machine might store the data and make it available to others!
 _EOF
     fi
     gnupghome_reset
-    return 0
 }
 
 #

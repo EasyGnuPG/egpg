@@ -12,16 +12,17 @@ fail() {
 }
 
 debug() {
-    is_true $DEBUG || return
+    is_true $DEBUG || return 0
     echo "$@"
 }
 
 is_true() {
     local var="${1,,}"
-    [[ $var == 1 ]] && return
-    [[ $var == 'yes' ]] && return
-    [[ $var == 'true' ]] && return
-    [[ $var == 'enabled' ]] && return
+    [[ $var == 1 ]] && return 0
+    [[ $var == 'yes' ]] && return 0
+    [[ $var == 'true' ]] && return 0
+    [[ $var == 'enabled' ]] && return 0
+    return 1
 }
 
 is_false() {
@@ -50,7 +51,7 @@ get_valid_keys(){
 }
 
 get_gpg_key(){
-    [[ -z $GPG_KEY ]] || return
+    [[ -z $GPG_KEY ]] || return 0
 
     GPG_KEY=$(get_valid_keys | cut -d' ' -f1)
     [[ -z $GPG_KEY ]] && \
@@ -131,7 +132,7 @@ gnupghome_setup() {
     export GNUPGHOME="$WORKDIR"
 
     get_gpg_key    # get $GPG_KEY
-    is_full_key && return
+    is_full_key && return 0
 
     # get the partial keys from PC and dongle
     local partial1 partial2

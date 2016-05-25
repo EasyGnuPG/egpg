@@ -1,7 +1,7 @@
 workdir_make() {
-    [[ -n $WORKDIR ]] && return
+    [[ -n $WORKDIR ]] && return 0
     unmount_tmpdir() {
-	[[ -n $WORKDIR && -d $WORKDIR && -n $DARWIN_RAMDISK_DEV ]] || return
+	[[ -n $WORKDIR && -d $WORKDIR && -n $DARWIN_RAMDISK_DEV ]] || return 1
 	umount "$WORKDIR"
 	diskutil quiet eject "$DARWIN_RAMDISK_DEV"
 	rm -rf "$WORKDIR"
