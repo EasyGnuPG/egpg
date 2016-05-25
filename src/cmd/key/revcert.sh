@@ -13,8 +13,9 @@ cmd_key_revcert() {
     local description=${1:-"Key is being revoked"}
 
     get_gpg_key
-    revcert="$GNUPGHOME/openpgp-revocs.d/$FPR.rev"
+    local revcert="$GNUPGHOME/openpgp-revocs.d/$FPR.rev"
     rm -f "$revcert"
+    mkdir -p "$(dirname "$revcert")"
 
     gnupghome_setup
     local commands="y|1|$description||y"

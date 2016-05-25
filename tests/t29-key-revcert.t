@@ -7,9 +7,9 @@ test_expect_success 'egpg key revcert' '
     egpg_init &&
     egpg_key_fetch &&
     egpg key revcert "test" &&
-    local revoke_file="$EGPG_DIR/$KEY_ID.revoke" &&
-    [[ -f "$revoke_file" ]] &&
-    [[ -f "$revoke_file.pdf" ]]
+    local revcert="$GNUPGHOME/openpgp-revocs.d/$KEY_FPR.rev" &&
+    [[ -f "$revcert" ]] &&
+    [[ -f "$revcert.pdf" ]]
 '
 
 test_done
