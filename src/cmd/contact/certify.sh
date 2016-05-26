@@ -50,7 +50,7 @@ cmd_contact_certify() {
     gpg --homedir="$homedir" --import "$WORKDIR/contact.asc"
     gnupghome_reset
 
-    [[ $publish == 1 ]] && call_fn gpg_send_keys "$contact"
+    [[ $publish == 0 ]] || call_fn gpg_send_keys "$contact"
 }
 
 #

@@ -35,13 +35,13 @@ test_expect_success 'egpg contact find <match>' '
 '
 
 test_expect_success 'egpg contact ls -r' '
-    [[ $(egpg contact ls -r | grep "^uid " | sed -e "s/uid \+//") == "Test 1 <test1@example.org>" ]] &&
-    [[ $(egpg contact ls --raw | grep "^uid " | sed -e "s/uid \+//") == "Test 1 <test1@example.org>" ]]
+    [[ $(egpg contact ls -r | grep "^uid " | sed -e "s/uid \+//") == "[ultimate] Test 1 <test1@example.org>" ]] &&
+    [[ $(egpg contact ls --raw | grep "^uid " | sed -e "s/uid \+//") == "[ultimate] Test 1 <test1@example.org>" ]]
 '
 
 test_expect_success 'egpg contact ls -c' '
-    [[ $(egpg contact ls -c | grep fpr) == "fpr:::::::::669BDE5EB80FE5F18ABA7584D44186C07EA858BD:" ]] &&
-    [[ $(egpg contact ls --colons | grep fpr) == "fpr:::::::::669BDE5EB80FE5F18ABA7584D44186C07EA858BD:" ]]
+    [[ $(egpg contact ls -c | grep fpr) == "fpr:::::::::A9446F790F9BE7C9D108FC6718D1DA4D9E7A4FD0:" ]] &&
+    [[ $(egpg contact ls --colons | grep fpr) == "fpr:::::::::A9446F790F9BE7C9D108FC6718D1DA4D9E7A4FD0:" ]]
 '
 
 test_done

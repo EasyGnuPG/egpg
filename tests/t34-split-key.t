@@ -61,29 +61,30 @@ test_expect_success 'egpg key del' '
 test_expect_success 'egpg key backup' '
     init &&
     egpg key backup | grep "Key saved to" &&
-    [[ -f "$KEY_ID.key" ]]
+    [[ -f "$KEY_ID.tgz" ]]
 '
 
 test_expect_success 'egpg key pass' '
-    egpg key pass | grep "This key is split into partial keys."
+    egpg key pass 2>&1 | grep "This key is split into partial keys."
 '
 
 test_expect_success 'egpg key renew' '
-    egpg key renew | grep "This key is split into partial keys."
+    egpg key renew 2>&1 | grep "This key is split into partial keys."
 '
 
 test_expect_success 'egpg key revcert' '
     egpg key revcert "test" &&
-    local revoke_file="$EGPG_DIR/$KEY_ID.revoke" &&
-    [[ -f "$revoke_file" ]]
+    local revcert="$EGPG_DIR/.gnupg/openpgp-revocs.d/$KEY_FPR.rev" &&
+    [[ -f "$revcert" ]]
 '
 
 test_expect_success 'egpg key revoke' '
-    egpg key revoke | grep "This key is split into partial keys."
+    egpg key revoke 2>&1 | grep "This key is split into partial keys."
 '
 
 test_expect_success 'egpg contact certify' '
-    egpg contact certify $CONTACT_1 2>&1 | grep "This does not work with a split key."
+    echo "y" | egpg contact certify $CONTACT_1 &&
+    egpg contact ls $CONTACT_1
 '
 
 test_done
