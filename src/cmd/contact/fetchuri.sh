@@ -10,7 +10,12 @@ _EOF
 
 cmd_contact_fetchuri() {
     [[ -z $1 ]] && fail "Usage:\n$(cmd_contact_fetchuri_help)"
-    gpg --fetch-keys "$@"
+    #gpg --fetch-keys "$@"
+    workdir_make
+    cd "$WORKDIR"
+    wget -q $@
+    gpg --import *
+    workdir_clear
 }
 
 #
