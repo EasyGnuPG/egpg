@@ -44,10 +44,6 @@ cmd_key_fetch() {
     GNUPGHOME="$gnupghome"
     call_fn restore_key "$file" 2>/dev/null || fail "Could not fetch the key."
     workdir_clear
-
-    # set trust to ultimate
-    local commands=$(echo "trust|5|y|quit" | tr '|' "\n")
-    echo -e "$commands" | gpg --no-tty --command-fd=0 --key-edit $key_id
 }
 
 #

@@ -4,11 +4,11 @@ restore_key() {
     local file="$1"
 
     workdir_make
-    tar xz -C "$WORKDIR" --file=$file || return 1
+    tar xz -C "$WORKDIR" --file="$file" || return 1
 
     # restore private keys
     mkdir -p "$GNUPGHOME"/private-keys-v1.d/
-    chmod 600 "$GNUPGHOME"/private-keys-v1.d/
+    chmod 700 "$GNUPGHOME"/private-keys-v1.d/
     cp "$WORKDIR"/*/*.key "$GNUPGHOME"/private-keys-v1.d/
 
     # restore public keys
