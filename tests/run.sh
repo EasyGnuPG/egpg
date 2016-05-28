@@ -7,6 +7,7 @@ BLUE='\033[0;34m'
 NOCOLOR='\033[0m'
 for t in $(ls $pattern); do
     [[ ${t: -2} == ".t" ]] || continue
+    [[ -x $t ]] || continue
     echo -e "\n${BLUE}=> ./$t${NOCOLOR}"
     ./$t
 done

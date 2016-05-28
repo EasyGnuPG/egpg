@@ -64,5 +64,4 @@ setup_autopin() {
     sed -i "$autopin" -e "/^PIN=/ c PIN='$pin'" &&
     sed -i "$GNUPGHOME"/gpg-agent.conf -e "/^pinentry-program/ c pinentry-program \"$autopin\"" &&
     echo "pinentry-mode loopback" >> "$GNUPGHOME"/gpg-agent.conf
-    #killall gpg-agent
 }
