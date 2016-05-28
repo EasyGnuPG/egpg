@@ -3,7 +3,8 @@
 cd "$(dirname "$0")"
 source ./sharness.sh
 
-EGPG="$(dirname $SHARNESS_TEST_DIRECTORY)"/src/egpg.sh
+CODE="$(dirname "$SHARNESS_TEST_DIRECTORY")"
+EGPG="$CODE"/src/egpg.sh
 [[ ! -x $EGPG ]] && echo "Could not find egpg.sh" &&  exit 1
 
 egpg() { "$EGPG" "$@" ; }
@@ -13,7 +14,7 @@ unset  EGPG_DIR
 export HOME="$SHARNESS_TRASH_DIRECTORY"
 
 export GNUPGHOME="$HOME"/.gnupg
-cp -a "$SHARNESS_TEST_DIRECTORY"/gnupg/ "$GNUPGHOME"
+cp -a "$CODE"/tests/gnupg/ "$GNUPGHOME"
 
 export DONGLE="$HOME"/dongle
 mkdir -p "$DONGLE"
@@ -45,19 +46,23 @@ egpg_migrate() {
 }
 
 send_gpg_commands_from_stdin() {
-    echo "command-fd 0" >> "$GNUPGHOME"/gpg.conf
+    # override function gpg to accept commands from stdin
+    cat <<-'_EOF' > "$EGPG_DIR"/customize.sh
+gpg() {
+    is_true $DEBUG && echo "$(which gpg2)" --quiet "$@"
+    "$(which gpg2)" --quiet --no-tty --command-fd=0 "$@"
+}
+export -f gpg
+_EOF
+    chmod +x "$EGPG_DIR"/customize.sh
 }
 
 setup_autopin() {
     local pin="${1:-123456}" &&
-
-    killall gpg-agent &&
-
-    local autopin="$(dirname $SHARNESS_TEST_DIRECTORY)"/utils/autopin.sh &&
-    cp -f "$autopin" "$EGPG_DIR/" &&
-    autopin="$EGPG_DIR"/autopin.sh &&
+    cp -f "$CODE"/utils/autopin.sh "$EGPG_DIR"/ &&
+    local autopin="$EGPG_DIR"/autopin.sh &&
     sed -i "$autopin" -e "/^PIN=/ c PIN='$pin'" &&
     sed -i "$GNUPGHOME"/gpg-agent.conf -e "/^pinentry-program/ c pinentry-program \"$autopin\"" &&
-
-    source "$HOME"/.bashrc
+    echo "pinentry-mode loopback" >> "$GNUPGHOME"/gpg-agent.conf
+    #killall gpg-agent
 }

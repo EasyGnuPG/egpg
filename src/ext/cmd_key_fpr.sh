@@ -29,7 +29,8 @@ cmd_key_fpr() {
     local key_id=${fpr:24}
     echo $fpr | qrencode -o $key_id.png
     echo -e "\nFingerprint barcode saved to: $key_id.png\n"
-    display $key_id.png
+    [[ -t 1 ]] && display $key_id.png
+    return 0
 }
 
 #
