@@ -103,4 +103,4 @@ terminology, etc. is wellcome.
 [3]: http://www.issihosts.com/haveged/
 [4]: http://www.digital-scurf.org/software/libgfshare
 [5]: https://gaffer.ptitcanardnoir.org/intrigeri/code/parcimonie/
-[6]: /gnupg-2.0/man/
+[6]: http://dashohoxha.github.io/egpg/gnupg-2.0/man/
