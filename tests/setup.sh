@@ -12,13 +12,12 @@ unset  EGPG_DIR
 
 export HOME="$SHARNESS_TRASH_DIRECTORY"
 
-# set $GNUPGHOME
-cp -a "$SHARNESS_TEST_DIRECTORY"/gnupg/ "$HOME"/.gnupg
 export GNUPGHOME="$HOME"/.gnupg
-chown $(whoami): -R "$GNUPGHOME"
+cp -a "$SHARNESS_TEST_DIRECTORY"/gnupg/ "$GNUPGHOME"
 
 export DONGLE="$HOME"/dongle
 mkdir -p "$DONGLE"
+chmod 700 "$DONGLE"
 
 export KEY_ID="18D1DA4D9E7A4FD0"
 export KEY_FPR="A9446F790F9BE7C9D108FC6718D1DA4D9E7A4FD0"
