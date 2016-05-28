@@ -62,6 +62,5 @@ setup_autopin() {
     cp -f "$CODE"/utils/autopin.sh "$EGPG_DIR"/ &&
     local autopin="$EGPG_DIR"/autopin.sh &&
     sed -i "$autopin" -e "/^PIN=/ c PIN='$pin'" &&
-    sed -i "$GNUPGHOME"/gpg-agent.conf -e "/^pinentry-program/ c pinentry-program \"$autopin\"" &&
-    echo "pinentry-mode loopback" >> "$GNUPGHOME"/gpg-agent.conf
+    sed -i "$GNUPGHOME"/gpg-agent.conf -e "/^pinentry-program/ c pinentry-program \"$autopin\""
 }
