@@ -29,7 +29,7 @@ The philosophic goals here are these:
 
 ## Installation
 
-    git clone https://github.com/dashohoxha/egpg
+    git clone --branch gnupg-2.1 https://github.com/dashohoxha/egpg
     cd egpg/
     sudo make install
 
@@ -56,7 +56,7 @@ The philosophic goals here are these:
     egpg contact help
     egpg ext help
 
-For more details see the manual page: [http://dashohoxha.github.io/egpg/man/][6]
+For more details see the manual page: [http://dashohoxha.github.io/egpg/gnupg-2.1/man/][6]
 
 These should be the minimal set required to use GPG effectively.
 
@@ -95,7 +95,7 @@ terminology, etc. is wellcome.
 
  - For barcodes and pdf backups, these are also needed:
 
-        apt-get install qrencode imagemagic zbar-tools
+        apt-get install qrencode imagemagick zbar-tools
 
 
 [1]: http://brew.sh/
@@ -103,4 +103,4 @@ terminology, etc. is wellcome.
 [3]: http://www.issihosts.com/haveged/
 [4]: http://www.digital-scurf.org/software/libgfshare
 [5]: https://gaffer.ptitcanardnoir.org/intrigeri/code/parcimonie/
-[6]: http://dashohoxha.github.io/egpg/man/
+[6]: http://dashohoxha.github.io/egpg/gnupg-2.1/man/
