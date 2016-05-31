@@ -40,8 +40,8 @@ cmd_contact_pick() {
 
     # receive the contact with this fingerprint
     fpr=${fpr// /}
-    egpg contact receive $fpr
-    egpg contact ls $fpr
+    call cmd_contact_receive $fpr
+    call cmd_contact_list $fpr
 }
 
 #
