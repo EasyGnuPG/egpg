@@ -4,4 +4,4 @@ RUN apt-get update; apt-get -y upgrade
 RUN apt-get -y install \
         gnupg2 pinentry-tty haveged libgfshare-bin parcimonie \
         qrencode imagemagick zbar-tools wget
-RUN useradd -m test
+RUN useradd -m testuser
