@@ -84,7 +84,7 @@ test_expect_success 'egpg key revoke' '
 
 test_expect_success 'egpg contact certify' '
     echo "y" | egpg contact certify $CONTACT_1 &&
-    egpg contact ls $CONTACT_1
+    egpg contact ls $CONTACT_1 | grep "certified by: Test 1 <test1@example.org>"
 '
 
 test_done

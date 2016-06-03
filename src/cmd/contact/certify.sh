@@ -46,8 +46,8 @@ cmd_contact_certify() {
     gnupghome_setup
     gpg --batch --default-cert-level=$level --default-cert-expire=$time \
         --quick-sign-key $fingerprint
-    gpg --armor --export $fingerprint > "$WORKDIR/contact.asc"
-    gpg --homedir="$homedir" --import "$WORKDIR/contact.asc"
+    gpg --armor --export $fingerprint > "$WORKDIR"/contact.asc
+    gpg --homedir="$homedir" --import "$WORKDIR"/contact.asc
     gnupghome_reset
 
     [[ $publish == 0 ]] || call_fn gpg_send_keys "$contact"

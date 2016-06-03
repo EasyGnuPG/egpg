@@ -37,7 +37,7 @@ cmd_key_split() {
 
     # export key to a tmp dir
     workdir_make
-    local file="$WORKDIR/$GPG_KEY.key"
+    local file="$WORKDIR"/$GPG_KEY.key
     call_fn backup_key $GPG_KEY "$file"
     [[ -f "$file" ]] || fail "Could not make key backup."
 
@@ -53,19 +53,19 @@ cmd_key_split() {
 
     # copy partials to the corresponding directories
     rm -f "$backup"/$GPG_KEY.key.*
-    mv "$WORKDIR/$partial1" "$backup" \
+    mv "$WORKDIR"/$partial1 "$backup" \
         || fail "Could not copy partial key to the backup dir: $backup"
     echo " * Backup partial key saved to: $backup/$partial1"
 
-    mkdir -p "$DONGLE/.gnupg/" \
+    mkdir -p "$DONGLE"/.gnupg/ \
         || fail "Could not create directory: $DONGLE/.gnupg/"
     rm -f "$DONGLE"/.gnupg/$GPG_KEY.key.*
-    mv "$WORKDIR/$partial2" "$DONGLE/.gnupg/" \
+    mv "$WORKDIR"/$partial2 "$DONGLE"/.gnupg/ \
         || fail "Could not copy partial key to the dongle: $DONGLE/.gnupg/"
     echo " * Dongle partial key saved to: $DONGLE/.gnupg/$partial2"
 
     rm -f "$GNUPGHOME"/$GPG_KEY.key.*
-    mv "$WORKDIR/$partial3" "$GNUPGHOME" \
+    mv "$WORKDIR"/$partial3 "$GNUPGHOME" \
         || fail "Could not copy partial key to: $GNUPGHOME"
     echo " * Local  partial key saved to: $GNUPGHOME/$partial3"
 
@@ -107,7 +107,7 @@ check_split_options() {
     export DONGLE=$(realpath "${dongle%/}")
 
     # set DONGLE on the config file
-    sed -i "$EGPG_DIR/config.sh" -e "/DONGLE=/c DONGLE=\"$DONGLE\""
+    sed -i "$EGPG_DIR"/config.sh -e "/DONGLE=/c DONGLE=\"$DONGLE\""
 
     # check the $backup option
     [[ -d "$backup" ]] || fail "Backup directory does not exist: $backup"

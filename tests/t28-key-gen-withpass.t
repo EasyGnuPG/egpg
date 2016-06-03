@@ -14,7 +14,7 @@ test_expect_success 'init' '
 '
 
 test_expect_success 'egpg key gen' '
-    cat <<-_EOF | egpg key gen test1@example.org "Test 1" 2>&1 &&
+    cat <<-_EOF | egpg key gen test1@example.org "Test 1" &&
 123456
 123456
 _EOF

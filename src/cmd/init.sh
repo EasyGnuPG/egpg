@@ -20,24 +20,24 @@ cmd_init() {
         && rm -rfv "$EGPG_DIR"
 
     # create the new $EGPG_DIR
-    export EGPG_DIR="$HOME/.egpg"
+    export EGPG_DIR="$HOME"/.egpg
     [[ -n "$1" ]] && export EGPG_DIR="$1"
     mkdir -pv "$EGPG_DIR"
-    mkdir -p "$EGPG_DIR/.gnupg"
-    [[ -f "$EGPG_DIR/.gnupg/gpg-agent.conf" ]] || cat <<-_EOF > "$EGPG_DIR/.gnupg/gpg-agent.conf"
+    mkdir -p "$EGPG_DIR"/.gnupg
+    [[ -f "$EGPG_DIR"/.gnupg/gpg-agent.conf ]] || cat <<-_EOF > "$EGPG_DIR"/.gnupg/gpg-agent.conf
 quiet
 pinentry-program /usr/bin/pinentry-tty
 allow-loopback-pinentry
 default-cache-ttl 300
 max-cache-ttl 999999
 _EOF
-    [[ -f "$EGPG_DIR/.gnupg/gpg.conf" ]] || cat <<-_EOF > "$EGPG_DIR/.gnupg/gpg.conf"
+    [[ -f "$EGPG_DIR"/.gnupg/gpg.conf ]] || cat <<-_EOF > "$EGPG_DIR"/.gnupg/gpg.conf
 keyid-format long
 default-cert-expire 1y
 _EOF
 
     # create the config file
-    local config_file="$EGPG_DIR/config.sh"
+    local config_file="$EGPG_DIR"/config.sh
     [[ -f "$config_file" ]] || cat <<-_EOF > "$config_file"
 # If true, push local changes to the keyserver network.
 # Leave it empty (or comment out) to disable.

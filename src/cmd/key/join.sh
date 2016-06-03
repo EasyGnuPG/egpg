@@ -15,14 +15,14 @@ cmd_key_join() {
     # get the partial keys
     local partial1 partial2
     partial1=$(cd "$GNUPGHOME"; ls $GPG_KEY.key.[0-9][0-9][0-9] 2>/dev/null)
-    [[ -f "$GNUPGHOME/$partial1" ]] \
+    [[ -f "$GNUPGHOME"/$partial1 ]] \
         || fail "Could not find partial key for $GPG_KEY on $GNUPGHOME"
     [[ -d "$DONGLE" ]] \
         || fail "The dongle directory not found: $DONGLE\nMake sure that the dongle is connected and mounted."
-    [[ -d "$DONGLE/.gnupg/" ]] \
+    [[ -d "$DONGLE"/.gnupg/ ]] \
         || fail "Directory not found: $DONGLE/.gnupg"
-    partial2=$(cd "$DONGLE/.gnupg"; ls $GPG_KEY.key.[0-9][0-9][0-9] 2>/dev/null)
-    [[ -f "$DONGLE/.gnupg/$partial2" ]] \
+    partial2=$(cd "$DONGLE"/.gnupg; ls $GPG_KEY.key.[0-9][0-9][0-9] 2>/dev/null)
+    [[ -f "$DONGLE"/.gnupg/$partial2 ]] \
         || fail "Could not find partial key for $GPG_KEY on $DONGLE/.gnupg/"
 
     # combine partial keys and import the full key
