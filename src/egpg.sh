@@ -23,9 +23,9 @@ VERSION="2.0-1.0"
 
 LIBDIR="$(dirname "$0")"
 
-# make sure that these variables do not inherit values from the environment
-WORKDIR=''
-GPG_KEY=''
+# make sure that these global variables
+# do not inherit values from the environment
+unset WORKDIR GPG_KEY FPR
 
 source "$LIBDIR/auxiliary.sh"
 source "$LIBDIR/platform.sh"
@@ -134,7 +134,7 @@ call_ext() {
     elif [[ -f "$LIBDIR/ext/$cmd.sh" ]];           then load "$LIBDIR/ext/$cmd.sh"
     else
         echo -e "Unknown command '$cmd'.\nTry:  $(basename $0) help"
-        return
+        return 1
     fi
 
     debug running: $cmd "$@"
@@ -173,6 +173,7 @@ config() {
     # read the config file
     local config_file="$EGPG_DIR/config.sh"
     ENV_GNUPGHOME="$GNUPGHOME"
+    unset SHARE KEYSERVER GNUPGHOME DONGLE DEBUG
     [[ -f "$config_file" ]] && source "$config_file"
 
     # set defaults, if some configurations are missing
@@ -207,6 +208,9 @@ _EOF
 }
 
 main() {
+    local gnupg_version=$(gpg_version)
+    [[ ${gnupg_version%.*} == "2.0" ]] || fail "These scripts are supposed to work with GnuPG 2.0"
+
     # handle some basic commands
     case "$1" in
         v|-v|version|--version)  shift; cmd_version "$@" ; exit 0 ;;

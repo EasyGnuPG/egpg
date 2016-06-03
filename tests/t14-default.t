@@ -3,15 +3,9 @@
 test_description='Command: default'
 source "$(dirname "$0")"/setup.sh
 
-test_expect_success 'init' '
+test_expect_success 'egpg default' '
     egpg_init &&
     egpg_migrate &&
-
-    cp -a "$GNUPGHOME" "$HOME/.gnupg" &&
-    export GNUPGHOME="$HOME/.gnupg"
-'
-
-test_expect_success 'egpg default' '
     egpg default &&
     [[ -d "$HOME/.gnupg-old" ]] &&
     [[ ! -d "$HOME/.egpg/.gnupg" ]] &&

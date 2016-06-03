@@ -21,8 +21,8 @@ cmd_key_restore() {
 
     # set trust to 'ultimate'
     local key_id=$(gpg --with-fingerprint --with-colons "$file" | grep '^sec' | cut -d: -f5)
-    local commands=$(echo "trust|5|y|quit" | tr '|' "\n")
-    script -c "gpg --batch --command-fd=0 --key-edit $key_id <<< \"$commands\" " /dev/null > /dev/null
+    local commands=$(echo "5|y|quit" | tr '|' "\n")
+    echo -e "$commands" | gpg --no-tty --command-fd=0 --edit-key "$key_id" trust 2>/dev/null
 }
 
 #

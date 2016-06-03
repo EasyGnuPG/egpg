@@ -1,5 +1,5 @@
 workdir_make() {
-    [[ -n $WORKDIR ]] && return
+    [[ -n $WORKDIR ]] && return 0
     local warn=1
     [[ $1 == "nowarn" ]] && warn=0
     local template="$PROGRAM.XXXXXXXXXXXXX"
@@ -7,7 +7,7 @@ workdir_make() {
 	WORKDIR="$(mktemp -d "${TMPDIR:-/tmp}/$template")"
 	mount -t tmpfs -o -s16M tmpfs "$WORKDIR" || die "Error: could not create tmpfs."
 	unmount_tmpdir() {
-	    [[ -n $WORKDIR && -d $WORKDIR ]] || return
+	    [[ -n $WORKDIR && -d $WORKDIR ]] || return 1
 	    umount "$WORKDIR"
 	    rm -rf "$WORKDIR"
 	}

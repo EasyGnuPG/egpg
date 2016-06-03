@@ -10,8 +10,7 @@ init() {
 
 check_date() {
     sleep 1 &&
-    echo "args=$@" &&
-    local date1=$(egpg key | grep "^cert: " | cut -d" " -f4) &&
+    local date1=$(egpg key | grep "^sign: " | head -n 1 | cut -d" " -f4) &&
     local date2=$(date +%F --date="$(echo "$@")") &&
     [[ $date1 == $date2 ]]
 }

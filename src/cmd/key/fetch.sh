@@ -44,9 +44,9 @@ cmd_key_fetch() {
     gpg --import "$file" 2>/dev/null || fail "Failed to import file: $file"
     workdir_clear
 
-    # set trust to ultimate
+    # set trust to 'ultimate'
     local commands=$(echo "trust|5|y|quit" | tr '|' "\n")
-    script -c "gpg --command-fd=0 --key-edit $key_id <<< \"$commands\" " /dev/null > /dev/null
+    echo -e "$commands" | gpg --no-tty --batch --command-fd=0 --edit-key $key_id
 }
 
 #

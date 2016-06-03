@@ -11,7 +11,8 @@ test_expect_success 'egpg key revoke (certificate not found)' '
 
 test_expect_success 'egpg key revoke' '
     egpg key revcert &&
-    echo y | egpg key revoke 2>&1 | grep "revocation certificate imported"
+    echo y | egpg key revoke &&
+    egpg key 2>&1 | grep "No valid key found."
 '
 
 test_done

@@ -26,7 +26,7 @@ print_key() {
         start=$(date -d @$time1 +%F)
         end='never'; [[ -n $time2 ]] && end=$(date -d @$time2 +%F)
         exp=''; [[ -n $time2 ]] && [ $(date +%s) -gt $time2 ] && exp='expired'
-        case "$u" in a) u='auth';; s) u='sign';; e) u='encr';; *) u='cert';; esac
+        case "$u" in a) u='auth';; s) u='sign';; e) u='decr';; *) u='sign';; esac
         echo "$u: $id $start $end $exp"
     done
 

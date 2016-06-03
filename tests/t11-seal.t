@@ -12,7 +12,7 @@ test_expect_success 'init' '
 '
 
 test_expect_success 'egpg seal' '
-    echo "y" | egpg seal test1.txt &&
+    egpg seal test1.txt &&
     [[ -f test1.txt.sealed ]] &&
     [[ ! -f test1.txt ]]
 '

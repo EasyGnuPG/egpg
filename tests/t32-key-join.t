@@ -12,7 +12,7 @@ split() {
 
     ls "$EGPG_DIR"/.gnupg/$KEY_ID.key.* &&
     ls "$DONGLE"/.gnupg/$KEY_ID.key.* &&
-    ls "$(pwd)"/$KEY_ID.key.* &&
+    ls $KEY_ID.key.* &&
     egpg info | grep "DONGLE=\"$DONGLE\""
 }
 

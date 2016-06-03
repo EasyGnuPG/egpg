@@ -44,46 +44,34 @@ cmd_key_gen() {
         Name-Email: $email
         Subkey-Type: RSA
         Subkey-Length: 4096
-        Subkey-Usage: auth
+        Subkey-Usage: encrypt
         Expire-Date: 1m
-        Preferences: SHA512 SHA384 SHA256 SHA224 AES256 AES192 AES CAST5 ZLIB BZIP2 ZIP Uncompressed
         "
     if [[ $pass == 1 ]]; then
         get_new_passphrase
-        [[ -n "$PASSPHRASE" ]] && PARAMETERS+="Passphrase: $PASSPHRASE"
+        PARAMETERS+="Passphrase: $PASSPHRASE"
     else
-        PASSPHRASE=''
+        PARAMETERS+="%no-protection"
     fi
 
     # generate the key
     haveged_start
-    gpg --quiet --batch --gen-key <<< "$PARAMETERS"
-    [[ $? != 0 ]] && fail "Failed to generate a key."
-    # set up some sub keys, in order not to use the base key day-to-day
-    get_gpg_key
-    local commands="addkey|4|4096|1m|addkey|6|4096|1m|save"
-    commands=$(echo "$commands" | tr '|' "\n")
-    script -c "gpg --batch --command-fd=0 --edit-key $GPG_KEY <<< \"$commands\"" /dev/null >/dev/null
-    while [[ -n $(ps ax | grep -e '--edit-key' | grep -v grep) ]]; do sleep 0.5; done
+    echo -e "$PARAMETERS" | gpg --batch --gen-key 2>/dev/null
     haveged_stop
 
-    echo -e "\nExcellent! You created a fresh GPG key. Here's what it looks like:"
-    call cmd_key_list
+    # restrict expiration time to 1 month from now
+    call cmd_key_renew
 
     # generate a revokation certificate
     call cmd_key_revcert "This revocation certificate was generated when the key was created."
-
-    # send the key to keyserver
-    call_fn gpg_send_keys $GPG_KEY
-    return 0
 }
 
 get_new_passphrase() {
     local passphrase passphrase_again
     while true; do
-        read -r -p "Enter passphrase for the new key: " -s passphrase || return
+        read -r -p "Enter passphrase for the new key: " -s passphrase || return 1
         echo
-        read -r -p "Retype the passphrase of the key: " -s passphrase_again || return
+        read -r -p "Retype the passphrase of the key: " -s passphrase_again || return 1
         echo
         if [[ "$passphrase" == "$passphrase_again" ]]; then
             PASSPHRASE="$passphrase"

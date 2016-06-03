@@ -9,27 +9,22 @@ _EOF
 }
 
 cmd_key_rev() {
-    local revoke_cert="$1"
+    local revcert="$1"
     get_gpg_key
-    [[ -n "$revoke_cert" ]] || revoke_cert="$EGPG_DIR/$GPG_KEY.revoke"
-    [[ -f "$revoke_cert" ]] || fail "Revocation certificate not found: $revoke_cert"
+    [[ -n "$revcert" ]] || revcert="$EGPG_DIR/$GPG_KEY.revoke"
+    [[ -f "$revcert" ]] || fail "Revocation certificate not found: $revcert"
 
-    if is_split_key; then
-        cat <<-_EOF
-
+    is_full_key || fail "
 This key is split into partial keys.
 Try first:  $(basename $0) key join
      then:  $(basename $0) key revoke
-
-_EOF
-        exit
-    fi
+"
 
     yesno "
 Revocation will make your current key useless. You'll need
 to generate a new one. Are you sure about this?" || return 1
 
-    gpg --import "$revoke_cert"
+    gpg --import "$revcert"
     call_fn gpg_send_keys $GPG_KEY
 }
 

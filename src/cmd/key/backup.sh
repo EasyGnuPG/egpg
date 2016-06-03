@@ -28,10 +28,12 @@ cmd_key_backup() {
     gnupghome_setup
     gpg --armor --export $key_id > $key_id.key
     gpg --armor --export-secret-keys $key_id >> $key_id.key
-    [[ $qr == 1 ]] && call_fn qrencode $key_id.key
     gnupghome_reset
     echo -e "Key saved to:\n    $key_id.key"
-    [[ $qr == 1 ]] && echo -e "    $key_id.key.pdf"
+    if [[ $qr == 1 ]]; then
+        call_fn qrencode $key_id.key
+        echo -e "    $key_id.key.pdf"
+    fi
 
 }
 

@@ -13,17 +13,14 @@ _EOF
 
 cmd_key_renew() {
     get_gpg_key
-    if is_split_key; then
-        cat <<-_EOF
 
+    is_full_key || fail "
 This key is split into partial keys.
 Try first:  $(basename $0) key join
      then:  $(basename $0) key renew ...
       and:  $(basename $0) key split
 
-_EOF
-        exit
-    fi
+"
 
     local expdate="$@"
     [[ -z "$expdate" ]] && expdate="1 month"
@@ -33,14 +30,10 @@ _EOF
     local today=$(date -d $(date +%F) +%s)
     time=$(( ( $expday - $today ) / 86400 ))
 
-    local commands=";expire;$time;y"
-    commands+=";key 1;expire;$time;y;key 1"
-    commands+=";key 2;expire;$time;y;key 2"
-    commands+=";key 3;expire;$time;y;key 3"
-    commands+=";save"
+    local commands=";expire;$time;y;key 1;expire;$time;y;key 1;save"
     commands=$(echo "$commands" | tr ';' "\n")
 
-    script -c "gpg --command-fd=0 --key-edit $GPG_KEY <<< \"$commands\" " /dev/null > /dev/null
+    echo -e "$commands" | gpg --no-tty --command-fd=0 --key-edit $GPG_KEY 2>/dev/null
     call_fn gpg_send_keys $GPG_KEY
 
     call cmd_key_list

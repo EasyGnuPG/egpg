@@ -26,12 +26,20 @@ The philosophic goals here are these:
    you have a foundation to start with, and some direction on how to
    proceed.
 
-
 ## Installation
 
     git clone --branch gnupg-2.0 https://github.com/dashohoxha/egpg
     cd egpg/
     sudo make install
+
+## Requirements
+
+ - Ubuntu 14.04:
+
+   ```
+   apt install gnupg2 haveged libgfshare-bin parcimonie qrencode imagemagick zbar-tools wget realpath
+   ```
+
 
 ## Usage:
 
@@ -56,51 +64,11 @@ The philosophic goals here are these:
     egpg contact help
     egpg ext help
 
-For more details see the manual page: [http://dashohoxha.github.io/egpg/gnupg-2.0/man/][6]
+For more details see the manual page: [http://dashohoxha.github.io/egpg/gnupg-2.0/man/][1]
 
 These should be the minimal set required to use GPG effectively.
 
 Any suggestions or discussions about supported operations, simplified
 terminology, etc. is wellcome.
 
-
-## Requirements
-
- - You'll need `gpg2` installed. Most Linux distros have some variant
-   of:
-
-        apt-get install gnupg
-
-   Mac OS X users with [homebrew][1] installed can do:
-
-        brew install gnupg2
-
-   Or else install the full [GPGTools][2] suite.
-
- - You'll also need [haveged][3] which will improve greatly the speed
-   of generating new gpg keys. In Debian based distros it can be
-   installed with:
-
-        apt-get install haveged
-
- - For spliting the key and using a dongle you will need [libgfshare][4].
-   In Debian based distros it can be installed with:
-
-        apt-get install libgfshare-bin
-
- - It is also nice to have [parcimonie][5] installed (although not
-   required):
-
-        apt-get install parcimonie
-
- - For barcodes and pdf backups, these are also needed:
-
-        apt-get install qrencode imagemagick zbar-tools
-
-
-[1]: http://brew.sh/
-[2]: https://gpgtools.org/
-[3]: http://www.issihosts.com/haveged/
-[4]: http://www.digital-scurf.org/software/libgfshare
-[5]: https://gaffer.ptitcanardnoir.org/intrigeri/code/parcimonie/
-[6]: http://dashohoxha.github.io/egpg/gnupg-2.0/man/
+[1]: http://dashohoxha.github.io/egpg/gnupg-2.0/man/

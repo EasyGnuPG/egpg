@@ -18,10 +18,10 @@ cmd_init() {
     if [[ -d $EGPG_DIR ]]; then
         if yesno "There is an old directory '$EGPG_DIR'. Do you want to erase it?"; then
             # stop the gpg-agent if it is running
-            if [[ -f "$EGPG_DIR/.gpg-agent-info" ]]; then
-                kill -9 $(cut -d: -f 2 "$EGPG_DIR/.gpg-agent-info") 2>/dev/null
-                rm -rf $(dirname $(cut -d: -f 1 "$EGPG_DIR/.gpg-agent-info")) 2>/dev/null
-                rm "$EGPG_DIR/.gpg-agent-info"
+            if [[ -f "$EGPG_DIR"/.gpg-agent-info ]]; then
+                kill -9 $(cut -d: -f 2 "$EGPG_DIR"/.gpg-agent-info) 2>/dev/null
+                rm -rf $(dirname $(cut -d: -f 1 "$EGPG_DIR"/.gpg-agent-info)) 2>/dev/null
+                rm "$EGPG_DIR"/.gpg-agent-info
             fi
             # erase the old directory
             [[ -d "$EGPG_DIR" ]] && rm -rfv "$EGPG_DIR"
@@ -29,18 +29,18 @@ cmd_init() {
     fi
 
     # create the new $EGPG_DIR
-    export EGPG_DIR="$HOME/.egpg"
+    export EGPG_DIR="$HOME"/.egpg
     [[ -n "$1" ]] && export EGPG_DIR="$1"
     mkdir -pv "$EGPG_DIR"
-    mkdir -p "$EGPG_DIR/.gnupg"
-    [[ -f "$EGPG_DIR/gpg-agent.conf" ]] || cat <<_EOF > "$EGPG_DIR/gpg-agent.conf"
+    mkdir -p "$EGPG_DIR"/.gnupg
+    [[ -f "$EGPG_DIR"/gpg-agent.conf ]] || cat <<_EOF > "$EGPG_DIR"/gpg-agent.conf
 pinentry-program /usr/bin/pinentry
 default-cache-ttl 300
 max-cache-ttl 999999
 _EOF
 
     # create the config file
-    local config_file="$EGPG_DIR/config.sh"
+    local config_file="$EGPG_DIR"/config.sh
     [[ -f "$config_file" ]] || cat <<-_EOF > "$config_file"
 # If true, push local changes to the keyserver network.
 # Leave it empty (or comment out) to disable.
@@ -49,7 +49,7 @@ SHARE=
 
 # GPG homedir. If "default", then the default one will be used,
 # (whatever is in the environment \$GNUPGHOME, usually ~/.gnupg).
-GNUPGHOME="$EGPG_DIR/.gnupg"
+GNUPGHOME="$(realpath "$EGPG_DIR")/.gnupg"
 
 # Path of the dongle.
 DONGLE=
@@ -64,11 +64,13 @@ _EOF
 _env_setup() {
     local env_file="$1"
     [[ -f "$env_file" ]] && sed -i "$env_file" -e '/^### start egpg config/,/^### end egpg config/d'
-    cat <<_EOF >> "$env_file"
+    cat <<-_EOF >> "$env_file"
 ### start egpg config
-export EGPG_DIR="$EGPG_DIR"
+export EGPG_DIR="$(realpath "$EGPG_DIR")"
+#export GNUPGHOME="$(realpath "$EGPG_DIR")/.gnupg"
 _EOF
     cat <<'_EOF' >> "$env_file"
+export GPG_TTY=$(tty)
 # Does ".gpg-agent-info" exist and points to gpg-agent process accepting signals?
 if ! test -f "$EGPG_DIR/.gpg-agent-info" \
 || ! kill -0 $(cut -d: -f 2 "$EGPG_DIR/.gpg-agent-info") 2>/dev/null

@@ -3,7 +3,8 @@
 cd "$(dirname "$0")"
 source ./sharness.sh
 
-EGPG="$(dirname $SHARNESS_TEST_DIRECTORY)/src/egpg.sh"
+CODE="$(dirname "$SHARNESS_TEST_DIRECTORY")"
+EGPG="$CODE"/src/egpg.sh
 [[ ! -x $EGPG ]] && echo "Could not find egpg.sh" &&  exit 1
 
 egpg() { "$EGPG" "$@" ; }
@@ -11,9 +12,13 @@ egpg() { "$EGPG" "$@" ; }
 unset  EGPG_DIR
 
 export HOME="$SHARNESS_TRASH_DIRECTORY"
-export GNUPGHOME="$SHARNESS_TEST_DIRECTORY/gnupg/"
-export DONGLE="$HOME/dongle"
+
+export GNUPGHOME="$HOME"/.gnupg
+cp -a "$CODE"/tests/gnupg/ "$GNUPGHOME"
+
+export DONGLE="$HOME"/dongle
 mkdir -p "$DONGLE"
+chmod 700 "$DONGLE"
 
 export KEY_ID="D44186C07EA858BD"
 
@@ -23,7 +28,7 @@ export CONTACT_3="262A29CB12F046E8"
 
 egpg_init() {
     egpg init "$@" &&
-    source "$HOME/.bashrc"
+    source "$HOME"/.bashrc
 }
 
 egpg_key_fetch() {
@@ -39,7 +44,7 @@ egpg_migrate() {
 }
 
 send_gpg_commands_from_stdin() {
-    echo "command-fd 0" >> "$HOME/.egpg/.gnupg/gpg.conf"
+    echo "command-fd 0" >> "$HOME"/.egpg/.gnupg/gpg.conf
 }
 
 setup_autopin() {
@@ -48,11 +53,11 @@ setup_autopin() {
     killall gpg-agent &&
     rm -rf /tmp/gpg-* &&
 
-    local autopin="$(dirname $SHARNESS_TEST_DIRECTORY)/utils/autopin.sh" &&
+    local autopin="$CODE"/utils/autopin.sh &&
     cp -f "$autopin" "$EGPG_DIR/" &&
-    autopin="$EGPG_DIR/autopin.sh" &&
+    autopin="$EGPG_DIR"/autopin.sh &&
     sed -i "$autopin" -e "/^PIN=/ c PIN='$pin'" &&
-    sed -i "$HOME/.bashrc" -e "s#--pinentry-program.*#--pinentry-program \"$autopin\" \\\\#" &&
+    sed -i "$HOME"/.bashrc -e "s#--pinentry-program.*#--pinentry-program \"$autopin\" \\\\#" &&
 
-    source "$HOME/.bashrc"
+    source "$HOME"/.bashrc
 }

@@ -15,7 +15,7 @@ cmd_seal() {
     [[ -f "$file" ]] || fail "Cannot find file '$file'"
 
     if [[ -f "$file.sealed" ]]; then
-        yesno "File '$file.sealed' exists. Overwrite?" || return
+        yesno "File '$file.sealed' exists. Overwrite?" || return 1
         rm -f "$file.sealed"
     fi
 

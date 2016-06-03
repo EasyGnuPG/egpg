@@ -10,7 +10,7 @@ qrencode() {
     cd "$WORKDIR"
     local filename=$(basename "$file")
 
-    split -d -l 45 $filename $filename.
+    split -d -l 30 $filename $filename.
     for f in $filename.*; do
         cat $f | $(which qrencode) -o $f.png
     done
@@ -28,8 +28,6 @@ _EOF
 
     cd "$dir"
     mv "$WORKDIR"/$filename.pdf "$(dirname "$file")/"
-
-    workdir_clear
 }
 
 #
