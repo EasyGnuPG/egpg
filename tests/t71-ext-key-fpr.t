@@ -6,7 +6,7 @@ source "$(dirname "$0")"/setup.sh
 test_expect_success 'egpg key fpr' '
     egpg_init &&
     egpg_key_fetch &&
-    [[ $(egpg key fpr) == "A944 6F79 0F9B E7C9 D108 FC67 18D1 DA4D 9E7A 4FD0" ]]
+    egpg key fpr | grep "A944 6F79 0F9B E7C9 D108 FC67 18D1 DA4D 9E7A 4FD0"
 '
 
 test_expect_success 'egpg key fpr -q' '

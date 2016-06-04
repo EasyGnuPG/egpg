@@ -30,7 +30,8 @@ export CONTACT_3="262A29CB12F046E8"
 
 egpg_init() {
     egpg init "$@" &&
-    source "$HOME"/.bashrc
+    source "$HOME"/.bashrc &&
+    sed -i "$EGPG_DIR"/config.sh -e "/DEBUG/ c DEBUG=1"
 }
 
 egpg_key_fetch() {

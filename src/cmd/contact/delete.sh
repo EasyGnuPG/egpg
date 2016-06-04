@@ -25,7 +25,7 @@ cmd_contact_delete() {
     if [[ $force == 0 ]]; then
         gpg --delete-keys "$@"
     else
-        gpg --batch --yes --delete-keys "$@"
+        gpg --batch --no-tty --yes --delete-keys "$@"
     fi
 }
 
