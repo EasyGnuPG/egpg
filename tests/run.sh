@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+opts=''
+if [[ $1 == '-d' || $1 == '--debug' ]]; then
+    opts='--verbose'
+    shift
+fi
+
 pattern=${@:-*.t}
 set -e
 cd "$(dirname "$0")"
@@ -9,7 +15,7 @@ for t in $(ls $pattern); do
     [[ ${t: -2} == ".t" ]] || continue
     [[ -x $t ]] || continue
     echo -e "\n${BLUE}=> ./$t${NOCOLOR}"
-    ./$t
+    ./$t $opts
 done
 #prove $pattern
 
