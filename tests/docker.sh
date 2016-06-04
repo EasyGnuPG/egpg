@@ -15,7 +15,7 @@ cmd_help() {
 Usage: $0 ( build | create | test | start | stop | shell | erase )
 
 First build the image and create the containter:
-    $0 build [dockerfile/ubuntu-14.04]
+    $0 build [dockerfile/ubuntu-16.04]
     $0 create
 
 Then run tests like this:
@@ -35,7 +35,7 @@ _EOF
 }
 
 cmd_build() {
-    local dockerfile=${1:-"dockerfile/ubuntu-14.04"}
+    local dockerfile=${1:-"dockerfile/ubuntu-16.04"}
     docker build --tag=$IMAGE --file="$dockerfile" .
 }
 
