@@ -35,8 +35,8 @@ test_expect_success 'egpg contact find <match>' '
 '
 
 test_expect_success 'egpg contact ls -r' '
-    [[ $(egpg contact ls -r | grep "^uid " | sed -e "s/uid \+//") == "[ultimate] Test 1 <test1@example.org>" ]] &&
-    [[ $(egpg contact ls --raw | grep "^uid " | sed -e "s/uid \+//") == "[ultimate] Test 1 <test1@example.org>" ]]
+    egpg contact ls -r    | grep "^uid " | grep "Test 1 <test1@example.org>" &&
+    egpg contact ls --raw | grep "^uid " | grep "Test 1 <test1@example.org>"
 '
 
 test_expect_success 'egpg contact ls -c' '

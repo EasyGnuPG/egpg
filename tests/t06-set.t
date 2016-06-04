@@ -5,6 +5,7 @@ source "$(dirname "$0")"/setup.sh
 
 test_expect_success 'init' '
     egpg_init &&
+    sed -i "$EGPG_DIR"/config.sh -e "/DEBUG/ c DEBUG=no" &&
     egpg_key_fetch
 '
 

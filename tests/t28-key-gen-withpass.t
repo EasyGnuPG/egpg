@@ -4,7 +4,7 @@ test_description='Command: key gen'
 source "$(dirname "$0")"/setup.sh
 
 test_expect_success 'Make sure `haveged` is started' '
-    [[ -n "$(ps ax | grep -v grep | grep -v defunct | grep haveged)" ]]
+    [[ -n "$(ps -ax | grep -v grep | grep -v defunct | grep haveged)" ]]
 '
 
 test_expect_success 'init' '

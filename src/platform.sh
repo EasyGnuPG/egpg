@@ -1,8 +1,10 @@
 # Platform dependent functions.
 
 gpg() {
-    is_true $DEBUG && echo "$(which gpg2)" --quiet "$@"
-    "$(which gpg2)" --quiet "$@"
+    local opts='--quiet'
+    [[ -t 0 ]] || opts+=' --no-tty'
+    is_true $DEBUG && echo "debug: $(which gpg2)" $opts "$@" 1>&2
+    "$(which gpg2)" $opts "$@"
 }
 export -f gpg
 
@@ -13,7 +15,7 @@ shred() { "$(which shred)" -f -z -u "$@" ; }
 export -f shred
 
 haveged_start() {
-    [[ -z "$(ps ax | grep -v grep | grep -v defunct | grep haveged)" ]] || return 0
+    [[ -z "$(ps -ax | grep -v grep | grep -v defunct | grep haveged)" ]] || return 0
     echo "
 Starting haveged which will greatly improve the speed of creating
 a new key, by improving the entropy generation of the system."

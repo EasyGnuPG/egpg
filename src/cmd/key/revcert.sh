@@ -20,7 +20,7 @@ cmd_key_revcert() {
     local commands="y|1|$description||y"
     commands=$(echo "$commands" | tr '|' "\n")
     echo -e "$commands" | gpg --yes --no-tty --command-fd=0 --output "$revcert" --gen-revoke $GPG_KEY
-    while [[ -n $(ps ax | grep -e '--gen-revoke' | grep -v grep) ]]; do sleep 0.5; done
+    while [[ -n $(ps -x | grep -e '--gen-revoke' | grep -v grep) ]]; do sleep 0.5; done
     if [[ -f "$revcert" ]]; then
         echo -e "\nRevocation certificate saved at: \n    \"$revcert\""
         call_fn qrencode "$revcert"
