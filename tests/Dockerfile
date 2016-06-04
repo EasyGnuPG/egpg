@@ -1,7 +1,8 @@
-FROM ubuntu-upstart:14.04
+FROM ubuntu:14.04
 
 RUN apt-get update; apt-get -y upgrade
 RUN apt-get -y install \
         gnupg2 haveged libgfshare-bin parcimonie \
-        qrencode imagemagick zbar-tools wget realpath
+        qrencode imagemagick zbar-tools \
+        wget realpath psmisc
 RUN useradd -m testuser
