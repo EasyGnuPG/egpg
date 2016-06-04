@@ -10,10 +10,6 @@ _EOF
 }
 
 cmd_init() {
-    # make sure that dependencies are installed
-    test $(which haveged) || fail "You should install haveged:\n    sudo apt-get install haveged"
-    test $(which parcimonie) || echo "It is recommended to install parcimonie:\n    sudo apt-get install parcimonie"
-
     # erase any existing directory
     [[ -d "$EGPG_DIR" ]] \
         && yesno "There is an old directory '$EGPG_DIR'. Do you want to erase it?" \
