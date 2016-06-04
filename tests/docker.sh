@@ -6,7 +6,11 @@ cd $(dirname $0)
 IMAGE=egpg-image
 CONTAINER=egpg
 
-help() {
+docker() {
+    sudo docker "$@"
+}
+
+cmd_help() {
     cat <<-_EOF
 Usage: $0 ( build | create | test | start | stop | shell | erase )
 
@@ -21,6 +25,7 @@ Then run tests like this:
 
 You can also enter the shell of the container to run the tests:
     $0 shell
+    su testuser
     ./run.sh t1* t2*
 
 When testing is done, clean up the container and the image:
@@ -29,16 +34,13 @@ When testing is done, clean up the container and the image:
 _EOF
 }
 
-docker() {
-    sudo docker "$@"
+cmd_build() {
+    local dockerfile=${1:-"dockerfile/ubuntu-14.04"}
+    docker build --tag=$IMAGE --file="$dockerfile" .
 }
 
-build() {
-    docker build --tag=$IMAGE --file=Dockerfile .
-}
-
-create() {
-    stop
+cmd_create() {
+    cmd_stop
     docker rm $CONTAINER 2>/dev/null
     docker create --name=$CONTAINER \
         --privileged=true \
@@ -47,33 +49,33 @@ create() {
         $IMAGE /sbin/init
 }
 
-exec_cmd() {
+cmd_exec() {
     docker exec -it $CONTAINER env TERM=xterm \
         script /dev/null -c "$@" -q
 }
 
-shell() {
-    start
-    exec_cmd bash
+cmd_shell() {
+    cmd_start
+    cmd_exec bash
 }
 
-start() {
+cmd_start() {
     docker start $CONTAINER
-    exec_cmd "/etc/init.d/haveged start"
+    cmd_exec "/etc/init.d/haveged start"
 }
 
-stop() {
+cmd_stop() {
     docker stop $CONTAINER 2>/dev/null
 }
 
-erase() {
-    stop
+cmd_erase() {
+    cmd_stop
     docker rm $CONTAINER 2>/dev/null
     docker rmi $IMAGE 2>/dev/null
 }
 
-run_test() {
-    start
+cmd_test() {
+    cmd_start
 
     local opts=''
     if [[ $1 == '-d' || $1 == '--debug' ]]; then
@@ -83,14 +85,13 @@ run_test() {
 
     pattern=${@:-*.t}
     for test in $(ls $pattern); do
-        exec_cmd "su testuser -c './run.sh $opts $test'"
+        cmd_exec "su testuser -c './run.sh $opts $test'"
     done
 }
 
 # run the given command
-cmd=${1:-help}
+cmd=${1:-help} ; shift
 case $cmd in
-    help|build|create|start|stop|shell|clear) $cmd ;;
-    test) shift ; run_test "$@" ;;
+    help|build|create|test|start|stop|shell|clear) cmd_$cmd "$@" ;;
     *) docker "$@" ;;
 esac
