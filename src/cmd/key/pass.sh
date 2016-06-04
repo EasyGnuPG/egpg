@@ -16,7 +16,8 @@ Try first:  $(basename $0) key join
      then:  $(basename $0) key pass
       and:  $(basename $0) key split
 "
-    gpg --batch --passwd $GPG_KEY
+
+    gpg --batch --no-tty --passwd $GPG_KEY
 }
 
 #

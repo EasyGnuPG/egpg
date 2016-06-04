@@ -29,7 +29,7 @@ cmd_seal() {
 
     # sign and encrypt
     gnupghome_setup
-    gpg --auto-key-locate=local,cert,keyserver,pka \
+    gpg --no-tty --auto-key-locate=local,cert,keyserver,pka \
         --keyserver "$KEYSERVER" $recipients \
         --sign --encrypt --armor \
         --output "$file.sealed" "$file"
