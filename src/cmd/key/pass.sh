@@ -19,7 +19,7 @@ Try first:  $(basename $0) key join
 
 "
 
-    gpg --batch --passwd $GPG_KEY
+    gpg --batch --no-tty --passwd $GPG_KEY
 }
 
 #
