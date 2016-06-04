@@ -74,9 +74,16 @@ erase() {
 
 run_test() {
     start
+
+    local opts=''
+    if [[ $1 == '-d' || $1 == '--debug' ]]; then
+        opts='--debug'
+        shift
+    fi
+
     pattern=${@:-*.t}
     for test in $(ls $pattern); do
-        exec_cmd "su testuser -c './run.sh $test'"
+        exec_cmd "su testuser -c './run.sh $opts $test'"
     done
 }
 
