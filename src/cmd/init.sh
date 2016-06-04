@@ -10,10 +10,6 @@ _EOF
 }
 
 cmd_init() {
-    # make sure that dependencies are installed
-    test $(which haveged) || fail "You should install haveged:\n    sudo apt-get install haveged"
-    test $(which parcimonie) || echo "It is recommended to install parcimonie:\n    sudo apt-get install parcimonie"
-
     # check for an existing directory
     if [[ -d $EGPG_DIR ]]; then
         if yesno "There is an old directory '$EGPG_DIR'. Do you want to erase it?"; then
@@ -70,7 +66,6 @@ export EGPG_DIR="$(realpath "$EGPG_DIR")"
 #export GNUPGHOME="$(realpath "$EGPG_DIR")/.gnupg"
 _EOF
     cat <<'_EOF' >> "$env_file"
-export GPG_TTY=$(tty)
 # Does ".gpg-agent-info" exist and points to gpg-agent process accepting signals?
 if ! test -f "$EGPG_DIR/.gpg-agent-info" \
 || ! kill -0 $(cut -d: -f 2 "$EGPG_DIR/.gpg-agent-info") 2>/dev/null
