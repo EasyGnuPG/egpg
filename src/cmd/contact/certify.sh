@@ -44,7 +44,7 @@ cmd_contact_certify() {
     local fingerprint=$(get_fingerprint "$contact")
     local homedir="$GNUPGHOME"
     gnupghome_setup
-    gpg --batch --default-cert-level=$level --default-cert-expire=$time \
+    gpg --default-cert-level=$level --default-cert-expire=$time \
         --sign-key $fingerprint
     gpg --armor --export $fingerprint > "$WORKDIR"/contact.asc
     gpg --homedir="$homedir" --import "$WORKDIR"/contact.asc
