@@ -3,7 +3,7 @@
 gpg() {
     local opts='--quiet'
     [[ -t 0 ]] || opts+=' --no-tty'
-    is_true $DEBUG && echo "debug: $(which gpg2)" $opts "$@" 1>&2
+    is_true $DEBUG && echo "debug: $(which gpg2) $opts $@" 1>&2
     "$(which gpg2)" $opts "$@"
 }
 export -f gpg

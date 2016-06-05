@@ -14,7 +14,7 @@ fail() {
 
 debug() {
     is_true $DEBUG || return 0
-    echo "$@"
+    echo "debug: $@"
 }
 
 is_true() {
