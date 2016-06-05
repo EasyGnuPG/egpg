@@ -37,7 +37,8 @@ The philosophic goals here are these:
  - Ubuntu 14.04:
 
    ```
-   apt install gnupg2 haveged libgfshare-bin parcimonie qrencode imagemagick zbar-tools wget realpath
+   apt install gnupg2 haveged libgfshare-bin parcimonie \
+               qrencode imagemagick zbar-tools wget realpath psmisc
    ```
 
 

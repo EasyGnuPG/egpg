@@ -3,7 +3,7 @@ egpg(1) -- Easy GnuPG
 
 ## SYNOPSIS
 
-   `egpg` <COMMAND> [<ARGS>...] [<OPTIONS>...]
+   `egpg` *COMMAND* [*ARGS*...] [*OPTIONS*...]
 
 
 ## DESCRIPTION
@@ -20,12 +20,12 @@ egpg(1) -- Easy GnuPG
 
 ## COMMANDS
 
-* `init` [\<dir>]
+* `init` [*dir*]
 
     Initialize egpg. Optionally give the directory to be used.  If not
     given, the default directory will be *$HOME/.egpg/*
 
-* `migrate` [-d,--homedir <gnupghome>]
+* `migrate` [-d,--homedir *gnupghome*]
 
     Get keys and contacts from another gpg directory (by default from
     *$GNUPGHOME*).
@@ -34,22 +34,22 @@ egpg(1) -- Easy GnuPG
 
     Display info about the current configuration and settings.
 
-* `seal` <file> [<recipient>...]
+* `seal` *file* [*recipient*...]
 
     Sign and encrypt a file. The resulting file will have the
     extension **.sealed** The original file will be erased.
 
-* `open` <file.sealed>
+* `open` *file.sealed*
 
     Decrypt and verify the signature of the given file.  The file has
     to end with **.sealed** and the output will have that extension
     stripped.
 
-* `sign` <file>
+* `sign` *file*
 
-    Sign a file. The signature will be saved to <file**.signature**>.
+    Sign a file. The signature will be saved to file**.signature**.
 
-* `verify` <file.signature>
+* `verify` *file.signature*
 
     Verify the signature. The signed file must be present as well.
 
@@ -57,19 +57,19 @@ egpg(1) -- Easy GnuPG
 
     Use the default GNUPGHOME.
 
-* `set` \<option> <value>
+* `set` *option* *value*
 
     Change the settings.
 
-* `key` <command> [<options>...]
+* `key` *command* [*options*...]
 
     Commands for handling the key. For more details see `key help`.
 
-* `contact` <command> [<options>...]
+* `contact` *command* [*options*...]
 
     Commands for handling the contacts. For more details see `contact help`.
 
-* `--`,`gpg` ...
+* `gpg`,`--` ...
 
     Run any gpg command (but using the configuration settings of egpg).
 
@@ -90,25 +90,25 @@ egpg(1) -- Easy GnuPG
     colons). A list of all the keys can be displayed as well
     (including the revoked and expired ones).
 
-* `gen`,`generate` [<email> <name>] [-n,--no-passphrase]
+* `gen`,`generate` [*email* *name*] [-n,--no-passphrase]
 
-    Create a new GPG key. If <email> and <name> are not given as
+    Create a new GPG key. If *email* and *name* are not given as
     arguments, they will be asked interactively.
 
-* `fetch` [-d,--homedir <gnupghome>] [-k,--key-id <key-id>]
+* `fetch` [-d,--homedir *gnupghome*] [-k,--key-id *key-id*]
 
     Get a key from another gpg directory (by default from $GNUPGHOME).
 
-* `backup` [<key-id>] [-q,--qrencode]
+* `backup` [*key-id*] [-q,--qrencode]
 
     Backup key to text file. If the option --qrencode is given, then a
     PDF file with 3D barcode will be generated as well.
 
-* `restore` <file>
+* `restore` *file*
 
     Restore key from file.
 
-* `split` [-d,--dongle \<dir>] [-b,--backup \<dir>]
+* `split` [-d,--dongle *dir*] [-b,--backup *dir*]
 
     Split the key into 3 partial keys and store one of them on the
     dongle (removable device, usb), keep the other one locally, and
@@ -119,7 +119,7 @@ egpg(1) -- Easy GnuPG
 
     Join two partial keys into a full key and delete the partials.
 
-* `recover` <backup-partial.key.xyz>
+* `recover` *backup-partial.key.xyz*
 
     Recover the key from the backup partial key and from the partial
     key of the home or the dongle. This is useful when either the
@@ -133,10 +133,10 @@ egpg(1) -- Easy GnuPG
 
     Publish the key to the keyserver network.
 
-* `renew`,`expiration` [<date>]
+* `renew`,`expiration` [*date*]
 
     Renew the key until the given date (by default 1 month from now).
-    The <date> is in free time format, like "2 months", 2020-11-15,
+    The *date* is in free time format, like "2 months", 2020-11-15,
     "March 7", "5 years" etc. The date formats are those that are
     accepted by the command `date -d` (see `info date`).
 
@@ -144,52 +144,52 @@ egpg(1) -- Easy GnuPG
 
     Generate a revocation certificate for the key.
 
-* `rev`,`revoke` [<revocation-certificate>]
+* `rev`,`revoke` [*revocation-certificate*]
 
     Cancel the key by publishing the given revocation certificate.
 
-* `rm`,`del`,`delete` [<key-id>]
+* `rm`,`del`,`delete` [*key-id*]
 
     Delete the key.
 
 
 ## CONTACT COMMANDS
 
-* `ls`,`list`,`show`,`find` [<contact>...] [-r,--raw | -c,--colons]
+* `ls`,`list`,`show`,`find` [*contact*...] [-r,--raw | -c,--colons]
 
     Show the details of the contacts (optionally in raw format or with
     colons). A list of all the contacts will be displayed if no one is
     selected. A contact can be selected by name, email, id, etc.
 
-* `rm`,`del`,`delete` <contact>... [-f,--force]
+* `rm`,`del`,`delete` *contact*... [-f,--force]
 
     Delete the given contact(s).
 
-* `exp`,`export` [<contact>...] [-o,--output <file>]
+* `exp`,`export` [*contact*...] [-o,--output *file*]
 
     Export contact(s) to file.
 
-* `imp`,`import`,`add` <file>
+* `imp`,`import`,`add` *file*
 
     Import (add) contact(s) from file.
 
-* `fetch` [<contact>...] [-d,--homedir <gnupghome>]
+* `fetch` [*contact*...] [-d,--homedir *gnupghome*]
 
     Get contacts from another gpg directory (by default from $GNUPGHOME).
 
-* `fetch-uri` <uri>...
+* `fetch-uri` *uri*...
 
     Retrieve contacts located at the specified URIs.
 
-* `search` <name> [-s,--keyserver <server>]
+* `search` *name* [-s,--keyserver *server*]
 
     Search the keyserver network for a person.
 
-* `receive`,`pull` <contact-id> [-s,--keyserver <server>]
+* `receive`,`pull` *contact-id* [-s,--keyserver *server*]
 
     Download contact from the keyserver network.
 
-* `certify` <contact> [-p,--publish] [-l,--level <level>] [-t,--time <time>]
+* `certify` *contact* [-p,--publish] [-l,--level *level*] [-t,--time *time*]
 
     You have verified the identity of the contact (the details of the
     contact, name, email, etc. are correct and belong to a real
@@ -197,14 +197,14 @@ egpg(1) -- Easy GnuPG
     certification with the world, so that your friends may rely on it
     if they wish.  The levels of certification are: `0` (`unknown`),
     `1` (`onfaith`), `2` (`casual`), `3` (`extensive`).  The time of
-    certification can be: 0 (unlimited), <n>d (<n> days), <n>w (<n>
-    weeks), <n>m (<n> months), <n>y (<n> years).
+    certification can be: 0 (unlimited), *n*d (*n* days), *n*w (*n*
+    weeks), *n*m (*n* months), *n*y (*n* years).
 
-* `uncertify` <contact>
+* `uncertify` *contact*
 
     Revoke the certification of a contact.
 
-* `trust` <contact> [-l,--level <trust-level>]
+* `trust` *contact* [-l,--level *trust-level*]
 
     You have verified the identity of the contact and you also trust
     him to be able to verify correctly and honestly the identities of
@@ -217,6 +217,11 @@ egpg(1) -- Easy GnuPG
 * `key fpr`
 
     Show the fingerprint of the key.
+
+* `contact pick` [-i,--image *imagefile*]
+
+    Read fingerprint as a 2D barcode from camera or from image
+    and receive the given contact from the keyserver network.
 
 
 ## FILES
@@ -264,22 +269,23 @@ used. For key commands the name of the file must be
 
    Some basic usage is demonstrated on the examples below.
 
-   user@laptop:~$ `rm -rf ~/.egpg/`
+   testuser@laptop:~$ `rm -rf ~/.egpg/`
 
-   user@laptop:~$ `egpg`
+   testuser@laptop:~$ `egpg`
 
-    No directory '/home/user/.egpg'
+    No directory '/home/testuser/.egpg'
     Try first: egpg init
 
 
-   user@laptop:~$ `egpg init`
+   testuser@laptop:~$ `egpg init`
 
-    mkdir: created directory ‘/home/user/.egpg’
+    mkdir: created directory '/home/testuser/.egpg'
 
-    Appended the following lines to '/home/user/.bashrc':
+    Appended the following lines to '/home/testuser/.bashrc':
     ---------------8<---------------
     ### start egpg config
-    export EGPG_DIR="/home/user/.egpg"
+    export EGPG_DIR="/home/testuser/.egpg"
+    #export GNUPGHOME="/home/testuser/.egpg/.gnupg"
     # Does ".gpg-agent-info" exist and points to gpg-agent process accepting signals?
     if ! test -f "$EGPG_DIR/.gpg-agent-info" \
     || ! kill -0 $(cut -d: -f 2 "$EGPG_DIR/.gpg-agent-info") 2>/dev/null
@@ -291,27 +297,24 @@ used. For key commands the name of the file must be
     fi
     ### end egpg config
     --------------->8---------------
-    Please realod it to enable the new config:
-        source "/home/user/.bashrc"
+    Please reload it to enable the new config:
+        source "/home/testuser/.bashrc"
 
 
-   user@laptop:~$ `source "/home/user/.bashrc"`
+   testuser@laptop:~$ `source "/home/testuser/.bashrc"`
 
-   user@laptop:~$ `egpg`
+   testuser@laptop:~$ `egpg`
 
-    EasyGnuPG v0.9    ( https://github.com/dashohoxha/egpg )
+    EasyGnuPG 2.0-1.1    ( https://github.com/dashohoxha/egpg )
 
-    EGPG_DIR="/home/user/.egpg"
-    GNUPGHOME="/home/user/.egpg/.gnupg"
+    EGPG_DIR="/home/testuser/.egpg"
+    GNUPGHOME="/home/testuser/.egpg/.gnupg"
     DONGLE=""
     KEYSERVER="hkp://keys.gnupg.net"
-    GPG_AGENT_INFO="/tmp/gpg-05l0Kb/S.gpg-agent:13943:1"
-    GPG_TTY="/dev/pts/8"
+    GPG_AGENT_INFO="/tmp/gpg-YQjLty/S.gpg-agent:7838:1"
+    GPG_TTY="/dev/pts/22"
     SHARE=no
     DEBUG=no
-    gpg: keyring `/home/user/.egpg/.gnupg/secring.gpg' created
-    gpg: keyring `/home/user/.egpg/.gnupg/pubring.gpg' created
-    gpg: /home/user/.egpg/.gnupg/trustdb.gpg: trustdb created
 
     No valid key found.
 
@@ -321,120 +324,108 @@ used. For key commands the name of the file must be
            or:  egpg key recover
 
 
-   user@laptop:~$ `egpg key gen test@example.org "Test User"`
+   testuser@laptop:~$ `egpg key gen test@example.org "Test User"`
 
     Creating a new key.
 
     Enter passphrase for the new key: 
     Retype the passphrase of the key: 
-    gpg: key 0D6282D1 marked as ultimately trusted
-    gpg: checking the trustdb
-    gpg: 3 marginal(s) needed, 1 complete(s) needed, PGP trust model
-    gpg: depth: 0  valid:   1  signed:   0  trust: 0-, 0q, 0n, 0m, 0f, 1u
-    gpg: next trustdb check due at 2016-05-22
 
-    Excellent! You created a fresh GPG key. Here's what it looks like:
-
-    id: 4A8872C20D6282D1
+    id: D12F18F9B50EEBB0
     uid: Test User <test@example.org>
-    fpr: 515B 8C7D 8106 0DC6 E6E8 F28F 4A88 72C2 0D62 82D1 
+    fpr: 3E64 4602 3F55 95F3 3932 6056 D12F 18F9 B50E EBB0 
     trust: ultimate
-    cert: 4A8872C20D6282D1 2016-04-22 2016-05-22 
-    auth: CEA9603E528CED7D 2016-04-22 2016-05-22 
-    sign: 253F0000B8264D90 2016-04-22 2016-05-22 
-    encr: A29A4814128F99FF 2016-04-22 2016-05-22 
+    sign: D12F18F9B50EEBB0 2016-06-05 2016-07-05 
+    decr: 0BED9B547FC71851 2016-06-05 2016-07-05 
+
 
     Creating a revocation certificate.
+
     Revocation certificate saved at: 
-        "/home/user/.egpg/4A8872C20D6282D1.revoke"
+        "/home/testuser/.egpg/D12F18F9B50EEBB0.revoke"
+        "/home/testuser/.egpg/D12F18F9B50EEBB0.revoke.pdf"
+
+    Please move it to a medium which you can hide away; if Mallory gets
+    access to this certificate he can use it to make your key unusable.
+    It is smart to print this certificate and store it away, just in case
+    your media become unreadable.  But have some caution:  The print system of
+    your machine might store the data and make it available to others!
 
 
-   user@laptop:~$ `egpg info`
+   testuser@laptop:~$ `egpg info`
 
-    EasyGnuPG v0.9    ( https://github.com/dashohoxha/egpg )
+    EasyGnuPG 2.0-1.1    ( https://github.com/dashohoxha/egpg )
 
-    EGPG_DIR="/home/user/.egpg"
-    GNUPGHOME="/home/user/.egpg/.gnupg"
+    EGPG_DIR="/home/testuser/.egpg"
+    GNUPGHOME="/home/testuser/.egpg/.gnupg"
     DONGLE=""
     KEYSERVER="hkp://keys.gnupg.net"
-    GPG_AGENT_INFO="/tmp/gpg-05l0Kb/S.gpg-agent:13943:1"
-    GPG_TTY="/dev/pts/8"
+    GPG_AGENT_INFO="/tmp/gpg-bZYIfp/S.gpg-agent:15236:1"
+    GPG_TTY="/dev/pts/5"
     SHARE=no
     DEBUG=no
 
-    id: 4A8872C20D6282D1
+    id: D12F18F9B50EEBB0
     uid: Test User <test@example.org>
-    fpr: 515B 8C7D 8106 0DC6 E6E8 F28F 4A88 72C2 0D62 82D1 
+    fpr: 3E64 4602 3F55 95F3 3932 6056 D12F 18F9 B50E EBB0 
     trust: ultimate
-    cert: 4A8872C20D6282D1 2016-04-22 2016-05-22 
-    auth: CEA9603E528CED7D 2016-04-22 2016-05-22 
-    sign: 253F0000B8264D90 2016-04-22 2016-05-22 
-    encr: A29A4814128F99FF 2016-04-22 2016-05-22 
+    sign: D12F18F9B50EEBB0 2016-06-05 2016-07-05 
+    decr: 0BED9B547FC71851 2016-06-05 2016-07-05 
 
 
-   user@laptop:~$ `egpg key`
+   testuser@laptop:~$ `egpg key`
 
-    id: 4A8872C20D6282D1
+    id: D12F18F9B50EEBB0
     uid: Test User <test@example.org>
-    fpr: 515B 8C7D 8106 0DC6 E6E8 F28F 4A88 72C2 0D62 82D1 
+    fpr: 3E64 4602 3F55 95F3 3932 6056 D12F 18F9 B50E EBB0 
     trust: ultimate
-    cert: 4A8872C20D6282D1 2016-04-22 2016-05-22 
-    auth: CEA9603E528CED7D 2016-04-22 2016-05-22 
-    sign: 253F0000B8264D90 2016-04-22 2016-05-22 
-    encr: A29A4814128F99FF 2016-04-22 2016-05-22 
+    sign: D12F18F9B50EEBB0 2016-06-05 2016-07-05 
+    decr: 0BED9B547FC71851 2016-06-05 2016-07-05 
 
 
-   user@laptop:~$ `egpg key fpr`
+   testuser@laptop:~$ `egpg key fpr`
 
-    515B 8C7D 8106 0DC6 E6E8 F28F 4A88 72C2 0D62 82D1
+    3E64 4602 3F55 95F3 3932 6056 D12F 18F9 B50E EBB0
 
 
-   user@laptop:~$ `egpg key renew 1 year`
+   testuser@laptop:~$ `egpg key renew 1 year`
 
-    id: 4A8872C20D6282D1
+    id: D12F18F9B50EEBB0
     uid: Test User <test@example.org>
-    fpr: 515B 8C7D 8106 0DC6 E6E8 F28F 4A88 72C2 0D62 82D1 
+    fpr: 3E64 4602 3F55 95F3 3932 6056 D12F 18F9 B50E EBB0 
     trust: ultimate
-    cert: 4A8872C20D6282D1 2016-04-22 2017-04-22 
-    auth: CEA9603E528CED7D 2016-04-22 2017-04-22 
-    sign: 253F0000B8264D90 2016-04-22 2017-04-22 
-    encr: A29A4814128F99FF 2016-04-22 2017-04-22 
+    sign: D12F18F9B50EEBB0 2016-06-05 2017-06-05 
+    decr: 0BED9B547FC71851 2016-06-05 2017-06-05 
 
 
-   user@laptop:~$ `echo "This is a test message." > test.txt`
+   testuser@laptop:~$ `echo "This is a test message." > test.txt`
 
-   user@laptop:~$ `egpg seal test.txt`
+   testuser@laptop:~$ `egpg seal test.txt`
+
+   testuser@laptop:~$ `egpg open test.txt.sealed`
 
     You need a passphrase to unlock the secret key for
     user: "Test User <test@example.org>"
-    4096-bit RSA key, ID B8264D90, created 2016-04-22 (main key ID 0D6282D1)
+    4096-bit RSA key, ID 7FC71851, created 2016-06-05 (main key ID B50EEBB0)
 
-
-   user@laptop:~$ `egpg open test.txt.sealed`
-
-    user: "Test User <test@example.org>"
-    4096-bit RSA key, ID 128F99FF, created 2016-04-22 (main key ID 0D6282D1)
-
-    gpg: encrypted with 4096-bit RSA key, ID 128F99FF, created 2016-04-22
-          "Test User <test@example.org>"
-    gpg: Signature made Fri 22 Apr 2016 10:41:07 AM CEST using RSA key ID B8264D90
+    gpg: Signature made Sun 05 Jun 2016 11:26:30 AM CEST using RSA key ID B50EEBB0
     gpg: Good signature from "Test User <test@example.org>"
 
 
-   user@laptop:~$ `egpg sign test.txt`
+   testuser@laptop:~$ `egpg sign test.txt`
 
     You need a passphrase to unlock the secret key for
     user: "Test User <test@example.org>"
-    4096-bit RSA key, ID B8264D90, created 2016-04-22 (main key ID 0D6282D1)
+    4096-bit RSA key, ID B50EEBB0, created 2016-06-05
 
 
-   user@laptop:~$ `egpg verify test.txt.signature`
+   testuser@laptop:~$ `egpg verify test.txt.signature`
 
-    gpg: Signature made Fri 22 Apr 2016 10:42:34 AM CEST using RSA key ID B8264D90
+    gpg: Signature made Sun 05 Jun 2016 04:14:09 PM CEST using RSA key ID B50EEBB0
     gpg: Good signature from "Test User <test@example.org>"
 
 
-   user@laptop:~$ `egpg contact search Dashamir`
+   testuser@laptop:~$ `egpg contact search Dashamir`
 
     gpg: searching for "Dashamir" from hkp server keys.gnupg.net
     (1)	Dashamir Hoxha <dashohoxha@gmail.com>
@@ -447,68 +438,83 @@ used. For key commands the name of the file must be
           2048 bit RSA key 55D59B28, created: 2010-12-12, expires: 2015-12-13 (expired)
     Keys 1-3 of 3 for "Dashamir".  Enter number(s), N)ext, or Q)uit > 1
     gpg: requesting key C01D2DBD from hkp server keys.gnupg.net
-    gpg: key C01D2DBD: public key "Dashamir Hoxha <dashohoxha@gmail.com>" imported
-    gpg: 3 marginal(s) needed, 1 complete(s) needed, PGP trust model
-    gpg: depth: 0  valid:   1  signed:   0  trust: 0-, 0q, 0n, 0m, 0f, 1u
-    gpg: next trustdb check due at 2017-04-22
-    gpg: Total number processed: 1
-    gpg:               imported: 1  (RSA: 1)
 
 
-   user@laptop:~$ `egpg contact ls`
+   testuser@laptop:~$ `egpg contact ls`
 
-    id: 4A8872C20D6282D1
+    id: D12F18F9B50EEBB0
     uid: Test User <test@example.org>
-    fpr: 515B 8C7D 8106 0DC6 E6E8 F28F 4A88 72C2 0D62 82D1 
+    fpr: 3E64 4602 3F55 95F3 3932 6056 D12F 18F9 B50E EBB0 
     trust: ultimate
-    cert: 4A8872C20D6282D1 2016-04-22 2017-04-22 
-    auth: CEA9603E528CED7D 2016-04-22 2017-04-22 
-    sign: 253F0000B8264D90 2016-04-22 2017-04-22 
-    encr: A29A4814128F99FF 2016-04-22 2017-04-22 
+    sign: D12F18F9B50EEBB0 2016-06-05 2017-06-05 
+    decr: 0BED9B547FC71851 2016-06-05 2017-06-05 
 
 
     id: 562AC309C01D2DBD
     uid: Dashamir Hoxha <dashohoxha@gmail.com>
     fpr: 1EC0 8B86 1350 EE19 8053 7941 562A C309 C01D 2DBD 
-    cert: 562AC309C01D2DBD 2015-12-27 2020-12-31 
-    encr: 95B9FAD9DEF9A02A 2015-12-27 2020-12-31 
+    sign: 562AC309C01D2DBD 2015-12-27 2020-12-31 
+    decr: 95B9FAD9DEF9A02A 2015-12-27 2020-12-31 
 
 
-   user@laptop:~$ `egpg contact certify Dashamir`
+   testuser@laptop:~$ `egpg contact certify Dashamir`
 
-   user@laptop:~$ `egpg contact trust Dashamir`
+    pub  2048R/C01D2DBD  created: 2015-12-27  expires: 2020-12-31  usage: SC  
+                         trust: unknown       validity: unknown
+    sub  2048R/DEF9A02A  created: 2015-12-27  expires: 2020-12-31  usage: E   
+    [ unknown] (1). Dashamir Hoxha <dashohoxha@gmail.com>
 
-   user@laptop:~$ `egpg contact ls Dashamir`
+
+    pub  2048R/C01D2DBD  created: 2015-12-27  expires: 2020-12-31  usage: SC  
+                         trust: unknown       validity: unknown
+     Primary key fingerprint: 1EC0 8B86 1350 EE19 8053  7941 562A C309 C01D 2DBD
+
+         Dashamir Hoxha <dashohoxha@gmail.com>
+
+    This key is due to expire on 2020-12-31.
+    Are you sure that you want to sign this key with your
+    key "Test User <test@example.org>" (B50EEBB0)
+
+    I have checked this key casually.
+
+    Really sign? (y/N) y
+
+    You need a passphrase to unlock the secret key for
+    user: "Test User <test@example.org>"
+    4096-bit RSA key, ID B50EEBB0, created 2016-06-05
+
+
+   testuser@laptop:~$ `egpg contact trust Dashamir`
+
+    uid: Dashamir Hoxha <dashohoxha@gmail.com>
+    trust: marginal
+
+
+   testuser@laptop:~$ `egpg contact ls Dashamir`
 
     id: 562AC309C01D2DBD
     uid: Dashamir Hoxha <dashohoxha@gmail.com>
     fpr: 1EC0 8B86 1350 EE19 8053 7941 562A C309 C01D 2DBD 
     trust: marginal
-    cert: 562AC309C01D2DBD 2015-12-27 2020-12-31 
-    encr: 95B9FAD9DEF9A02A 2015-12-27 2020-12-31 
-    certified by: Test User <test@example.org> (4A8872C20D6282D1)
+    sign: 562AC309C01D2DBD 2015-12-27 2020-12-31 
+    decr: 95B9FAD9DEF9A02A 2015-12-27 2020-12-31 
+    certified by: Test User <test@example.org> (D12F18F9B50EEBB0)
 
 
-   user@laptop:~$ `egpg contact rm Dashamir`
+   testuser@laptop:~$ `egpg contact rm Dashamir`
 
     pub  2048R/C01D2DBD 2015-12-27 Dashamir Hoxha <dashohoxha@gmail.com>
 
     Delete this key from the keyring? (y/N) y
 
 
-   user@laptop:~$ `egpg key revoke`
+   testuser@laptop:~$ `egpg key revoke`
 
     Revocation will make your current key useless. You'll need
     to generate a new one. Are you sure about this? [y/N] y
-    gpg: key 0D6282D1: "Test User <test@example.org>" revocation certificate imported
-    gpg: Total number processed: 1
-    gpg:    new key revocations: 1
-    gpg: 3 marginal(s) needed, 1 complete(s) needed, PGP trust model
-    gpg: depth: 0  valid:   1  signed:   0  trust: 0-, 0q, 0n, 0m, 0f, 1u
-    gpg: next trustdb check due at 2017-04-22
 
 
-   user@laptop:~$ `egpg key ls`
+   testuser@laptop:~$ `egpg key ls`
 
     No valid key found.
 
@@ -517,23 +523,22 @@ used. For key commands the name of the file must be
            or:  egpg key restore
            or:  egpg key recover
 
-   user@laptop:~$ `rm -rf ~/.egpg/`
+   testuser@laptop:~$ `rm -rf ~/.egpg/`
 
 
 ## ADVANCED EXAMPLE
 
 ### Get the key and contacts from an existing $GNUPGHOME:
 
-   user@laptop:~$ `rm -rf ~/.egpg/`
+   testuser@laptop:~$ `rm -rf ~/.egpg/`
 
-   user@laptop:~$ `egpg init`
+   testuser@laptop:~$ `egpg init`
 
-    mkdir: created directory ‘/home/user/.egpg’
-
-    Appended the following lines to '/home/user/.bashrc':
+    Appended the following lines to '/home/testuser/.bashrc':
     ---------------8<---------------
     ### start egpg config
-    export EGPG_DIR="/home/user/.egpg"
+    export EGPG_DIR="/home/testuser/.egpg"
+    #export GNUPGHOME="/home/testuser/.egpg/.gnupg"
     # Does ".gpg-agent-info" exist and points to gpg-agent process accepting signals?
     if ! test -f "$EGPG_DIR/.gpg-agent-info" \
     || ! kill -0 $(cut -d: -f 2 "$EGPG_DIR/.gpg-agent-info") 2>/dev/null
@@ -545,48 +550,27 @@ used. For key commands the name of the file must be
     fi
     ### end egpg config
     --------------->8---------------
-    Please realod it to enable the new config:
-        source "/home/user/.bashrc"
+    Please reload it to enable the new config:
+        source "/home/testuser/.bashrc"
 
 
-   user@laptop:~$ `source "/home/user/.bashrc"`
+   testuser@laptop:~$ `source "/home/testuser/.bashrc"`
 
-   user@laptop:~$ `egpg migrate`
+   testuser@laptop:~$ `egpg migrate`
 
-    gpg: keyring `/home/user/.egpg/.gnupg/secring.gpg' created
-    gpg: keyring `/home/user/.egpg/.gnupg/pubring.gpg' created
-    gpg: /home/user/.egpg/.gnupg/trustdb.gpg: trustdb created
-    Importing key from: /home/user/.gnupg
-    gpg: key C01D2DBD: public key "Dashamir Hoxha <dashohoxha@gmail.com>" imported
-    gpg: key C01D2DBD: secret key imported
-    gpg: key C01D2DBD: "Dashamir Hoxha <dashohoxha@gmail.com>" not changed
-    gpg: Total number processed: 2
-    gpg:               imported: 1  (RSA: 1)
-    gpg:              unchanged: 1
-    gpg:       secret keys read: 1
-    gpg:   secret keys imported: 1
-    gpg: no ultimately trusted keys found
-    Importing contacts from: /home/user/.gnupg
-    gpg: key 61309252: public key "Test 1 <test1@example.org>" imported
-    gpg: key EC8C9493: public key "Test 2 <test2@example.org>" imported
-    gpg: Total number processed: 3
-    gpg:               imported: 2  (RSA: 15)
-    gpg:              unchanged: 1
-    gpg: 3 marginal(s) needed, 1 complete(s) needed, PGP trust model
-    gpg: depth: 0  valid:   1  signed:   1  trust: 0-, 0q, 0n, 0m, 0f, 1u
-    gpg: depth: 1  valid:   1  signed:   1  trust: 0-, 0q, 0n, 0m, 1f, 0u
-    gpg: depth: 2  valid:   1  signed:   0  trust: 1-, 0q, 0n, 0m, 0f, 0u
-    gpg: next trustdb check due at 2017-01-05
+    Importing key from: /home/testuser/.gnupg
+
+    Importing contacts from: /home/testuser/.gnupg
 
 
 ### Change the passphrase of the key:
 
-   user@laptop:~$ `egpg key pass`
+   testuser@laptop:~$ `egpg key pass`
 
 
 ### Use the default GNUPGHOME:
 
-   user@laptop:~$ `egpg default`
+   testuser@laptop:~$ `egpg default`
 
    Afterwards `egpg` will use the directory `~/.gnupg` (or whatever is
    in the environment variable $GNUPGHOME) for the key and contacts.
@@ -594,14 +578,14 @@ used. For key commands the name of the file must be
 
 ### Send key to the keyserver network:
 
-   user@laptop:~$ `egpg key share`
+   testuser@laptop:~$ `egpg key share`
 
     You must enable sharing first with:
       egpg set share yes
 
-   user@laptop:~$ `egpg set share yes`
+   testuser@laptop:~$ `egpg set share yes`
 
-   user@laptop:~$ `egpg key share`
+   testuser@laptop:~$ `egpg key share`
 
 
 ### Split the key and use a dongle
@@ -613,15 +597,15 @@ used. For key commands the name of the file must be
    device). The third partial key is used as a backup, to recover the
    full key in case that the dongle or the computer is lost.
 
-   user@laptop:~$ `egpg key split`
+   testuser@laptop:~$ `egpg key split`
 
     Splitting the key: 155E526BA47364BC
 
-    Enter the dongle directory: /media/user/sdb1
+    Enter the dongle directory: /media/testuser/sdb1
 
-     * Backup partial key saved to: /home/user/155E526BA47364BC.key.089
-     * Dongle partial key saved to: /media/user/sdb1/.gnupg/155E526BA47364BC.key.113
-     * Local  partial key saved to: /home/user/.egpg/.gnupg/155E526BA47364BC.key.129
+     * Backup partial key saved to: /home/testuser/155E526BA47364BC.key.089
+     * Dongle partial key saved to: /media/testuser/sdb1/.gnupg/155E526BA47364BC.key.113
+     * Local  partial key saved to: /home/testuser/.egpg/.gnupg/155E526BA47364BC.key.129
 
     The key was split successfully. Whenever you need to use the key
     (to sign, seal, open, etc.) connect first the dongle to the PC.
@@ -631,9 +615,9 @@ used. For key commands the name of the file must be
     or the PC (but it cannot help you if you loose both of them).
 
 
-   user@laptop:~$ `egpg key recover 155E526BA47364BC.key.089`
+   testuser@laptop:~$ `egpg key recover 155E526BA47364BC.key.089`
 
-   user@laptop:~$ `egpg key join`
+   testuser@laptop:~$ `egpg key join`
 
    Spliting the key into partial keys makes key management safer and
    more robust. In case that you loose the dongle the key is not
@@ -647,9 +631,9 @@ used. For key commands the name of the file must be
 
 ### Run any gpg command but with the configuration settings of egpg:
 
-   user@laptop:~$ `egpg gpg --list-secret-keys`
+   testuser@laptop:~$ `egpg gpg --list-secret-keys`
 
-    /home/user/.egpg/.gnupg/secring.gpg
+    /home/testuser/.egpg/.gnupg/secring.gpg
     ------------------------------------
     sec   2048R/C01D2DBD 2015-12-27 [expires: 2020-12-31]
     uid                  Dashamir Hoxha <dashohoxha@gmail.com>
@@ -664,15 +648,15 @@ used. For key commands the name of the file must be
    EGPG, one for each key, and they will not mess with each-other.
    Let's see an example of doing this.
 
-   user@laptop:~$ `egpg init ~/.egpg1 <<< n`
+   testuser@laptop:~$ `egpg init ~/.egpg1 <<< n`
 
-   user@laptop:~$ `egpg init ~/.egpg2 <<< n`
+   testuser@laptop:~$ `egpg init ~/.egpg2 <<< n`
 
-   user@laptop:~$ `egpg init ~/.egpg <<< n`
+   testuser@laptop:~$ `egpg init ~/.egpg <<< n`
 
    Now add these lines to `~/.bashrc`:
 
-    export EGPG_DIR="/home/user/.egpg1"
+    export EGPG_DIR="/home/testuser/.egpg1"
     # Does ".gpg-agent-info" exist and points to gpg-agent process accepting signals?
     if ! test -f "$EGPG_DIR/.gpg-agent-info" \
     || ! kill -0 $(cut -d: -f 2 "$EGPG_DIR/.gpg-agent-info") 2>/dev/null
@@ -683,7 +667,7 @@ used. For key commands the name of the file must be
             --write-env-file "$EGPG_DIR/.gpg-agent-info" > /dev/null
     fi
 
-    export EGPG_DIR="/home/user/.egpg2"
+    export EGPG_DIR="/home/testuser/.egpg2"
     # Does ".gpg-agent-info" exist and points to gpg-agent process accepting signals?
     if ! test -f "$EGPG_DIR/.gpg-agent-info" \
     || ! kill -0 $(cut -d: -f 2 "$EGPG_DIR/.gpg-agent-info") 2>/dev/null
@@ -694,19 +678,19 @@ used. For key commands the name of the file must be
             --write-env-file "$EGPG_DIR/.gpg-agent-info" > /dev/null
     fi
 
-    alias egpg1='EGPG_DIR="/home/user/.egpg1" egpg'
-    alias egpg2='EGPG_DIR="/home/user/.egpg2" egpg'
-    export EGPG_DIR="/home/user/.egpg"
+    alias egpg1='EGPG_DIR="/home/testuser/.egpg1" egpg'
+    alias egpg2='EGPG_DIR="/home/testuser/.egpg2" egpg'
+    export EGPG_DIR="/home/testuser/.egpg"
 
 
-   user@laptop:~$ `source ~/.bashrc`
+   testuser@laptop:~$ `source ~/.bashrc`
 
-   user@laptop:~$ `egpg`
+   testuser@laptop:~$ `egpg`
 
-    EasyGnuPG v0.9    ( https://github.com/dashohoxha/egpg )
+    EasyGnuPG 2.0-1.1    ( https://github.com/dashohoxha/egpg )
 
-    EGPG_DIR="/home/user/.egpg"
-    GNUPGHOME="/home/user/.egpg/.gnupg"
+    EGPG_DIR="/home/testuser/.egpg"
+    GNUPGHOME="/home/testuser/.egpg/.gnupg"
     DONGLE=""
     KEYSERVER="hkp://keys.gnupg.net"
     GPG_AGENT_INFO="/tmp/gpg-1OyoSv/S.gpg-agent:19657:1"
@@ -722,12 +706,12 @@ used. For key commands the name of the file must be
            or:  egpg key recover
 
 
-   user@laptop:~$ `egpg1`
+   testuser@laptop:~$ `egpg1`
 
-    EasyGnuPG v0.9    ( https://github.com/dashohoxha/egpg )
+    EasyGnuPG 2.0-1.1    ( https://github.com/dashohoxha/egpg )
 
-    EGPG_DIR="/home/user/.egpg1"
-    GNUPGHOME="/home/user/.egpg1/.gnupg"
+    EGPG_DIR="/home/testuser/.egpg1"
+    GNUPGHOME="/home/testuser/.egpg1/.gnupg"
     DONGLE=""
     KEYSERVER="hkp://keys.gnupg.net"
     GPG_AGENT_INFO="/tmp/gpg-GzhOIA/S.gpg-agent:19661:1"
@@ -743,12 +727,12 @@ used. For key commands the name of the file must be
            or:  egpg key recover
 
 
-   user@laptop:~$ `egpg2`
+   testuser@laptop:~$ `egpg2`
 
-    EasyGnuPG v0.9    ( https://github.com/dashohoxha/egpg )
+    EasyGnuPG 2.0-1.1    ( https://github.com/dashohoxha/egpg )
 
-    EGPG_DIR="/home/user/.egpg2"
-    GNUPGHOME="/home/user/.egpg2/.gnupg"
+    EGPG_DIR="/home/testuser/.egpg2"
+    GNUPGHOME="/home/testuser/.egpg2/.gnupg"
     DONGLE=""
     KEYSERVER="hkp://keys.gnupg.net"
     GPG_AGENT_INFO="/tmp/gpg-MMUdsA/S.gpg-agent:19663:1"
