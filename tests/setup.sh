@@ -29,7 +29,7 @@ export CONTACT_3="262A29CB12F046E8"
 egpg_init() {
     egpg init "$@" &&
     source "$HOME"/.bashrc &&
-    sed -i "$EGPG_DIR"/config.sh -e "/DEBUG/ c DEBUG=1"
+    sed -i "$EGPG_DIR"/config.sh -e "/DEBUG/ c DEBUG=yes"
 }
 
 egpg_key_fetch() {
@@ -45,7 +45,20 @@ egpg_migrate() {
 }
 
 send_gpg_commands_from_stdin() {
-    echo "command-fd 0" >> "$HOME"/.egpg/.gnupg/gpg.conf
+    # echo "command-fd 0" >> "$HOME"/.egpg/.gnupg/gpg.conf
+
+    # override function gpg to accept commands from stdin
+    cat <<-'_EOF' > "$EGPG_DIR"/customize.sh
+gpg() {
+    local opts='--quiet --command-fd=0'
+    [[ -t 0 ]] || opts+=' --no-tty'
+    is_true $DEBUG && echo "debug: $(which gpg2) $opts $@" 1>&2
+    "$(which gpg2)" $opts "$@"
+}
+export -f gpg
+_EOF
+    chmod +x "$EGPG_DIR"/customize.sh
+
 }
 
 setup_autopin() {
