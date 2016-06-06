@@ -36,9 +36,9 @@ The philosophic goals here are these:
 ## Requirements
 
  - Ubuntu 16.04:
-   ```
-   apt install gnupg2 pinentry-tty haveged libgfshare-bin parcimonie qrencode imagemagick zbar-tools
-   ```
+
+        apt install gnupg2 pinentry-tty haveged libgfshare-bin parcimonie \
+               qrencode imagemagick zbar-tools wget realpath psmisc
 
 ## Usage:
 
