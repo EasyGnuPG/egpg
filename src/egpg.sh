@@ -172,7 +172,7 @@ _EOF
 config() {
     # read the config file
     local config_file="$EGPG_DIR/config.sh"
-    ENV_GNUPGHOME="$GNUPGHOME"
+    ENV_GNUPGHOME=${GNUPGHOME:-~/.gnupg}
     unset SHARE KEYSERVER GNUPGHOME DONGLE DEBUG
     [[ -f "$config_file" ]] && source "$config_file"
 
