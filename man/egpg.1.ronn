@@ -69,7 +69,7 @@ egpg(1) -- Easy GnuPG
 
     Commands for handling the contacts. For more details see `contact help`.
 
-* `--`,`gpg` ...
+* `gpg`, `--` ...
 
     Run any gpg command (but using the configuration settings of egpg).
 
@@ -274,41 +274,41 @@ used. For key commands the name of the file must be
 
    Some basic usage is demonstrated on the examples below.
 
-   user@laptop:~$ `rm -rf ~/.egpg/`
+   testuser@laptop:~$ `rm -rf ~/.egpg/`
 
-   user@laptop:~$ `egpg`
+   testuser@laptop:~$ `egpg`
 
-    No directory '/home/user/.egpg'
+    No directory '/home/testuser/.egpg'
     Try first: egpg init
 
 
-   user@laptop:~$ `egpg init`
+   testuser@laptop:~$ `egpg init`
 
-    mkdir: created directory '/home/user/.egpg'
+    mkdir: created directory '/home/testuser/.egpg'
 
-    Appended the following lines to '/home/user/.bashrc':
+    Appended the following lines to '/home/testuser/.bashrc':
     ---------------8<---------------
     ### start egpg config
     export GPG_TTY=$(tty)
-    export EGPG_DIR="/home/user/.egpg"
-    #export GNUPGHOME="/home/user/.egpg/.gnupg"
+    export EGPG_DIR="/home/testuser/.egpg"
+    #export GNUPGHOME="/home/testuser/.egpg/.gnupg"
     ### end egpg config
     --------------->8---------------
     Please reload it to enable the new config:
-        source "/home/user/.bashrc"
+        source "/home/testuser/.bashrc"
 
 
-   user@laptop:~$ `source "/home/user/.bashrc"`
+   testuser@laptop:~$ `source "/home/testuser/.bashrc"`
 
-   user@laptop:~$ `egpg`
+   testuser@laptop:~$ `egpg`
 
-    EasyGnuPG 2.1-0.9    ( https://github.com/dashohoxha/egpg )
+    EasyGnuPG 2.1-1.0    ( https://github.com/dashohoxha/egpg )
 
-    EGPG_DIR="/home/user/.egpg"
-    GNUPGHOME="/home/user/.egpg/.gnupg"
+    EGPG_DIR="/home/testuser/.egpg"
+    GNUPGHOME="/home/testuser/.egpg/.gnupg"
     DONGLE=""
     KEYSERVER="hkp://keys.gnupg.net"
-    GPG_TTY="/dev/pts/20"
+    GPG_TTY="/dev/pts/18"
     SHARE=no
     DEBUG=no
 
@@ -320,7 +320,7 @@ used. For key commands the name of the file must be
            or:  egpg key recover
 
 
-   user@laptop:~$ `egpg key gen test@example.org "Test User"`
+   testuser@laptop:~$ `egpg key gen test@example.org "Test User"`
 
     Creating a new key.
 
@@ -328,117 +328,119 @@ used. For key commands the name of the file must be
     Retype the passphrase of the key: 
     Please enter the passphrase to unlock the OpenPGP secret key:
     "Test User <test@example.org>"
-    4096-bit RSA key, ID 55FA7A73FD847AF1,
-    created 2016-05-29.
+    4096-bit RSA key, ID 01D532A283DC1CBF,
+    created 2016-06-06.
 
     Passphrase: 
 
-    gpg: marginals needed: 3  completes needed: 1  trust model: PGP
-    gpg: depth: 0  valid:   1  signed:   0  trust: 0-, 0q, 0n, 0m, 0f, 1u
-    gpg: next trustdb check due at 2016-06-29
-    id: 55FA7A73FD847AF1
+    id: 01D532A283DC1CBF
     uid: Test User <test@example.org>
-    fpr: 74E4 1805 1992 F203 E3AB BD88 55FA 7A73 FD84 7AF1 
+    fpr: 4E91 DD0E EDD7 49F2 B6DE D9CE 01D5 32A2 83DC 1CBF 
     trust: ultimate
-    sign: 55FA7A73FD847AF1 2016-05-29 2016-06-29 
-    decr: 63ED1339BF9FFD7B 2016-05-29 2016-06-29 
+    sign: 01D532A283DC1CBF 2016-06-06 2016-07-06 
+    decr: 7BD4B1BE5D76CC0D 2016-06-06 2016-07-06 
 
     Revocation certificate is at: 
-        "/home/user/.egpg/.gnupg/openpgp-revocs.d/74E418051992F203E3ABBD8855FA7A73FD847AF1.rev"
-        "/home/user/.egpg/.gnupg/openpgp-revocs.d/74E418051992F203E3ABBD8855FA7A73FD847AF1.rev.pdf"
+        "/home/testuser/.egpg/.gnupg/openpgp-revocs.d/4E91DD0EEDD749F2B6DED9CE01D532A283DC1CBF.rev"
+        "/home/testuser/.egpg/.gnupg/openpgp-revocs.d/4E91DD0EEDD749F2B6DED9CE01D532A283DC1CBF.rev.pdf"
 
+   testuser@laptop:~$ `egpg info`
 
-   user@laptop:~$ `egpg info`
+    EasyGnuPG 2.1-1.0    ( https://github.com/dashohoxha/egpg )
 
-    EasyGnuPG 2.1-0.9    ( https://github.com/dashohoxha/egpg )
-
-    EGPG_DIR="/home/user/.egpg"
-    GNUPGHOME="/home/user/.egpg/.gnupg"
+    EGPG_DIR="/home/testuser/.egpg"
+    GNUPGHOME="/home/testuser/.egpg/.gnupg"
     DONGLE=""
     KEYSERVER="hkp://keys.gnupg.net"
-    GPG_TTY="/dev/pts/21"
+    GPG_TTY="/dev/pts/18"
     SHARE=no
     DEBUG=no
 
-    id: 55FA7A73FD847AF1
+    id: 01D532A283DC1CBF
     uid: Test User <test@example.org>
-    fpr: 74E4 1805 1992 F203 E3AB BD88 55FA 7A73 FD84 7AF1 
+    fpr: 4E91 DD0E EDD7 49F2 B6DE D9CE 01D5 32A2 83DC 1CBF 
     trust: ultimate
-    sign: 55FA7A73FD847AF1 2016-05-29 2016-06-29 
-    decr: 63ED1339BF9FFD7B 2016-05-29 2016-06-29 
+    sign: 01D532A283DC1CBF 2016-06-06 2016-07-06 
+    decr: 7BD4B1BE5D76CC0D 2016-06-06 2016-07-06 
 
 
-   user@laptop:~$ `egpg key`
+   testuser@laptop:~$ `egpg key`
 
-    id: 55FA7A73FD847AF1
+    id: 01D532A283DC1CBF
     uid: Test User <test@example.org>
-    fpr: 74E4 1805 1992 F203 E3AB BD88 55FA 7A73 FD84 7AF1 
+    fpr: 4E91 DD0E EDD7 49F2 B6DE D9CE 01D5 32A2 83DC 1CBF 
     trust: ultimate
-    sign: 55FA7A73FD847AF1 2016-05-29 2016-06-29 
-    decr: 63ED1339BF9FFD7B 2016-05-29 2016-06-29 
+    sign: 01D532A283DC1CBF 2016-06-06 2016-07-06 
+    decr: 7BD4B1BE5D76CC0D 2016-06-06 2016-07-06 
 
 
-   user@laptop:~$ `egpg key fpr`
+   testuser@laptop:~$ `egpg key fpr`
 
-    74E4 1805 1992 F203 E3AB BD88 55FA 7A73 FD84 7AF1
-
-
-   user@laptop:~$ `egpg key renew 1 year`
-
-    id: 55FA7A73FD847AF1
-    uid: Test User <test@example.org>
-    fpr: 74E4 1805 1992 F203 E3AB BD88 55FA 7A73 FD84 7AF1 
-    trust: ultimate
-    sign: 55FA7A73FD847AF1 2016-05-29 2017-05-29 
-    decr: 63ED1339BF9FFD7B 2016-05-29 2017-05-29 
+    4E91 DD0E EDD7 49F2 B6DE D9CE 01D5 32A2 83DC 1CBF
 
 
-   user@laptop:~$ `echo "This is a test message." > test.txt`
-
-   user@laptop:~$ `egpg seal test.txt`
+   testuser@laptop:~$ `egpg key renew 1 year`
 
     Please enter the passphrase to unlock the OpenPGP secret key:
     "Test User <test@example.org>"
-    4096-bit RSA key, ID 55FA7A73FD847AF1,
-    created 2016-05-29.
+    4096-bit RSA key, ID 01D532A283DC1CBF,
+    created 2016-06-06.
+
+    Passphrase: 
+
+    id: 01D532A283DC1CBF
+    uid: Test User <test@example.org>
+    fpr: 4E91 DD0E EDD7 49F2 B6DE D9CE 01D5 32A2 83DC 1CBF 
+    trust: ultimate
+    sign: 01D532A283DC1CBF 2016-06-06 2017-06-06 
+    decr: 7BD4B1BE5D76CC0D 2016-06-06 2017-06-06 
+
+
+   testuser@laptop:~$ `echo "This is a test message." > test.txt`
+
+   testuser@laptop:~$ `egpg seal test.txt`
+
+    Please enter the passphrase to unlock the OpenPGP secret key:
+    "Test User <test@example.org>"
+    4096-bit RSA key, ID 01D532A283DC1CBF,
+    created 2016-06-06.
 
     Passphrase: 
 
 
-   user@laptop:~$ `egpg open test.txt.sealed`
+   testuser@laptop:~$ `egpg open test.txt.sealed`
 
-    gpg: keyserver option 'verbose' is unknown
     Please enter the passphrase to unlock the OpenPGP secret key:
     "Test User <test@example.org>"
-    4096-bit RSA key, ID 63ED1339BF9FFD7B,
-    created 2016-05-29 (main key ID 55FA7A73FD847AF1).
+    4096-bit RSA key, ID 7BD4B1BE5D76CC0D,
+    created 2016-06-06 (main key ID 01D532A283DC1CBF).
 
     Passphrase: 
-    gpg: Signature made Sun 29 May 2016 09:26:41 PM CEST
-    gpg:                using RSA key 55FA7A73FD847AF1
+    gpg: Signature made Mon 06 Jun 2016 06:28:52 PM CEST
+    gpg:                using RSA key 01D532A283DC1CBF
     gpg: Good signature from "Test User <test@example.org>" [ultimate]
 
 
-   user@laptop:~$ `egpg sign test.txt`
+   testuser@laptop:~$ `egpg sign test.txt`
 
     Please enter the passphrase to unlock the OpenPGP secret key:
     "Test User <test@example.org>"
-    4096-bit RSA key, ID 55FA7A73FD847AF1,
-    created 2016-05-29.
+    4096-bit RSA key, ID 01D532A283DC1CBF,
+    created 2016-06-06.
 
     Passphrase: 
 
 
-   user@laptop:~$ `egpg verify test.txt.signature`
+   testuser@laptop:~$ `egpg verify test.txt.signature`
 
-    gpg: Signature made Sun 29 May 2016 09:28:22 PM CEST
-    gpg:                using RSA key 55FA7A73FD847AF1
+    gpg: Signature made Mon 06 Jun 2016 06:32:23 PM CEST
+    gpg:                using RSA key 01D532A283DC1CBF
     gpg: Good signature from "Test User <test@example.org>" [ultimate]
 
 
-   user@laptop:~$ `egpg contact search Dashamir`
+   testuser@laptop:~$ `egpg contact search Dashamir`
 
-    gpg: data source: http://schluesselbruecke.de:11371
+    gpg: data source: http://svcs4.riverwillow.net.au:11371
     (1)	Dashamir Hoxha <dashohoxha@gmail.com>
           2048 bit RSA key 562AC309C01D2DBD, created: 2015-12-27, expires: 2020-12-31
     (2)	Dashamir Hoxha <dashohoxha@gmail.com>
@@ -450,14 +452,14 @@ used. For key commands the name of the file must be
     Keys 1-3 of 3 for "Dashamir".  Enter number(s), N)ext, or Q)uit > 1
 
 
-   user@laptop:~$ `egpg contact ls`
+   testuser@laptop:~$ `egpg contact ls`
 
-    id: 55FA7A73FD847AF1
+    id: 01D532A283DC1CBF
     uid: Test User <test@example.org>
-    fpr: 74E4 1805 1992 F203 E3AB BD88 55FA 7A73 FD84 7AF1 
+    fpr: 4E91 DD0E EDD7 49F2 B6DE D9CE 01D5 32A2 83DC 1CBF 
     trust: ultimate
-    sign: 55FA7A73FD847AF1 2016-05-29 2017-05-29 
-    decr: 63ED1339BF9FFD7B 2016-05-29 2017-05-29 
+    sign: 01D532A283DC1CBF 2016-06-06 2017-06-06 
+    decr: 7BD4B1BE5D76CC0D 2016-06-06 2017-06-06 
 
 
     id: 562AC309C01D2DBD
@@ -467,12 +469,12 @@ used. For key commands the name of the file must be
     decr: 95B9FAD9DEF9A02A 2015-12-27 2020-12-31 
 
 
-   user@laptop:~$ `egpg contact certify Dashamir`
+   testuser@laptop:~$ `egpg contact certify Dashamir`
 
     Please enter the passphrase to unlock the OpenPGP secret key:
     "Test User <test@example.org>"
-    4096-bit RSA key, ID 55FA7A73FD847AF1,
-    created 2016-05-29.
+    4096-bit RSA key, ID 01D532A283DC1CBF,
+    created 2016-06-06.
 
     Passphrase: 
 
@@ -487,13 +489,14 @@ used. For key commands the name of the file must be
 
     I have checked this key casually.
 
-   user@laptop:~$ `egpg contact trust Dashamir`
+
+   testuser@laptop:~$ `egpg contact trust Dashamir`
 
     uid: Dashamir Hoxha <dashohoxha@gmail.com>
     trust: marginal
 
 
-   user@laptop:~$ `egpg contact ls Dashamir`
+   testuser@laptop:~$ `egpg contact ls Dashamir`
 
     id: 562AC309C01D2DBD
     uid: Dashamir Hoxha <dashohoxha@gmail.com>
@@ -501,10 +504,10 @@ used. For key commands the name of the file must be
     trust: marginal
     sign: 562AC309C01D2DBD 2015-12-27 2020-12-31 
     decr: 95B9FAD9DEF9A02A 2015-12-27 2020-12-31 
-    certified by: Test User <test@example.org> (55FA7A73FD847AF1)
+    certified by: Test User <test@example.org> (01D532A283DC1CBF)
 
 
-   user@laptop:~$ `egpg contact rm Dashamir`
+   testuser@laptop:~$ `egpg contact rm Dashamir`
 
     gpg (GnuPG) 2.1.11; Copyright (C) 2016 Free Software Foundation, Inc.
     This is free software: you are free to change and redistribute it.
@@ -515,14 +518,14 @@ used. For key commands the name of the file must be
     Delete this key from the keyring? (y/N) y
 
 
-   user@laptop:~$ `egpg key revoke`
+   testuser@laptop:~$ `egpg key revoke`
 
     Revocation will make your current key useless.
     You'll need to generate a new one.
     Are you sure about this? [y/N] y
 
 
-   user@laptop:~$ `egpg key ls`
+   testuser@laptop:~$ `egpg key ls`
 
     No valid key found.
 
@@ -531,47 +534,62 @@ used. For key commands the name of the file must be
            or:  egpg key restore
            or:  egpg key recover
 
-   user@laptop:~$ `rm -rf ~/.egpg/`
+   testuser@laptop:~$ `rm -rf ~/.egpg/`
 
 
 ## ADVANCED EXAMPLE
 
 ### Get the key and contacts from an existing $GNUPGHOME:
 
-   user@laptop:~$ `rm -rf ~/.egpg/`
+   testuser@laptop:~$ `rm -rf ~/.egpg/`
 
-   user@laptop:~$ `egpg init`
+   testuser@laptop:~$ `egpg init`
 
-    mkdir: created directory '/home/user/.egpg'
+    mkdir: created directory '/home/testuser/.egpg'
 
-    Appended the following lines to '/home/user/.bashrc':
+    Appended the following lines to '/home/testuser/.bashrc':
     ---------------8<---------------
     ### start egpg config
     export GPG_TTY=$(tty)
-    export EGPG_DIR="/home/user/.egpg"
-    #export GNUPGHOME="/home/user/.egpg/.gnupg"
+    export EGPG_DIR="/home/testuser/.egpg"
+    #export GNUPGHOME="/home/testuser/.egpg/.gnupg"
     ### end egpg config
     --------------->8---------------
     Please reload it to enable the new config:
-        source "/home/user/.bashrc"
+        source "/home/testuser/.bashrc"
 
 
-   user@laptop:~$ `source "/home/user/.bashrc"`
+   testuser@laptop:~$ `source "/home/testuser/.bashrc"`
 
-   user@laptop:~$ `egpg migrate`
+   testuser@laptop:~$ `egpg migrate`
 
-    Importing key from: /home/user/.gnupg
-    Importing contacts from: /home/user/.gnupg
+    Importing key from: /home/testuser/.gnupg
+    
+    Importing contacts from: /home/testuser/.gnupg
 
 
 ### Change the passphrase of the key:
 
-   user@laptop:~$ `egpg key pass`
+   testuser@laptop:~$ `egpg key pass`
+
+    Please enter the passphrase to unlock the OpenPGP secret key:
+    "Test 1 <test1@exampel.org>"
+    4096-bit RSA key, ID DB7065FD432FF513,
+    created 2016-06-06.
+
+    Passphrase: 
+    Please enter the new passphrase
+    Passphrase: 
+    Repeat: 
 
 
 ### Use the default GNUPGHOME:
 
-   user@laptop:~$ `egpg default`
+   testuser@laptop:~$ `egpg default`
+
+    '/home/testuser/.gnupg' -> '/home/testuser/.gnupg-old'
+    '/home/testuser/.egpg/.gnupg' -> '/home/testuser/.gnupg'
+    OK
 
    Afterwards `egpg` will use the directory `~/.gnupg` (or whatever is
    in the environment variable $GNUPGHOME) for the key and contacts.
@@ -579,26 +597,26 @@ used. For key commands the name of the file must be
 
 ### Send key to the keyserver network:
 
-   user@laptop:~$ `egpg key share`
+   testuser@laptop:~$ `egpg key share`
 
     You must enable sharing first with:
       egpg set share yes
 
-   user@laptop:~$ `egpg set share yes`
+   testuser@laptop:~$ `egpg set share yes`
 
-   user@laptop:~$ `egpg key share`
+   testuser@laptop:~$ `egpg key share`
 
 
 ### Keep the sign/cert private key on a dongle
 
-   user@laptop:~$ `egpg key2dongle`
+   testuser@laptop:~$ `egpg key2dongle`
 
-    Enter the dongle directory: /media/user/19BA-88F9/
+    Enter the dongle directory: /media/testuser/19BA-88F9/
 
-    '/home/user/.egpg/.gnupg/private-keys-v1.d/C44D9A5C673623B0674F456999EE2607941EC904.key' -> '/media/user/19BA-88F9/.gnupg/C44D9A5C673623B0674F456999EE2607941EC904.key'
-    removed '/home/user/.egpg/.gnupg/private-keys-v1.d/C44D9A5C673623B0674F456999EE2607941EC904.key'
+    '/home/testuser/.egpg/.gnupg/private-keys-v1.d/C44D9A5C673623B0674F456999EE2607941EC904.key' -> '/media/testuser/19BA-88F9/.gnupg/C44D9A5C673623B0674F456999EE2607941EC904.key'
+    removed '/home/testuser/.egpg/.gnupg/private-keys-v1.d/C44D9A5C673623B0674F456999EE2607941EC904.key'
 
-    Key moved to /media/user/19BA-88F9/.gnupg/C44D9A5C673623B0674F456999EE2607941EC904.key 
+    Key moved to /media/testuser/19BA-88F9/.gnupg/C44D9A5C673623B0674F456999EE2607941EC904.key 
 
    Afterwards, in order to sign or certify, you need to mount the
    dongle first, otherwise it will not be able to find the
@@ -607,14 +625,14 @@ used. For key commands the name of the file must be
 
    You can move back the signing private key like this:
 
-   user@laptop:~$ `egpg key2dongle --reverse`
+   testuser@laptop:~$ `egpg key2dongle --reverse`
 
-    Enter the dongle directory [/media/user/19BA-88F9]: 
+    Enter the dongle directory [/media/testuser/19BA-88F9]: 
 
-    '/media/user/19BA-88F9/.gnupg/C44D9A5C673623B0674F456999EE2607941EC904.key' -> '/home/user/.egpg/.gnupg/private-keys-v1.d/C44D9A5C673623B0674F456999EE2607941EC904.key'
-    removed '/media/user/19BA-88F9/.gnupg/C44D9A5C673623B0674F456999EE2607941EC904.key'
+    '/media/testuser/19BA-88F9/.gnupg/C44D9A5C673623B0674F456999EE2607941EC904.key' -> '/home/testuser/.egpg/.gnupg/private-keys-v1.d/C44D9A5C673623B0674F456999EE2607941EC904.key'
+    removed '/media/testuser/19BA-88F9/.gnupg/C44D9A5C673623B0674F456999EE2607941EC904.key'
 
-    Key moved to /home/user/.egpg/.gnupg/private-keys-v1.d/C44D9A5C673623B0674F456999EE2607941EC904.key 
+    Key moved to /home/testuser/.egpg/.gnupg/private-keys-v1.d/C44D9A5C673623B0674F456999EE2607941EC904.key 
 
 
 ### Split the key and use a dongle
@@ -626,15 +644,15 @@ used. For key commands the name of the file must be
    device). The third partial key is used as a backup, to recover the
    full key in case that the dongle or the computer is lost.
 
-   user@laptop:~$ `egpg key split`
+   testuser@laptop:~$ `egpg key split`
 
     Splitting the key: 155E526BA47364BC
 
-    Enter the dongle directory: /media/user/sdb1
+    Enter the dongle directory: /media/testuser/sdb1
 
-     * Backup partial key saved to: /home/user/155E526BA47364BC.key.089
-     * Dongle partial key saved to: /media/user/sdb1/.gnupg/155E526BA47364BC.key.113
-     * Local  partial key saved to: /home/user/.egpg/.gnupg/155E526BA47364BC.key.129
+     * Backup partial key saved to: /home/testuser/155E526BA47364BC.key.089
+     * Dongle partial key saved to: /media/testuser/sdb1/.gnupg/155E526BA47364BC.key.113
+     * Local  partial key saved to: /home/testuser/.egpg/.gnupg/155E526BA47364BC.key.129
 
     The key was split successfully. Whenever you need to use the key
     (to sign, seal, open, etc.) connect first the dongle to the PC.
@@ -644,9 +662,9 @@ used. For key commands the name of the file must be
     or the PC (but it cannot help you if you loose both of them).
 
 
-   user@laptop:~$ `egpg key recover 155E526BA47364BC.key.089`
+   testuser@laptop:~$ `egpg key recover 155E526BA47364BC.key.089`
 
-   user@laptop:~$ `egpg key join`
+   testuser@laptop:~$ `egpg key join`
 
    Spliting the key into partial keys makes key management safer and
    more robust. In case that you loose the dongle the key is not
@@ -660,9 +678,9 @@ used. For key commands the name of the file must be
 
 ### Run any gpg command but with the configuration settings of egpg:
 
-   user@laptop:~$ `egpg gpg --list-secret-keys`
+   testuser@laptop:~$ `egpg gpg --list-secret-keys`
 
-    /home/user/.egpg/.gnupg/secring.gpg
+    /home/testuser/.egpg/.gnupg/secring.gpg
     ------------------------------------
     sec   2048R/C01D2DBD 2015-12-27 [expires: 2020-12-31]
     uid                  Dashamir Hoxha <dashohoxha@gmail.com>
@@ -677,27 +695,27 @@ used. For key commands the name of the file must be
    EGPG, one for each key, and they will not mess with each-other.
    Let's see an example of doing this.
 
-   user@laptop:~$ `egpg init ~/.egpg1 <<< n`
+   testuser@laptop:~$ `egpg init ~/.egpg1 <<< n`
 
-   user@laptop:~$ `egpg init ~/.egpg2 <<< n`
+   testuser@laptop:~$ `egpg init ~/.egpg2 <<< n`
 
-   user@laptop:~$ `egpg init ~/.egpg <<< n`
+   testuser@laptop:~$ `egpg init ~/.egpg <<< n`
 
    Now add these lines to `~/.bashrc`:
 
-    alias egpg1='EGPG_DIR="/home/user/.egpg1" egpg'
-    alias egpg2='EGPG_DIR="/home/user/.egpg2" egpg'
-    export EGPG_DIR="/home/user/.egpg"
+    alias egpg1='EGPG_DIR="/home/testuser/.egpg1" egpg'
+    alias egpg2='EGPG_DIR="/home/testuser/.egpg2" egpg'
+    export EGPG_DIR="/home/testuser/.egpg"
 
 
-   user@laptop:~$ `source ~/.bashrc`
+   testuser@laptop:~$ `source ~/.bashrc`
 
-   user@laptop:~$ `egpg`
+   testuser@laptop:~$ `egpg`
 
     EasyGnuPG 2.1-0.9    ( https://github.com/dashohoxha/egpg )
 
-    EGPG_DIR="/home/user/.egpg"
-    GNUPGHOME="/home/user/.egpg/.gnupg"
+    EGPG_DIR="/home/testuser/.egpg"
+    GNUPGHOME="/home/testuser/.egpg/.gnupg"
     DONGLE=""
     KEYSERVER="hkp://keys.gnupg.net"
     GPG_TTY="/dev/pts/20"
@@ -712,12 +730,12 @@ used. For key commands the name of the file must be
            or:  egpg key recover
 
 
-   user@laptop:~$ `egpg1`
+   testuser@laptop:~$ `egpg1`
 
     EasyGnuPG 2.1-0.9    ( https://github.com/dashohoxha/egpg )
 
-    EGPG_DIR="/home/user/.egpg1"
-    GNUPGHOME="/home/user/.egpg1/.gnupg"
+    EGPG_DIR="/home/testuser/.egpg1"
+    GNUPGHOME="/home/testuser/.egpg1/.gnupg"
     DONGLE=""
     KEYSERVER="hkp://keys.gnupg.net"
     GPG_TTY="/dev/pts/20"
@@ -732,12 +750,12 @@ used. For key commands the name of the file must be
            or:  egpg key recover
 
 
-   user@laptop:~$ `egpg2`
+   testuser@laptop:~$ `egpg2`
 
     EasyGnuPG 2.1-0.9    ( https://github.com/dashohoxha/egpg )
 
-    EGPG_DIR="/home/user/.egpg2"
-    GNUPGHOME="/home/user/.egpg2/.gnupg"
+    EGPG_DIR="/home/testuser/.egpg2"
+    GNUPGHOME="/home/testuser/.egpg2/.gnupg"
     DONGLE=""
     KEYSERVER="hkp://keys.gnupg.net"
     GPG_TTY="/dev/pts/20"
@@ -750,6 +768,44 @@ used. For key commands the name of the file must be
            or:  egpg key fetch
            or:  egpg key restore
            or:  egpg key recover
+
+
+### Debug
+
+   testuser@laptop:~$ `egpg set debug yes`
+
+
+   testuser@laptop:~$ `egpg sign test.txt`
+
+    debug: /usr/bin/gpg2 --quiet --status-fd=2 --homedir=/dev/shm/egpg.YoWn6SQbmXGk0 --list-secret-keys --with-colons
+    debug: /usr/bin/gpg2 --quiet --status-fd=2 --homedir=/dev/shm/egpg.YoWn6SQbmXGk0 --list-keys --with-colons 01965828F3DA198A
+    debug: /usr/bin/gpg2 --quiet --status-fd=2 --list-keys --fingerprint --with-sig-check --with-colons 01965828F3DA198A
+    debug: /usr/bin/gpg2 --quiet --status-fd=2 --list-keys --with-colons 01965828F3DA198A
+    debug: /usr/bin/gpg2 --quiet --status-fd=2 --import /dev/shm/egpg.YoWn6SQbmXGk0/01965828F3DA198A/01965828F3DA198A.pub
+    [GNUPG:] IMPORT_OK 0 E8C5C6414838799DD062A2B401965828F3DA198A
+    [GNUPG:] IMPORT_RES 1 0 0 0 1 0 0 0 0 0 0 0 0 0 0
+    debug: /usr/bin/gpg2 --quiet --no-tty --status-fd=2 --no-tty --batch --command-fd=0 --edit-key 01965828F3DA198A
+    [GNUPG:] GET_LINE keyedit.prompt
+    [GNUPG:] GOT_IT
+    [GNUPG:] GET_LINE edit_ownertrust.value
+    [GNUPG:] GOT_IT
+    [GNUPG:] GET_BOOL edit_ownertrust.set_ultimate.okay
+    [GNUPG:] GOT_IT
+    [GNUPG:] GET_LINE keyedit.prompt
+    [GNUPG:] GOT_IT
+    debug: /usr/bin/gpg2 --quiet --status-fd=2 --local-user 01965828F3DA198A --detach-sign --armor --output test.txt.signature test.txt
+    [GNUPG:] BEGIN_SIGNING H8
+    [GNUPG:] PINENTRY_LAUNCHED 20338
+    Please enter the passphrase to unlock the OpenPGP secret key:
+    "Test 1 <test1@example.org>"
+    4096-bit RSA key, ID 01965828F3DA198A,
+    created 2016-06-06.
+
+    Passphrase: 
+    [GNUPG:] SIG_CREATED D 1 8 00 1465233946 E8C5C6414838799DD062A2B401965828F3DA198A
+
+
+   testuser@laptop:~$ `egpg set debug no`
 
 
 ## AUTHOR
