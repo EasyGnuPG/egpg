@@ -21,7 +21,7 @@ cmd_open() {
     # decrypt and verify
     gnupghome_setup
     gpg --keyserver "$KEYSERVER" \
-        --keyserver-options auto-key-retrieve,verbose,honor-keyserver-url \
+        --keyserver-options auto-key-retrieve,honor-keyserver-url \
         --decrypt --output "$output" "$file"
     gnupghome_reset
 }

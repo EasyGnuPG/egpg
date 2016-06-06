@@ -15,6 +15,7 @@ cmd_default() {
     mv -v "$ENV_GNUPGHOME" "$ENV_GNUPGHOME-old"
     mv -v "$GNUPGHOME" "$ENV_GNUPGHOME"
     export GNUPGHOME="$ENV_GNUPGHOME"
+    gpg-connect-agent reloadagent /bye
 }
 
 #
