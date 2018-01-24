@@ -344,6 +344,8 @@ used. For key commands the name of the file must be
 
 <p>   testuser@laptop:~$ <code>rm -rf ~/.egpg/</code></p>
 
+<p>   testuser@laptop:~$ <code>killall -u $USER gpg-agent</code></p>
+
 <p>   testuser@laptop:~$ <code>egpg</code></p>
 
 <pre><code>No directory '/home/testuser/.egpg'
@@ -612,6 +614,8 @@ Try first:  egpg key gen
 
 <p>   testuser@laptop:~$ <code>rm -rf ~/.egpg/</code></p>
 
+<p>   testuser@laptop:~$ <code>killall -u $USER gpg-agent</code></p>
+
 <p>   testuser@laptop:~$ <code>egpg init</code></p>
 
 <pre><code>mkdir: created directory '/home/testuser/.egpg'
@@ -781,7 +785,7 @@ export EGPG_DIR="/home/testuser/.egpg"
 
 <p>   testuser@laptop:~$ <code>egpg</code></p>
 
-<pre><code>EasyGnuPG 2.1-0.9    ( https://github.com/dashohoxha/egpg )
+<pre><code>EasyGnuPG 2.1-1.0    ( https://github.com/dashohoxha/egpg )
 
 EGPG_DIR="/home/testuser/.egpg"
 GNUPGHOME="/home/testuser/.egpg/.gnupg"
@@ -801,7 +805,7 @@ Try first:  egpg key gen
 
 <p>   testuser@laptop:~$ <code>egpg1</code></p>
 
-<pre><code>EasyGnuPG 2.1-0.9    ( https://github.com/dashohoxha/egpg )
+<pre><code>EasyGnuPG 2.1-1.0    ( https://github.com/dashohoxha/egpg )
 
 EGPG_DIR="/home/testuser/.egpg1"
 GNUPGHOME="/home/testuser/.egpg1/.gnupg"
@@ -821,7 +825,7 @@ Try first:  egpg key gen
 
 <p>   testuser@laptop:~$ <code>egpg2</code></p>
 
-<pre><code>EasyGnuPG 2.1-0.9    ( https://github.com/dashohoxha/egpg )
+<pre><code>EasyGnuPG 2.1-1.0    ( https://github.com/dashohoxha/egpg )
 
 EGPG_DIR="/home/testuser/.egpg2"
 GNUPGHOME="/home/testuser/.egpg2/.gnupg"
@@ -902,7 +906,7 @@ Passphrase:
 
   <ol class='man-decor man-foot man foot'>
     <li class='tl'>dashohoxha</li>
-    <li class='tc'>2016-06-06</li>
+    <li class='tc'>January 2018</li>
     <li class='tr'>egpg(1)</li>
   </ol>
 
