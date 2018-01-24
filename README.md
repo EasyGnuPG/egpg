@@ -39,6 +39,9 @@ The philosophic goals here are these:
 
         apt install gnupg2 pinentry-tty haveged libgfshare-bin parcimonie \
                qrencode imagemagick zbar-tools wget realpath psmisc
+   
+   For development, you need also `ronn` to make the man pages:
+   
         apt install ruby-dev gcc
         gem install ronn
 
