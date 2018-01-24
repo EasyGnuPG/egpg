@@ -35,10 +35,12 @@ The philosophic goals here are these:
 
 ## Requirements
 
- - Ubuntu 16.04:
+ - Debian and Ubuntu:
 
         apt install gnupg2 pinentry-tty haveged libgfshare-bin parcimonie \
                qrencode imagemagick zbar-tools wget realpath psmisc
+        apt install ruby-dev gcc
+        gem install ronn
 
 ## Usage:
 
@@ -63,11 +65,12 @@ The philosophic goals here are these:
     egpg contact help
     egpg ext help
 
-For more details see the manual page: [http://dashohoxha.github.io/egpg/gnupg-2.1/man/][1]
-
 These should be the minimal set required to use GPG effectively.
 
 Any suggestions or discussions about supported operations, simplified
 terminology, etc. is wellcome.
 
-[1]: http://dashohoxha.github.io/egpg/gnupg-2.1/man/
+For more details see the wiki pages and the manual page:
+ - https://github.com/dashohoxha/egpg/wiki
+ - http://dashohoxha.github.io/egpg/gnupg-2.1/man/
+
