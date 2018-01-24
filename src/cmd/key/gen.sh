@@ -13,7 +13,7 @@ cmd_key_gen() {
     assert_no_valid_key
 
     # check that haveged is installed
-    test $(which haveged) || echo "You should install haveged:\n    sudo apt-get install haveged"
+    test -x /usr/sbin/haveged || fail "You should install haveged:\n    sudo apt install haveged"
 
     local opts pass=1
     opts="$(getopt -o n -l no-passphrase -n "$PROGRAM" -- "$@")"
