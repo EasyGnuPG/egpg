@@ -276,6 +276,8 @@ used. For key commands the name of the file must be
 
    testuser@laptop:~$ `rm -rf ~/.egpg/`
 
+   testuser@laptop:~$ `killall -u $USER gpg-agent`
+
    testuser@laptop:~$ `egpg`
 
     No directory '/home/testuser/.egpg'
@@ -542,6 +544,8 @@ used. For key commands the name of the file must be
 ### Get the key and contacts from an existing $GNUPGHOME:
 
    testuser@laptop:~$ `rm -rf ~/.egpg/`
+
+   testuser@laptop:~$ `killall -u $USER gpg-agent`
 
    testuser@laptop:~$ `egpg init`
 

@@ -344,6 +344,8 @@ used. For key commands the name of the file must be
 
 <p>   testuser@laptop:~$ <code>rm -rf ~/.egpg/</code></p>
 
+<p>   testuser@laptop:~$ <code>killall -u $USER gpg-agent</code></p>
+
 <p>   testuser@laptop:~$ <code>egpg</code></p>
 
 <pre><code>No directory '/home/testuser/.egpg'
@@ -611,6 +613,8 @@ Try first:  egpg key gen
 <h3 id="Get-the-key-and-contacts-from-an-existing-GNUPGHOME-">Get the key and contacts from an existing $GNUPGHOME:</h3>
 
 <p>   testuser@laptop:~$ <code>rm -rf ~/.egpg/</code></p>
+
+<p>   testuser@laptop:~$ <code>killall -u $USER gpg-agent</code></p>
 
 <p>   testuser@laptop:~$ <code>egpg init</code></p>
 
@@ -902,7 +906,7 @@ Passphrase:
 
   <ol class='man-decor man-foot man foot'>
     <li class='tl'>dashohoxha</li>
-    <li class='tc'>2016-06-07</li>
+    <li class='tc'>January 2018</li>
     <li class='tr'>egpg(1)</li>
   </ol>
 
