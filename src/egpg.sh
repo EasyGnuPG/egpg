@@ -148,8 +148,8 @@ cmd_ext_help() {
     cat <<-_EOF
 An external 'command' can be loaded from:
     1. $EGPG_DIR/cmd_command.sh
-    2. $LIB/ext/$PLATFORM/cmd_command.sh
-    3. $LIB/ext/cmd_command.sh
+    2. $LIBDIR/ext/$PLATFORM/cmd_command.sh
+    3. $LIBDIR/ext/cmd_command.sh
 The first file that is found is loaded and used.
 For key commands the name of the file must be: cmd_key_command.sh
 and for contact commands it must be: cmd_contact_command.sh
