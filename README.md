@@ -26,6 +26,7 @@ The philosophic goals here are these:
    you have a foundation to start with, and some direction on how to
    proceed.
 
+For more details see this presentation: http://dashohoxha.fs.al/easy-gnupg-talk/
 
 ## Installation
 
