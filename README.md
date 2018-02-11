@@ -26,7 +26,9 @@ The philosophic goals here are these:
    you have a foundation to start with, and some direction on how to
    proceed.
 
-For more details see this presentation: http://dashohoxha.fs.al/easy-gnupg-talk/
+For more details see the following presentation from FOSDEM 2018:
+* http://dashohoxha.fs.al/easy-gnupg-talk/ (slides)
+* https://fosdem.org/2018/schedule/event/easy_gnupg/ (lightning talk)
 
 ## Installation
 
