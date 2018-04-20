@@ -79,5 +79,5 @@ terminology, etc. is wellcome.
 
 For more details see the wiki pages and the manual page:
  - https://github.com/dashohoxha/egpg/wiki
- - http://dashohoxha.fs.al/easy-gnupg-presentation/
+ - https://easygnupg.github.io/egpg/gnupg-2.1/man/
 
