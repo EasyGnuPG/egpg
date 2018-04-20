@@ -32,7 +32,7 @@ source "$LIBDIR/platform.sh"
 
 cmd_version() {
     echo
-    echo "EasyGnuPG $VERSION    ( https://github.com/dashohoxha/egpg )"
+    echo "EasyGnuPG $VERSION    ( https://github.com/easygnupg/egpg )"
     echo
 }
 
