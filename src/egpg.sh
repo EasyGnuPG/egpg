@@ -19,7 +19,7 @@
 umask 077
 set -o pipefail
 
-VERSION="2.1-1.0"
+VERSION="2.2-1.0"
 
 LIBDIR="$(dirname "$0")"
 
@@ -32,7 +32,7 @@ source "$LIBDIR/platform.sh"
 
 cmd_version() {
     echo
-    echo "EasyGnuPG $VERSION    ( https://github.com/dashohoxha/egpg )"
+    echo "EasyGnuPG $VERSION    ( https://github.com/easygnupg/egpg )"
     echo
 }
 

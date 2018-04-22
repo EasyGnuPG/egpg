@@ -304,7 +304,7 @@ used. For key commands the name of the file must be
 
    testuser@laptop:~$ `egpg`
 
-    EasyGnuPG 2.1-1.0    ( https://github.com/dashohoxha/egpg )
+    EasyGnuPG 2.2-1.0    ( https://github.com/easygnupg/egpg )
 
     EGPG_DIR="/home/testuser/.egpg"
     GNUPGHOME="/home/testuser/.egpg/.gnupg"
@@ -348,7 +348,7 @@ used. For key commands the name of the file must be
 
    testuser@laptop:~$ `egpg info`
 
-    EasyGnuPG 2.1-1.0    ( https://github.com/dashohoxha/egpg )
+    EasyGnuPG 2.2-1.0    ( https://github.com/easygnupg/egpg )
 
     EGPG_DIR="/home/testuser/.egpg"
     GNUPGHOME="/home/testuser/.egpg/.gnupg"
@@ -716,7 +716,7 @@ used. For key commands the name of the file must be
 
    testuser@laptop:~$ `egpg`
 
-    EasyGnuPG 2.1-1.0    ( https://github.com/dashohoxha/egpg )
+    EasyGnuPG 2.2-1.0    ( https://github.com/easygnupg/egpg )
 
     EGPG_DIR="/home/testuser/.egpg"
     GNUPGHOME="/home/testuser/.egpg/.gnupg"
@@ -736,7 +736,7 @@ used. For key commands the name of the file must be
 
    testuser@laptop:~$ `egpg1`
 
-    EasyGnuPG 2.1-1.0    ( https://github.com/dashohoxha/egpg )
+    EasyGnuPG 2.2-1.0    ( https://github.com/easygnupg/egpg )
 
     EGPG_DIR="/home/testuser/.egpg1"
     GNUPGHOME="/home/testuser/.egpg1/.gnupg"
@@ -756,7 +756,7 @@ used. For key commands the name of the file must be
 
    testuser@laptop:~$ `egpg2`
 
-    EasyGnuPG 2.1-1.0    ( https://github.com/dashohoxha/egpg )
+    EasyGnuPG 2.2-1.0    ( https://github.com/easygnupg/egpg )
 
     EGPG_DIR="/home/testuser/.egpg2"
     GNUPGHOME="/home/testuser/.egpg2/.gnupg"
@@ -815,7 +815,7 @@ used. For key commands the name of the file must be
 ## AUTHOR
 
    Copyright (C) 2016  Dashamir Hoxha (dashohoxha@gmail.com). The
-   code is on GitHub at <https://github.com/dashohoxha/egpg>.
+   code is on GitHub at <https://github.com/easygnupg/egpg>.
 
 
 ## COPYLEFT
