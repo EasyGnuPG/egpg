@@ -37,7 +37,7 @@ For more details see the following presentation from FOSDEM 2018:
 
 ## Installation
 
-    git clone --branch gnupg-2.1 https://github.com/dashohoxha/egpg
+    git clone --branch gnupg-2.2 https://github.com/easygnupg/egpg
     cd egpg/
     sudo make install
 
@@ -82,6 +82,6 @@ Any suggestions or discussions about supported operations, simplified
 terminology, etc. is wellcome.
 
 For more details see the wiki pages and the manual page:
- - https://github.com/dashohoxha/egpg/wiki
+ - https://github.com/easygnupg/egpg/wiki
  - http://dashohoxha.github.io/egpg/gnupg-2.1/man/
 
