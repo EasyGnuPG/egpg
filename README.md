@@ -37,7 +37,7 @@ For more details see the following presentation from FOSDEM 2018:
 
 ## Installation
 
-    git clone --branch gnupg-2.1 https://github.com/easygnupg/egpg
+    git clone --branch gnupg-2.2 https://github.com/easygnupg/egpg
     cd egpg/
     sudo make install
 
