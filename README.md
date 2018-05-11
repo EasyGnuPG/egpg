@@ -1,8 +1,3 @@
-
-# **Note: This repository has been moved to: https://github.com/EasyGnuPG/egpg**
-
---------------------
-
 There are scads of options presented by GnuPG, which are all part of
 making it the flexible and powerful an encryption framework that it
 is. But it's extremely complicated to get started with, and that quite
