@@ -41,10 +41,10 @@ For more details see the following presentation from FOSDEM 2018:
  - Debian and Ubuntu:
 
         apt install gnupg2 pinentry-tty haveged libgfshare-bin parcimonie \
-               qrencode imagemagick zbar-tools wget realpath psmisc
-   
+               qrencode imagemagick zbar-tools wget coreutils psmisc
+
    For development, you need also `ronn` to make the man pages:
-   
+
         apt install ruby-dev gcc
         gem install ronn
 
