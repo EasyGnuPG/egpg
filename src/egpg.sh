@@ -208,7 +208,7 @@ _EOF
 
 main() {
     local gnupg_version=$(gpg_version)
-    [[ ${gnupg_version%.*} == "2.1" ]] || fail "These scripts are supposed to work with GnuPG 2.1"
+    [[ ${gnupg_version%.*} == "2.2" ]] || fail "These scripts are supposed to work with GnuPG 2.2"
 
     # handle some basic commands
     case "$1" in
