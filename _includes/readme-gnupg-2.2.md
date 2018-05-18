@@ -29,7 +29,7 @@ The philosophic goals here are these:
 
 ## Installation
 
-    git clone --branch gnupg-2.1 https://github.com/easygnupg/egpg
+    git clone --branch gnupg-2.2 https://github.com/easygnupg/egpg
     cd egpg/
     sudo make install
 
@@ -63,11 +63,11 @@ The philosophic goals here are these:
     egpg contact help
     egpg ext help
 
-For more details see the manual page: [http://easygnupg.github.io/egpg/gnupg-2.1/man/][1]
+For more details see the manual page: [http://easygnupg.github.io/egpg/gnupg-2.2/man/][1]
 
 These should be the minimal set required to use GPG effectively.
 
 Any suggestions or discussions about supported operations, simplified
 terminology, etc. is wellcome.
 
-[1]: http://easygnupg.github.io/egpg/gnupg-2.1/man/
+[1]: http://easygnupg.github.io/egpg/gnupg-2.2/man/
