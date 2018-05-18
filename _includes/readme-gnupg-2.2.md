@@ -26,6 +26,9 @@ The philosophic goals here are these:
    you have a foundation to start with, and some direction on how to
    proceed.
 
+For more details see the following presentation from FOSDEM 2018:
+* http://dashohoxha.fs.al/easy-gnupg-talk/ (slides)
+* https://fosdem.org/2018/schedule/event/easy_gnupg/ (lightning talk)
 
 ## Installation
 
@@ -35,10 +38,15 @@ The philosophic goals here are these:
 
 ## Requirements
 
- - Ubuntu 16.04:
+ - Debian and Ubuntu:
 
         apt install gnupg2 pinentry-tty haveged libgfshare-bin parcimonie \
-               qrencode imagemagick zbar-tools wget realpath psmisc
+               qrencode imagemagick zbar-tools wget coreutils psmisc make
+
+   For development, you need also `ronn` to make the man pages:
+
+        apt install ruby-dev gcc
+        gem install ronn
 
 ## Usage:
 
@@ -63,11 +71,13 @@ The philosophic goals here are these:
     egpg contact help
     egpg ext help
 
-For more details see the manual page: [http://easygnupg.github.io/egpg/gnupg-2.2/man/][1]
-
 These should be the minimal set required to use GPG effectively.
 
 Any suggestions or discussions about supported operations, simplified
 terminology, etc. is wellcome.
 
-[1]: http://easygnupg.github.io/egpg/gnupg-2.2/man/
+For more details see the wiki pages and the manual page:
+ - https://github.com/easygnupg/egpg/wiki
+ - http://dashohoxha.github.io/egpg/gnupg-2.1/man/
+
+
