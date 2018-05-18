@@ -78,6 +78,6 @@ terminology, etc. is wellcome.
 
 For more details see the wiki pages and the manual page:
  - https://github.com/easygnupg/egpg/wiki
- - http://dashohoxha.github.io/egpg/gnupg-2.1/man/
+ - http://dashohoxha.github.io/egpg/gnupg-2.2/man/
 
 
