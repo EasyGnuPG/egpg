@@ -38,7 +38,7 @@ For more details see the following presentation from FOSDEM 2018:
 
 ## Requirements
 
- - Debian and Ubuntu:
+ - Debian 10 and Ubuntu 18.04:
 
         apt install gnupg2 pinentry-tty haveged libgfshare-bin parcimonie \
                qrencode imagemagick zbar-tools wget coreutils psmisc make
