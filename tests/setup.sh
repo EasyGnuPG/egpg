@@ -75,3 +75,10 @@ setup_autopin() {
 
     source "$HOME"/.bashrc
 }
+
+extend_test_key_expiration() {
+    local commands=";expire;1m;y;key 1;expire;1m;y;key 1;save"
+    commands=$(echo "$commands" | tr ';' "\n")
+    local homedir="$SHARNESS_TEST_DIRECTORY/gnupg"
+    echo -e "$commands" | gpg --homedir="$homedir" --no-tty --command-fd=0 --key-edit $KEY_ID 2>/dev/null
+}
