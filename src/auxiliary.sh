@@ -66,7 +66,7 @@ Try first:  $(basename $0) key gen
 "
 
     # get the fingerprint
-    FPR=$(gpg --list-keys --fingerprint --with-sig-check --with-colons $GPG_KEY | grep '^fpr:' | cut -d: -f10)
+    FPR=$(gpg --list-keys --fingerprint --with-sig-check --with-colons $GPG_KEY | grep '^fpr:' | cut -d: -f10 | head -n 1)
 
     # check for key expiration
     # an expired key can be renewed at any time, so only a warning is issued
