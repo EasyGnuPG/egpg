@@ -35,6 +35,7 @@ cmd_seal() {
         --output "$file.sealed" "$file"
     gnupghome_reset
 
+    [[ -s "$file.sealed" ]] || rm -f "$file.sealed"
     [[ -f "$file.sealed" ]] && shred "$file"
 }
 
