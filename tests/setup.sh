@@ -1,5 +1,13 @@
 # This file should be sourced by all test-scripts
 
+export KEY_ID="18D1DA4D9E7A4FD0"
+export KEY_FPR="A9446F790F9BE7C9D108FC6718D1DA4D9E7A4FD0"
+export KEY_GRIP_1="3914E664597E9C5998B8BC994C420602895881AB"
+
+export CONTACT_1="290F15FEDA94668A"
+export CONTACT_2="C95634F06073B549"
+export CONTACT_3="262A29CB12F046E8"
+
 cd "$(dirname "$0")"
 source ./sharness.sh
 
@@ -12,21 +20,18 @@ egpg() { "$EGPG" "$@" ; }
 unset  EGPG_DIR
 
 export HOME="$SHARNESS_TRASH_DIRECTORY"
-
 export GNUPGHOME="$HOME"/.gnupg
+
+# copy keyring to $GNUPGHOME of the test
 cp -a "$CODE"/tests/gnupg/ "$GNUPGHOME"
+chmod 700 -R "$GNUPGHOME"
+# extend key expiration
+commands=$(echo ";expire;1m;y;key 1;expire;1m;y;key 1;save" | tr ';' "\n")
+echo -e "$commands" | gpg --no-tty --command-fd=0 --key-edit $KEY_ID 2>/dev/null
 
 export DONGLE="$HOME"/dongle
 mkdir -p "$DONGLE"
 chmod 700 "$DONGLE"
-
-export KEY_ID="18D1DA4D9E7A4FD0"
-export KEY_FPR="A9446F790F9BE7C9D108FC6718D1DA4D9E7A4FD0"
-export KEY_GRIP_1="3914E664597E9C5998B8BC994C420602895881AB"
-
-export CONTACT_1="290F15FEDA94668A"
-export CONTACT_2="C95634F06073B549"
-export CONTACT_3="262A29CB12F046E8"
 
 egpg_init() {
     egpg init "$@" &&
@@ -66,11 +71,4 @@ setup_autopin() {
     local autopin="$EGPG_DIR"/autopin.sh &&
     sed -i "$autopin" -e "/^PIN=/ c PIN='$pin'" &&
     sed -i "$GNUPGHOME"/gpg-agent.conf -e "/^pinentry-program/ c pinentry-program \"$autopin\""
-}
-
-extend_test_key_expiration() {
-    local commands=";expire;1m;y;key 1;expire;1m;y;key 1;save"
-    commands=$(echo "$commands" | tr ';' "\n")
-    local homedir="$SHARNESS_TEST_DIRECTORY/gnupg"
-    echo -e "$commands" | gpg --homedir="$homedir" --no-tty --command-fd=0 --key-edit $KEY_ID 2>/dev/null
 }
