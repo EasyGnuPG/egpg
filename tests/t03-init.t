@@ -2,7 +2,6 @@
 
 test_description='Command: init'
 source "$(dirname "$0")"/setup.sh
-extend_test_key_expiration     # make sure that the test key has not expired
 
 test_expect_success 'egpg' '
     [[ ! -d "$HOME/.egpg" ]] &&
