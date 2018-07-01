@@ -70,5 +70,7 @@ setup_autopin() {
     cp -f "$CODE"/utils/autopin.sh "$EGPG_DIR"/ &&
     local autopin="$EGPG_DIR"/autopin.sh &&
     sed -i "$autopin" -e "/^PIN=/ c PIN='$pin'" &&
-    sed -i "$GNUPGHOME"/gpg-agent.conf -e "/^pinentry-program/ c pinentry-program \"$autopin\""
+    local homedir="$EGPG_DIR/.gnupg" &&
+    sed -i "$homedir"/gpg-agent.conf -e "/^pinentry-program/ c pinentry-program \"$autopin\"" &&
+    gpgconf --homedir="$homedir" --reload gpg-agent
 }
