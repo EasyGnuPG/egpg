@@ -17,6 +17,7 @@ cmd_open() {
 
     local output=${file%.sealed}
     [[ "$output" != "$file" ]] || fail "The given file does not end in '.sealed'."
+    [[ -f "$output" ]] && yesno "File '$output' exists. Overwrite?" || return 1
 
     # decrypt and verify
     gnupghome_setup
