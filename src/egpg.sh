@@ -237,4 +237,7 @@ main() {
     cmd "$@"
 }
 
-main "$@"
+# call the main function, unless the script
+# is sourced from another one
+unset BASH_SOURCE 2>/dev/null
+[[ $0 != $BASH_SOURCE ]] || main "$@"
