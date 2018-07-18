@@ -1,37 +1,36 @@
 PREFIX ?= /usr
 DESTDIR ?=
 BINDIR ?= $(DESTDIR)$(PREFIX)/bin
-LIBDIR ?= $(DESTDIR)$(PREFIX)/lib
+LIBDIR ?= $(DESTDIR)$(PREFIX)/lib/egpg
 MANDIR ?= $(DESTDIR)$(PREFIX)/share/man/man1
 BASHCOMP_PATH ?= $(DESTDIR)$(PREFIX)/share/bash-completion/completions
-
-EGPG = $(BINDIR)/egpg
-LIB = $(LIBDIR)/egpg
 
 all: install
 
 install: uninstall
-	@install -v -d "$(LIB)/"
-	@cp -v -r src/* "$(LIB)"
-
 	@install -v -d "$(BINDIR)/"
-	@mv -v "$(LIB)"/egpg.sh "$(EGPG)"
-	@sed -i "$(EGPG)" -e "s#LIBDIR=.*#LIBDIR=\"$(LIB)\"#"
-	@chmod -c 0755 "$(EGPG)"
+	@install -v -m 0755 src/egpg.sh "$(BINDIR)/egpg"
+	@sed -i $(BINDIR)/egpg -e "s#^LIBDIR=.*#LIBDIR=\"$(PREFIX)/lib/egpg\"#"
+
+	@install -v -d "$(LIBDIR)/"
+	@cp -v -r src/* "$(LIBDIR)/"
 
 	@install -v -d "$(BASHCOMP_PATH)"
-	@mv -v "$(LIB)"/bash-completion.sh "$(BASHCOMP_PATH)"/egpg
+	@mv -v "$(LIBDIR)"/bash-completion.sh "$(BASHCOMP_PATH)"/egpg
 	@chmod -c 0644 "$(BASHCOMP_PATH)"/egpg
 
 	@install -v -d "$(MANDIR)/"
 	@install -v -m 0644 man/egpg.1 "$(MANDIR)/egpg.1"
 
 uninstall:
-	@rm -vrf "$(EGPG)" "$(LIB)" "$(MANDIR)/egpg.1" "$(BASHCOMP_PATH)"/egpg
+	@rm -vrf "$(BINDIR)/egpg" "$(LIBDIR)" "$(MANDIR)/egpg.1" "$(BASHCOMP_PATH)"/egpg
 
 TESTS = $(sort $(wildcard tests/t*.t))
 
 test: $(TESTS)
+
+deb:
+	./deb.sh
 
 $(TESTS):
 	@$@ $(EGPG_TEST_OPTS)

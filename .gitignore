@@ -3,3 +3,4 @@ tests/gnupg/pubring.kbx
 tests/gnupg/trustdb.gpg
 tests/gnupg/tofu.db
 tests/gnupg/pubring.kbx~
+egpg.deb
