@@ -80,6 +80,7 @@
     + If unsuccessful display an error
   
   - **Manage Contacts**::
+
     ![](img/contact-modify.png)
-    
+
     ![](img/contact-add.png)
