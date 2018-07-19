@@ -184,6 +184,7 @@ config() {
     DEBUG=${DEBUG:-no}
 
     export GNUPGHOME
+    export DEBUG
     export GPG_TTY=$(tty)
 
     # create the config file, if it does not exist

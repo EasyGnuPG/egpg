@@ -40,8 +40,8 @@ test_expect_success 'egpg contact ls -r' '
 '
 
 test_expect_success 'egpg contact ls -c' '
-    [[ $(egpg contact ls -c | grep fpr) == "fpr:::::::::A9446F790F9BE7C9D108FC6718D1DA4D9E7A4FD0:" ]] &&
-    [[ $(egpg contact ls --colons | grep fpr) == "fpr:::::::::A9446F790F9BE7C9D108FC6718D1DA4D9E7A4FD0:" ]]
+    [[ $(egpg contact ls -c | grep fpr | head -1) == "fpr:::::::::A9446F790F9BE7C9D108FC6718D1DA4D9E7A4FD0:" ]] &&
+    [[ $(egpg contact ls --colons | grep fpr | head -1) == "fpr:::::::::A9446F790F9BE7C9D108FC6718D1DA4D9E7A4FD0:" ]]
 '
 
 test_done

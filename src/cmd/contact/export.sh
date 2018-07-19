@@ -20,6 +20,7 @@ cmd_contact_export() {
         esac
     done
     [[ $err == 0 ]] || fail "Usage:\n$(cmd_contact_export_help)"
+    [[ -f "$output" ]] && yesno "File '$output' exists. Overwrite?" || return 1
 
     # export
     gpg --armor --export --output $output $@
