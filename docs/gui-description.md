@@ -64,8 +64,10 @@
        
      ![](img/verify-no-contact.png)
      
-  - **Seal a file**::
-    + Open a dialog box for selecting a file
+  - **Seal a file(s)**::
+    + Open a dialog box for selecting a file(s)
+    + Open dialog box for selecting contact(s)
+      - We can probably use the code from contact management part.
     + If the encryption is successful display a info. 
     + If unsuccessful display the errors
     
@@ -78,8 +80,16 @@
       - we can also give an option to launch the file with default program
     
     + If unsuccessful display an error
-  
-  - **Manage Contacts**::
+
+  - **Change settings**::
+
+    ![](img/settings.png)
+    
+### 04. Manage Keys
+
+    ![](img/key-management.png)
+
+### 05. Manage Contacts
 
     ![](img/contact-modify.png)
 
