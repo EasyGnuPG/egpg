@@ -13,7 +13,8 @@ Version: 1.0
 Section: custom
 Priority: optional
 Architecture: all
-Depends: bash, gnupg 
+Depends: bash, gnupg2, pinentry-tty, haveged, libgfshare-bin, parcimonie, \
+          qrencode, imagemagick, zbar-tools, wget, coreutils, psmisc, make
 Maintainer: https://github.com/EasyGnuPG/egpg
 Description: An easy wrapper for GNUpg
 EOF

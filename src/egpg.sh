@@ -19,9 +19,9 @@
 umask 077
 set -o pipefail
 
-VERSION="2.2-1.0"
+export VERSION="2.2-1.0"
 
-LIBDIR="$(dirname "$0")"
+export LIBDIR="$(dirname "$0")"
 
 # make sure that these global variables
 # do not inherit values from the environment
@@ -169,6 +169,15 @@ _EOF
     done
 }
 
+gui() {
+    local gui=${1:-main}; shift
+    local file="$LIBDIR/gui/$(echo $gui | tr _ /).sh"
+    [[ -f "$file" ]] || fail "Cannot find interface file: $file"
+    source "$file"
+    gui_$gui "$@"
+}
+export -f gui
+
 config() {
     # read the config file
     local config_file="$EGPG_DIR/config.sh"
@@ -208,14 +217,21 @@ _EOF
 }
 
 main() {
-    local gnupg_version=$(gpg_version)
-    [[ ${gnupg_version%.*} == "2.2" ]] || fail "These scripts are supposed to work with GnuPG 2.2"
-
     # handle some basic commands
     case "$1" in
         v|-v|version|--version)  shift; cmd_version "$@" ; exit 0 ;;
         help|-h|--help)          shift; call cmd_help "$@" ; exit 0 ;;
-        init)                    shift; call cmd_init "$@" ; exit 0 ;;
+        g|gui)                   shift
+                                 export GUI='true'
+                                 source "$LIBDIR/aux-gui.sh"
+                                 ;;
+    esac
+
+    local gnupg_version=$(gpg_version)
+    #[[ ${gnupg_version%.*} == "2.2" ]] || fail "These scripts are supposed to work with GnuPG 2.2"
+
+    case "$1" in
+        init)  shift; call cmd_init "$@" ; exit 0 ;;
     esac
 
     # set config variables
@@ -234,11 +250,14 @@ main() {
     local customize_file="$EGPG_DIR/customize.sh"
     [[ -f "$customize_file" ]] && source "$customize_file"
 
-    # run the command
-    cmd "$@"
+    if is_true $GUI
+    then gui "$@"   # start the gui
+    else cmd "$@"   # run the command
+    fi
 }
 
-# call the main function, unless the script
-# is sourced from another one
+# stop if the script is sourced from another one
 unset BASH_SOURCE 2>/dev/null
-[[ $0 != $BASH_SOURCE ]] || main "$@"
+[[ $0 != $BASH_SOURCE ]] && exit
+# call the main function
+main "$@"
