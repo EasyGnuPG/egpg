@@ -2,6 +2,7 @@
 
 gui_main() {
     get_gpg_key
+    is_true $DEBUG || exec &>/dev/null    # ignore all output, unless debugging
     yad --title="EasyGnuPG" \
         --text="$(key_info $GPG_KEY)" \
         --selectable-labels \
@@ -12,11 +13,10 @@ gui_main() {
         --field="Verify File Signature":FBTN "bash -c 'gui verify'" \
         --field="Seal File(s)":FBTN "bash -c 'gui seal'" \
         --field="Open Sealed File(s)":FBTN "bash -c 'gui open'" \
-        --field="Manage Key":FBTN "bash -c ' gui key'" \
+        --field="Manage Key":FBTN "bash -c 'gui key'" \
         --field="Manage Contacts":FBTN "bash -c 'gui contacts'" \
         --field="Settings":FBTN "bash -c 'gui settings'" \
         --button=gtk-quit
-       # &>/dev/null
 }
 
 #
