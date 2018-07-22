@@ -8,13 +8,13 @@ gui_main() {
         --borders=10 \
         --form \
         --columns=4 \
-        --field="Sign File":FBTN "bash -c '$(basename $0) gui sign'" \
-        --field="Verify File Signature":FBTN "bash -c '$(basename $0) gui verify'" \
-        --field="Seal File(s)":FBTN "bash -c '$(basename $0) gui seal'" \
-        --field="Open Sealed File(s)":FBTN "bash -c '$(basename $0) gui open'" \
-        --field="Manage Key":FBTN "bash -c '$(basename $0) gui key'" \
-        --field="Manage Contacts":FBTN "bash -c '$(basename $0) gui contacts'" \
-        --field="Settings":FBTN "bash -c '$(basename $0) gui settings'" \
+        --field="Sign File":FBTN "bash -c 'gui sign'" \
+        --field="Verify File Signature":FBTN "bash -c 'gui verify'" \
+        --field="Seal File(s)":FBTN "bash -c 'gui seal'" \
+        --field="Open Sealed File(s)":FBTN "bash -c 'gui open'" \
+        --field="Manage Key":FBTN "bash -c ' gui key'" \
+        --field="Manage Contacts":FBTN "bash -c 'gui contacts'" \
+        --field="Settings":FBTN "bash -c 'gui settings'" \
         --button=gtk-quit
        # &>/dev/null
 }

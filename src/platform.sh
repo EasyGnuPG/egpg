@@ -9,13 +9,10 @@ gpg() {
     fi
     "$(which gpg2)" $opts "$@"
 }
-export -f gpg
 
 getopt() { "$(which getopt)" "$@" ; }
-export -f getopt
 
 shred() { "$(which shred)" -f -z -u "$@" ; }
-export -f shred
 
 haveged_start() {
     [[ -z "$(ps -ax | grep -v grep | grep -v defunct | grep haveged)" ]] || return 0

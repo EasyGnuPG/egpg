@@ -18,10 +18,11 @@
 
 umask 077
 set -o pipefail
+set -a
 
-export VERSION="2.2-1.0"
+VERSION="2.2-1.0"
 
-export LIBDIR="$(dirname "$0")"
+LIBDIR="$(dirname "$0")"
 
 # make sure that these global variables
 # do not inherit values from the environment
@@ -190,10 +191,7 @@ config() {
     GNUPGHOME=${GNUPGHOME:-$EGPG_DIR/.gnupg}
     [[ "$GNUPGHOME" == "default" ]] && GNUPGHOME="$ENV_GNUPGHOME"
     DEBUG=${DEBUG:-no}
-
-    export GNUPGHOME
-    export DEBUG
-    export GPG_TTY=$(tty)
+    GPG_TTY=$(tty)
 
     # create the config file, if it does not exist
     local gpghome="$GNUPGHOME"
@@ -220,10 +218,7 @@ main() {
     case "$1" in
         v|-v|version|--version)  shift; cmd_version "$@" ; exit 0 ;;
         help|-h|--help)          shift; call cmd_help "$@" ; exit 0 ;;
-        g|gui)                   shift
-                                 export GUI='true'
-                                 source "$LIBDIR/aux-gui.sh"
-                                 ;;
+        g|gui)                   shift; GUI='true'; source "$LIBDIR/aux-gui.sh" ;;
     esac
 
     local gnupg_version=$(gpg_version)
@@ -234,7 +229,7 @@ main() {
     esac
 
     # set config variables
-    export EGPG_DIR="${EGPG_DIR:-$HOME/.egpg}"
+    EGPG_DIR="${EGPG_DIR:-$HOME/.egpg}"
     [[ -d "$EGPG_DIR" ]] || fail "No directory '$EGPG_DIR'\nTry first: $(basename $0) init"
     config
 

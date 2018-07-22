@@ -149,7 +149,7 @@ gnupghome_setup() {
     workdir_make
     cp -a "$gnupghome"/* "$WORKDIR"/
     GNUPGHOME_BAK="$GNUPGHOME"
-    export GNUPGHOME="$WORKDIR"
+    GNUPGHOME="$WORKDIR"
 
     get_gpg_key    # get $GPG_KEY
     is_full_key && return 0
@@ -172,7 +172,7 @@ gnupghome_setup() {
     call_fn restore_key "$GNUPGHOME"/$GPG_KEY.key
 }
 gnupghome_reset() {
-    export GNUPGHOME="$GNUPGHOME_BAK"
+    GNUPGHOME="$GNUPGHOME_BAK"
     unset GNUPGHOME_BAK
     workdir_clear
 }
