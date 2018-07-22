@@ -1,7 +1,6 @@
 gui_sign() {
-    yad --file
-    #yad --title="EasyGnuPG | Sign a File" \
-    #   --text="Sign a File"
+    file=$(yad --file --title="EasyGnuPG | Sign a File")
+    call cmd_sign $file
 }
 
 #

@@ -176,7 +176,6 @@ gui() {
     source "$file"
     gui_$gui "$@"
 }
-export -f gui
 
 config() {
     # read the config file
