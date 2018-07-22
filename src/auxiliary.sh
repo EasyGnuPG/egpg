@@ -8,7 +8,12 @@ yesno() {
 
 fail() {
     workdir_clear
-    echo -e "$@" >&2
+
+    if is_true $GUI
+    then error_msg "$@"
+    else echo -e "$@" >&2
+    fi
+
     exit 1
 }
 
@@ -55,8 +60,12 @@ get_gpg_key(){
     [[ -z $GPG_KEY ]] || return 0
 
     GPG_KEY=$(get_valid_keys | cut -d' ' -f1)
-    [[ -z $GPG_KEY ]] && \
-        fail "
+    if [[ -z $GPG_KEY ]]; then
+        if is_true $GUI; then
+            gui key-not-found
+            exit 1
+        else
+            fail "
 No valid key found.
 
 Try first:  $(basename $0) key gen
@@ -64,6 +73,8 @@ Try first:  $(basename $0) key gen
        or:  $(basename $0) key restore
        or:  $(basename $0) key recover
 "
+        fi
+    fi
 
     # get the fingerprint
     FPR=$(gpg --list-keys --fingerprint --with-sig-check --with-colons $GPG_KEY | grep '^fpr:' | cut -d: -f10 | head -n 1)
@@ -77,10 +88,18 @@ Try first:  $(basename $0) key gen
         exp=$(echo "$key_details" | grep -E ":$key_id:" | cut -d: -f7)
         [[ -z $exp ]] && continue
         if [[ $exp -lt $(date +%s) ]]; then
-            echo -e "\nThe key $key_id has expired on $(date -d @$exp +%F).\nPlease renew it with:  $(basename $0) key renew\n"
+            if is_true $GUI; then
+                gui key-expired "$(date -d @$exp +%F)"
+            else
+                echo -e "\nThe key $key_id has expired on $(date -d @$exp +%F).\nPlease renew it with:  $(basename $0) key renew\n"
+            fi
             break
         elif [[ $(($exp - $(date +%s))) -lt $((2*24*60*60)) ]]; then
-            echo -e "\nThe key $key_id is expiring soon.\nPlease renew it with:  $(basename $0) key renew\n"
+            if is_true $GUI; then
+                gui key-expiring "$(($exp - $(date +%s)))"
+            else
+                echo -e "\nThe key $key_id is expiring soon.\nPlease renew it with:  $(basename $0) key renew\n"
+            fi
             break
         fi
     done
