@@ -45,19 +45,52 @@
 
   - **Verify a signature**:
     When the button is clicked, the app does these:
-     + Open the dialog box for selecting a file.
+     + Open the dialog box for selecting a file (of type .signature).
+     
+     ![](img/sign-file-dialog.png)
+     
      + Verify the signature.
+     
+     
      + Display any error or information messages (whether the
        signature is correct or not, if correct by whom was signed, any
-       metadata, etc.) For example:
-       ```
-       File: ....
-       Good signature from: Dashamir Hoxha <dashohoxha@gmail.com> (verified)
-       Fingerprint: 040E FEF9 081A 6B44 A0F7 CE6C FA82 4ADB A836 945C
-       Time of signature: ....
-       Title:
-       Description:
-       ```
+       metadata, etc.)
+       
+     ![](img/verify.png)
+       
      + If the person who signed the docs is not on the contact list,
        it should ask to search for him online. If found, should ask
        to save him on the contact list.
+       
+     ![](img/verify-no-contact.png)
+     
+  - **Seal a file(s)**::
+    + Open a dialog box for selecting a file(s)
+    + Open dialog box for selecting contact(s)
+      - We can probably use the code from contact management part.
+    + If the encryption is successful display a info. 
+    + If unsuccessful display the errors
+    
+  - **Open a Sealed file(s)**::
+    + Open a dialog box for selecting a file (of type .sealed)
+    
+    + Try decrypting the file
+    
+    + If successful display info (such as signature).
+      - we can also give an option to launch the file with default program
+    
+    + If unsuccessful display an error
+
+  - **Change settings**::
+
+    ![](img/settings.png)
+    
+### 04. Manage Keys
+
+    ![](img/key-management.png)
+
+### 05. Manage Contacts
+
+    ![](img/contact-modify.png)
+
+    ![](img/contact-add.png)
