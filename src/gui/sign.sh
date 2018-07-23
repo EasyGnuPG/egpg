@@ -1,6 +1,8 @@
 gui_sign() {
     file=$(yad --file --title="EasyGnuPG | Sign a File")
     call cmd_sign $file
+    [[ -f $file.signature ]] || fail "Internal Error!"
+    success_msg "Signature saved as $file.signature"
 }
 
 #

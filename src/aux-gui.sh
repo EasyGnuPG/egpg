@@ -1,6 +1,7 @@
 error_msg() {
     yad --title "Error" \
         --text "$@" \
+        --no-markup \
         --button=gtk-close \
         --image=gtk-dialog-error \
         --borders=10 \
@@ -31,4 +32,16 @@ key_info() {
     echo "<b>Creation:</b>    $creation"
     echo "<b>Expiration:</b>  $expiration"
     echo "</tt></big>"
+}
+
+success_msg() {
+    yad --title "Success" \
+        --text "$@" \
+        --no-markup \
+        --button=gtk-ok \
+        --image=gtk-dialog-info \
+        --borders=10 \
+        --skip-taskbar \
+        --close-on-unfocus \
+        --timeout=10
 }
