@@ -1,6 +1,11 @@
 gui_sign() {
     local file output
     file=$(yad --file --title="EasyGnuPG | Sign a File")
+
+    if [[ -f "$file.signature" ]]; then
+        yesno "$file.signature already exists. Do you want to overwrite??" || exit 0
+    fi
+    
     output=$(call cmd_sign $file)
     [[ -n "$output" ]] && message error "$output"
     [[ -f "$file.signature" ]] && message info "Signature saved as $file.signature"

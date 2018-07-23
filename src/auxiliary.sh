@@ -1,6 +1,7 @@
 # Auxiliary functions.
 
 yesno() {
+    is_true $GUI && return $(yad --window-icon=gtk-yes --text=" $1 ")
     local response
     read -r -p "$1 [y/N] " response
     [[ $response == [yY] ]] || return 1
