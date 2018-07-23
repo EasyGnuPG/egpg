@@ -8,12 +8,7 @@ yesno() {
 
 fail() {
     workdir_clear
-
-    if is_true $GUI
-    then error_msg "$@"
-    else echo -e "$@" >&2
-    fi
-
+    is_true $GUI && message error "$@" || echo -e "$@" >&2
     exit 1
 }
 
