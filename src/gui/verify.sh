@@ -1,16 +1,17 @@
 gui_verify() {
-    local file output
+    local file output err
+
     file=$(yad \
-            --file \
-            --title="EasyGnuPG | Verify Signature"\
-            --file-filter "Signature files | *.signature" \
-            ) || return 0
-    
+               --file \
+               --title="EasyGnuPG | Verify Signature"\
+               --file-filter="Signature files | *.signature" \
+        ) || return 0
+
     output=$(call cmd_verify "$file" 2>&1)
-    if is_true $DEBUG; then
-        echo "$output"
-    fi
-    message info "$(echo "$output" | grep "^gpg:" | pango_raw )"
+    err=$?
+
+    is_true $DEBUG && echo "$output"
+    message info "<tt>$(echo "$output" | grep '^gpg: ' | pango_raw )</tt>"
 }
 
 #

@@ -36,5 +36,5 @@ _EOF_
 }
 
 pango_raw(){
-    sed "s/</\&lt;/" | sed "s/>/\&gt;/"
+    sed -e "s/</\&lt;/" -e "s/>/\&gt;/"
 }
