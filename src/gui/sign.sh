@@ -11,14 +11,13 @@ gui_sign() {
     output=$(call cmd_sign $file 2>&1)
     err=$?
     is_true $DEBUG && echo "$output"
-    [[ $err == 0 ]] || message error "$output"
 
-    if [[ -s "$file.signature" ]]; then
+    if [[ -s "$file.signature" ]] && [[ $err == 0 ]]; then
         yad --file --filename="$file.signature" &
         sleep 1
         message info "Signature saved as:\n <tt>$file.signature</tt>"
     else
-        message error "Failed to sign file."
+        message error "Failed to sign file.\n" "<tt>$(echo "$output" | grep '^gpg:' | uniq)</tt>"
     fi
 }
 
