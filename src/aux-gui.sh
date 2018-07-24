@@ -3,7 +3,6 @@ message() {
     local text="$@"
     yad --title "EasyGnuPG | ${type^} Message" \
         --text "$text" \
-        --no-markup \
         --button=gtk-close \
         --image=gtk-dialog-${type,,} \
         --borders=10 \

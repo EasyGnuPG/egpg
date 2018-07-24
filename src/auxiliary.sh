@@ -1,7 +1,11 @@
 # Auxiliary functions.
 
 yesno() {
-    is_true $GUI && return $(yad --window-icon=gtk-yes --text=" $1 ")
+    is_true $GUI && return $(yad --text="$1" \
+                                 --image=gtk-dialog-question \
+                                 --button=gtk-yes:0 \
+                                 --button=gtk-no:1 \
+                                 --borders=10 )
     local response
     read -r -p "$1 [y/N] " response
     [[ $response == [yY] ]] || return 1
