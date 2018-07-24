@@ -1,7 +1,23 @@
 gui_sign() {
-    yad --file
-    #yad --title="EasyGnuPG | Sign a File" \
-    #   --text="Sign a File"
+    local file output
+
+    file=$(yad --file --title="EasyGnuPG | Sign a File")
+    [[ -n "$file" ]] || return 0
+    if [[ -f "$file.signature" ]]; then
+        yesno "File already exists:\n<tt>$file.signature</tt>\n\nDo you want to overwrite it?" || return 0
+        rm -f "$file.signature"
+    fi
+
+    output=$(call cmd_sign $file)
+    [[ -n "$output" ]] && message error "$output"
+
+    if [[ -s "$file.signature" ]]; then
+        yad --file --filename="$file.signature" &
+        sleep 1
+        message info "Signature saved as:\n <tt>$file.signature</tt>"
+    else
+        message error "Failed to sign file."
+    fi
 }
 
 #

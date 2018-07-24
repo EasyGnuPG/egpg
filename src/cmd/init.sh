@@ -16,8 +16,8 @@ cmd_init() {
         && rm -rfv "$EGPG_DIR"
 
     # create the new $EGPG_DIR
-    export EGPG_DIR="$HOME"/.egpg
-    [[ -n "$1" ]] && export EGPG_DIR="$1"
+    EGPG_DIR="$HOME"/.egpg
+    [[ -n "$1" ]] && EGPG_DIR="$1"
     mkdir -pv "$EGPG_DIR"
     mkdir -p "$EGPG_DIR"/.gnupg
     [[ -f "$EGPG_DIR"/.gnupg/gpg-agent.conf ]] || cat <<-_EOF > "$EGPG_DIR"/.gnupg/gpg-agent.conf
