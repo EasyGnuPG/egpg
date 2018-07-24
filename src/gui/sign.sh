@@ -1,5 +1,5 @@
 gui_sign() {
-    local file output
+    local file output err
 
     file=$(yad --file --title="EasyGnuPG | Sign a File")
     [[ -n "$file" ]] || return 0
@@ -8,15 +8,16 @@ gui_sign() {
         rm -f "$file.signature"
     fi
 
-    output=$(call cmd_sign $file)
-    [[ -n "$output" ]] && message error "$output"
+    output=$(call cmd_sign $file 2>&1)
+    err=$?
+    is_true $DEBUG && echo "$output"
 
-    if [[ -s "$file.signature" ]]; then
+    if [[ -s "$file.signature" ]] && [[ $err == 0 ]]; then
         yad --file --filename="$file.signature" &
         sleep 1
         message info "Signature saved as:\n <tt>$file.signature</tt>"
     else
-        message error "Failed to sign file."
+        message error "Failed to sign file.\n" "<tt>$(echo "$output" | grep '^gpg:' | uniq)</tt>"
     fi
 }
 

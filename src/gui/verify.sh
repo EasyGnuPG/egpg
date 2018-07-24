@@ -1,25 +1,19 @@
-# The main interface of the application.
+gui_verify() {
+    local file output err msg_type
 
-gui_main() {
-    get_gpg_key
+    file=$(yad \
+               --file \
+               --title="EasyGnuPG | Verify Signature"\
+               --file-filter="Signature files | *.signature" \
+        ) || return 0
 
-    local out
-    is_true $DEBUG && out='/dev/tty' || out='/dev/null'
-    yad --title="EasyGnuPG" \
-        --text="$(key_info $GPG_KEY)" \
-        --selectable-labels \
-        --borders=10 \
-        --form \
-        --columns=4 \
-        --field="Sign File":FBTN "bash -c 'gui sign'" \
-        --field="Verify File Signature":FBTN "bash -c 'gui verify'" \
-        --field="Seal File(s)":FBTN "bash -c 'gui seal'" \
-        --field="Open Sealed File(s)":FBTN "bash -c 'gui open'" \
-        --field="Manage Key":FBTN "bash -c 'gui key'" \
-        --field="Manage Contacts":FBTN "bash -c 'gui contacts'" \
-        --field="Settings":FBTN "bash -c 'gui settings'" \
-        --button=gtk-quit \
-        &> $out
+    output=$(call cmd_verify "$file" 2>&1)
+    err=$?
+    is_true $DEBUG && echo "$output"
+    [[ $err == 0 ]] && msg_type="info" || msg_type="error"
+
+    message $msg_type "<tt>$(echo "$output" | grep '^gpg:' | pango_raw)</tt>"
+    return $err
 }
 
 #

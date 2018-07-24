@@ -34,3 +34,7 @@ key_info() {
 </tt></big>
 _EOF_
 }
+
+pango_raw(){
+    sed -e "s/</\&lt;/" -e "s/>/\&gt;/"
+}
