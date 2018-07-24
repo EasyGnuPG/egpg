@@ -1,5 +1,5 @@
 gui_verify() {
-    local file output err
+    local file output err msg_type
 
     file=$(yad \
                --file \
@@ -9,9 +9,11 @@ gui_verify() {
 
     output=$(call cmd_verify "$file" 2>&1)
     err=$?
-
     is_true $DEBUG && echo "$output"
-    message info "<tt>$(echo "$output" | grep '^gpg: ' | pango_raw )</tt>"
+    [[ $err == 0 ]] && msg_type="info" || msg_type="error"
+
+    message $msg_type "<tt>$(echo "$output" | grep '^gpg:' | pango_raw)</tt>"
+    return $err
 }
 
 #
