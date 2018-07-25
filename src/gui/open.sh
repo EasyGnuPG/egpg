@@ -7,7 +7,7 @@ gui_open() {
                --file-filter="Sealed files | *.sealed" \
         ) || return 0
 
-    target_file="${file%.*}"
+    target_file="${file%.sealed}"
 
     if [[ -f  "$target_file" ]]; then
         yesno "File already exists:\n<tt>$target_file</tt>\n"\
