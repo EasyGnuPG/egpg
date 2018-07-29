@@ -38,3 +38,15 @@ _EOF_
 pango_raw(){
     sed -e "s/</\&lt;/" -e "s/>/\&gt;/"
 }
+
+get_contacts_list() {
+    local ids output info
+    ids=$(gpg --list-keys --with-colons "$@" | grep '^pub' | cut -d: -f5)
+    source "$LIBDIR/fn/print_key.sh"
+    for id in $ids; do
+        info=$(print_key $id)
+        uids=$(echo "$info" | grep "^uid:" | cut -d: -f2 | pango_raw)
+        output="$output$id\n$uids\n"
+    done
+    echo -e $output | head -c -1
+}

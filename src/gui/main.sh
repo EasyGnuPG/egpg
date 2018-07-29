@@ -16,7 +16,7 @@ gui_main() {
         --field="Seal File(s)":FBTN "bash -c 'gui seal'" \
         --field="Open Sealed File(s)":FBTN "bash -c 'gui open'" \
         --field="Manage Key":FBTN "bash -c 'gui key'" \
-        --field="Manage Contacts":FBTN "bash -c 'gui contacts'" \
+        --field="Manage Contacts":FBTN "bash -c 'gui contacts_list'" \
         --field="Settings":FBTN "bash -c 'gui settings'" \
         --button=gtk-quit \
         &> $out

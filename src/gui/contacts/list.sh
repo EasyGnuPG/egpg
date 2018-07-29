@@ -1,34 +1,31 @@
-get_contacts_list() {
-    local ids output info
-    ids=$(gpg --list-keys --with-colons "$@" | grep '^pub' | cut -d: -f5)
-    source "$LIBDIR/fn/print_key.sh"
-    for id in $ids; do
-        info=$(print_key $id)
-        uids=$(echo "$info" | grep "^uid:" | cut -d: -f2 | pango_raw)
-        output="$output$id\n$uids\n"
-    done
-    echo -e $output | head -c -1
-}
+export tmpfile=$(mktemp)
 
-gui_display_list(){
+sel() {
+    selected=$1
+    echo $selected > $tmpfile
+}
+export -f sel
+
+gui_contact_details(){
+    # basic dummy contact details
+    # TODO: add delete export etc. buttons
+    [[ -z "$@" ]] || message info "<tt>$(call cmd_contact_list "$1" | pango_raw)</tt>"
+}
+export -f gui_contact_details
+
+gui_contacts_list(){
     get_contacts_list "$@" | yad --title="EasyGnuPG | Contacts" \
         --list \
         --width=600 \
         --height=450 \
         --column="ID" \
         --column="UID(s)" \
-        --button="Details" \
-        --button="Add Contacts"
-        --button=gtk-quit
-}
-
-gui_contacts_details(){
-    message info "<tt>$(call cmd_contact_list "$1" | pango_raw)</tt>"
-}
-
-gui_contacts() {
-    selection=$(gui_display_list "$@" | cut -d"|" -f1)
-    gui_contacts_details "$selection"
+        --button="Details":'bash -c "gui_contact_details $(head -n 1 $tmpfile)"' \
+        --button="Add Contact":'bash -c "gui contacts_add"' \
+        --button=gtk-quit \
+        --select-action='bash -c "sel %s"'\
+        --dclick-action='bash -c "gui_contact_details $(head -n 1 $tmpfile)"'\
+        --no-rules-hint
 }
 
 #
