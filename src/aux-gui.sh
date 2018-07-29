@@ -1,3 +1,5 @@
+export file_geo="400x400"
+
 message() {
     local type=${1:-info}; shift
     local text="$@"
@@ -39,7 +41,7 @@ pango_raw(){
     sed -e "s/</\&lt;/" -e "s/>/\&gt;/"
 }
 
-get_contacts_list() {
+get_contacts() {
     local ids output info
     ids=$(gpg --list-keys --with-colons "$@" | grep '^pub' | cut -d: -f5)
     source "$LIBDIR/fn/print_key.sh"
@@ -49,4 +51,20 @@ get_contacts_list() {
         output="$output$id\n$uids\n"
     done
     echo -e $output | head -c -1
+}
+
+select_contacts() {
+    get_contacts "$@" | yad --title="EasyGnuPG | Select Contacts" \
+    --list \
+    --multiple \
+    --width=600 \
+    --height=450 \
+    --column="ID" \
+    --column="UID(s)" \
+    --button="Details":'bash -c "gui contacts_details $(head -n 1 $tmpfile)"' \
+    --button="Add Contact":'bash -c "gui contacts_add"' \
+    --button=gtk-ok \
+    --select-action='bash -c "on_select %s"'\
+    --dclick-action='bash -c "gui contacts_details $(head -n 1 $tmpfile)"'\
+    --no-rules-hint
 }

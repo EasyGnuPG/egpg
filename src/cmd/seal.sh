@@ -10,6 +10,7 @@ _EOF
 }
 
 cmd_seal() {
+    local err
     local file="$1" ; shift
     [[ -z "$file" ]] && fail "Usage:\n$(cmd_seal_help)"
     [[ -f "$file" ]] || fail "Cannot find file '$file'"
@@ -29,14 +30,16 @@ cmd_seal() {
 
     # sign and encrypt
     gnupghome_setup
-    gpg --no-tty --auto-key-locate=local,cert,keyserver,pka \
+    gpg --batch --auto-key-locate=local,cert,keyserver,pka \
         --keyserver "$KEYSERVER" $recipients \
         --sign --encrypt --armor \
         --output "$file.sealed" "$file"
+    err=$?
     gnupghome_reset
 
     [[ -s "$file.sealed" ]] || rm -f "$file.sealed"
     [[ -f "$file.sealed" ]] && shred "$file"
+    return $err
 }
 
 #

@@ -1,23 +1,24 @@
-gui_sign() {
+gui_seal() {
     local file output err
 
-    file=$(yad --geometry=$file_geo --file --title="EasyGnuPG | Sign a File")
+    file=$(yad --geometry=$file_geo --file --title="EasyGnuPG | Seal a File")
     [[ -n "$file" ]] || return 0
-    if [[ -f "$file.signature" ]]; then
-        yesno "File already exists:\n<tt>$file.signature</tt>\n\nDo you want to overwrite it?" || return 0
-        rm -f "$file.signature"
+    if [[ -f "$file.sealed" ]]; then
+        yesno "File already exists:\n<tt>$file.sealed</tt>\n\nDo you want to overwrite it?" || return 0
+        rm -f "$file.sealed"
     fi
 
-    output=$(call cmd_sign $file 2>&1)
+    a=$(select_contacts | cut -d"|" -f1)
+    output=$(call cmd_seal "$file" $a 2>&1)
     err=$?
-    is_true $DEBUG && echo "$output"
+    is_true $DEBUG && echo "$output" > /dev/tty
 
-    if [[ -s "$file.signature" ]] && [[ $err == 0 ]]; then
-        yad --geometry=$file_geo --file --filename="$file.signature" &
+    if [[ -s "$file.sealed" ]] && [[ $err == 0 ]]; then
+        yad --geometry=$file_geo --file --filename="$file.sealed" &
         sleep 1
-        message info "Signature saved as:\n <tt>$file.signature</tt>"
+        message info "File saved as:\n <tt>$file.sealed</tt>"
     else
-        message error "Failed to sign file.\n" "<tt>$(echo "$output" | grep '^gpg:' | uniq)</tt>"
+        message error "Failed to seal file.\n" "<tt>$(echo "$output" | grep '^gpg:' | pango_raw)</tt>"
     fi
 }
 

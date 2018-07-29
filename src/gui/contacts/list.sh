@@ -7,7 +7,7 @@ on_select() {
 export -f on_select
 
 gui_contacts_list(){
-    get_contacts_list "$@" | yad --title="EasyGnuPG | Contacts" \
+    get_contacts "$@" | yad --title="EasyGnuPG | Contacts" \
         --list \
         --width=600 \
         --height=450 \

@@ -2,6 +2,7 @@ gui_verify() {
     local file output err msg_type
 
     file=$(yad \
+               --geometry=$file_geo \
                --file \
                --title="EasyGnuPG | Verify Signature"\
                --file-filter="Signature files | *.signature" \
