@@ -1,17 +1,10 @@
 export tmpfile=$(mktemp)
 
-sel() {
+on_select() {
     selected=$1
     echo $selected > $tmpfile
 }
-export -f sel
-
-gui_contact_details(){
-    # basic dummy contact details
-    # TODO: add delete export etc. buttons
-    [[ -z "$@" ]] || message info "<tt>$(call cmd_contact_list "$1" | pango_raw)</tt>"
-}
-export -f gui_contact_details
+export -f on_select
 
 gui_contacts_list(){
     get_contacts_list "$@" | yad --title="EasyGnuPG | Contacts" \
@@ -20,11 +13,11 @@ gui_contacts_list(){
         --height=450 \
         --column="ID" \
         --column="UID(s)" \
-        --button="Details":'bash -c "gui_contact_details $(head -n 1 $tmpfile)"' \
+        --button="Details":'bash -c "gui contacts_details $(head -n 1 $tmpfile)"' \
         --button="Add Contact":'bash -c "gui contacts_add"' \
         --button=gtk-quit \
-        --select-action='bash -c "sel %s"'\
-        --dclick-action='bash -c "gui_contact_details $(head -n 1 $tmpfile)"'\
+        --select-action='bash -c "on_select %s"'\
+        --dclick-action='bash -c "gui contacts_details $(head -n 1 $tmpfile)"'\
         --no-rules-hint
 }
 
