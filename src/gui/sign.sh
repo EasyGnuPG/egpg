@@ -1,7 +1,7 @@
 gui_sign() {
     local file output err
 
-    file=$(yad --geometry=$file_geo --file --title="EasyGnuPG | Sign a File")
+    file=$(yad --file --title="EasyGnuPG | Sign a File")
     [[ -n "$file" ]] || return 0
     if [[ -f "$file.signature" ]]; then
         yesno "File already exists:\n<tt>$file.signature</tt>\n\nDo you want to overwrite it?" || return 0
@@ -13,7 +13,7 @@ gui_sign() {
     is_true $DEBUG && echo "$output"
 
     if [[ -s "$file.signature" ]] && [[ $err == 0 ]]; then
-        yad --geometry=$file_geo --file --filename="$file.signature" &
+        yad --file --filename="$file.signature" &
         sleep 1
         message info "Signature saved as:\n <tt>$file.signature</tt>"
     else

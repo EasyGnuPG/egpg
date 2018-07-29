@@ -1,7 +1,7 @@
 gui_seal() {
     local file output err
 
-    file=$(yad --geometry=$file_geo --file --title="EasyGnuPG | Seal a File")
+    file=$(yad --file --title="EasyGnuPG | Seal a File")
     [[ -n "$file" ]] || return 0
     if [[ -f "$file.sealed" ]]; then
         yesno "File already exists:\n<tt>$file.sealed</tt>\n\nDo you want to overwrite it?" || return 0
@@ -14,7 +14,7 @@ gui_seal() {
     is_true $DEBUG && echo "$output" > /dev/tty
 
     if [[ -s "$file.sealed" ]] && [[ $err == 0 ]]; then
-        yad --geometry=$file_geo --file --filename="$file.sealed" &
+        yad --file --filename="$file.sealed" &
         sleep 1
         message info "File saved as:\n <tt>$file.sealed</tt>"
     else

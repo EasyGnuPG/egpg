@@ -1,5 +1,3 @@
-export file_geo="400x400"
-
 message() {
     local type=${1:-info}; shift
     local text="$@"

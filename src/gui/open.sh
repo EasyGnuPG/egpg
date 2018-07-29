@@ -2,7 +2,6 @@ gui_open() {
     local file output err msg_type target_file
 
     file=$(yad \
-               --geometry=$file_geo \
                --file \
                --title="EasyGnuPG | Open file"\
                --file-filter="Sealed files | *.sealed" \
@@ -21,7 +20,7 @@ gui_open() {
     is_true $DEBUG && echo "$output"
     
     if [[ -s "$target_file" ]] && [[ $err == 0 ]]; then
-        xdg-open $(yad --geometry=$file_geo --file --filename="$target_file" \
+        xdg-open $(yad --file --filename="$target_file" \
                    --button=gtk-cancel:1 --button="View!gtk-open:0") &
         sleep 1
         message info "File saved as:\n <tt>$target_file</tt>"
