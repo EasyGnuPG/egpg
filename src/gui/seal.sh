@@ -1,5 +1,5 @@
 gui_seal() {
-    local file output err
+    local file output err recipients
 
     file=$(yad --file --title="EasyGnuPG | Seal a File")
     [[ -n "$file" ]] || return 0
@@ -8,8 +8,8 @@ gui_seal() {
         rm -f "$file.sealed"
     fi
 
-    a=$(select_contacts | cut -d"|" -f1)
-    output=$(call cmd_seal "$file" $a 2>&1)
+    recipients=$(select_contacts | cut -d"|" -f1)
+    output=$(call cmd_seal "$file" $recipients 2>&1)
     err=$?
     is_true $DEBUG && echo "$output" > /dev/tty
 

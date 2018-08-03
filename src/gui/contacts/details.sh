@@ -1,17 +1,19 @@
 gui_contacts_details(){
-    [[ -z "$@" ]] \
+    local contact_id=$1
+
+    details_text="<big><tt> \
+                $(call cmd_contact_list "$1" | pango_raw | sed 's/[^ ]*/\<b\>&\<\/b\>/') \
+                </tt></big>"
+
+    [[ -z "$contact_id" ]] \
     && message error "<tt>Please select a contact first.<tt>" \
-    || cert_status="Uncertify"; yad --text="<big><tt> \
-                                            $(call cmd_contact_list "$1" \
-                                            | pango_raw \
-                                            | sed 's/[^ ]*/\<b\>&\<\/b\>/') \
-                                            </tt></big>" \
+    || yad --text="$details_text" \
            --selectable-labels \
            --borders=10 \
            --form \
            --columns=4 \
            --field="Delete":FBTN "bash -c 'gui contacts_delete'" \
-           --field="$cert_status":FBTN "bash -c 'gui contacts_certify'" \
+           --field="Certify":FBTN "bash -c 'gui contacts_certify'" \
            --field="Trust":FBTN "bash -c 'gui contacts_trust'" \
            --field="Export":FBTN "bash -c 'gui contacts_export'" \
            --button=gtk-quit
