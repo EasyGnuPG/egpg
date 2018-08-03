@@ -69,7 +69,8 @@ select_contacts() {
 
 #
 # This file is part of EasyGnuPG.  EasyGnuPG is a wrapper around GnuPG
-# to simplify its operations.  Copyright (C) 2018 Dashamir Hoxha
+# to simplify its operations.  Copyright (C) 2018 Dashamir Hoxha,
+# Divesh Uttamchandani
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
