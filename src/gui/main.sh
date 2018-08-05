@@ -16,7 +16,7 @@ gui_main() {
         --field="Seal File(s)":FBTN "bash -c 'gui seal'" \
         --field="Open Sealed File(s)":FBTN "bash -c 'gui open'" \
         --field="Manage Key":FBTN "bash -c 'gui key'" \
-        --field="Manage Contacts":FBTN "bash -c 'gui contacts'" \
+        --field="Manage Contacts":FBTN "bash -c 'gui contacts_list'" \
         --field="Settings":FBTN "bash -c 'gui settings'" \
         --button=gtk-quit \
         &> $out
@@ -24,7 +24,8 @@ gui_main() {
 
 #
 # This file is part of EasyGnuPG.  EasyGnuPG is a wrapper around GnuPG
-# to simplify its operations.  Copyright (C) 2018 Dashamir Hoxha
+# to simplify its operations.  Copyright (C) 2018 Dashamir Hoxha,
+# Divesh Uttamchandani
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

@@ -51,7 +51,7 @@ cmd_key_gen() {
         Expire-Date: 1m
         "
     if [[ $pass == 1 ]]; then
-        get_new_passphrase
+        is_true $GUI && PASSPHRASE=$3 || get_new_passphrase
         PARAMETERS+="Passphrase: $PASSPHRASE"
     else
         PARAMETERS+="%no-protection"

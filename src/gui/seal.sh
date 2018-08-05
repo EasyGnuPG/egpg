@@ -1,19 +1,25 @@
-gui_verify() {
-    local file output err msg_type
+gui_seal() {
+    local file output err recipients
 
-    file=$(yad \
-               --file \
-               --title="EasyGnuPG | Verify Signature"\
-               --file-filter="Signature files | *.signature" \
-        ) || return 0
+    file=$(yad --file --title="EasyGnuPG | Seal a File")
+    [[ -n "$file" ]] || return 0
+    if [[ -f "$file.sealed" ]]; then
+        yesno "File already exists:\n<tt>$file.sealed</tt>\n\nDo you want to overwrite it?" || return 0
+        rm -f "$file.sealed"
+    fi
 
-    output=$(call cmd_verify "$file" 2>&1)
+    recipients=$(select_contacts | cut -d"|" -f1)
+    output=$(call cmd_seal "$file" $recipients 2>&1)
     err=$?
-    is_true $DEBUG && echo "$output"
-    [[ $err == 0 ]] && msg_type="info" || msg_type="error"
+    is_true $DEBUG && echo "$output" > /dev/tty
 
-    message $msg_type "<tt>$(echo "$output" | grep '^gpg:' | pango_raw)</tt>"
-    return $err
+    if [[ -s "$file.sealed" ]] && [[ $err == 0 ]]; then
+        yad --file --filename="$file.sealed" &
+        sleep 1
+        message info "File saved as:\n <tt>$file.sealed</tt>"
+    else
+        message error "Failed to seal file.\n" "<tt>$(echo "$output" | grep '^gpg:' | pango_raw)</tt>"
+    fi
 }
 
 #

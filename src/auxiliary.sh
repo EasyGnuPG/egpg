@@ -62,7 +62,7 @@ get_gpg_key(){
     GPG_KEY=$(get_valid_keys | cut -d' ' -f1)
     if [[ -z $GPG_KEY ]]; then
         if is_true $GUI; then
-            gui key-not-found
+            gui key-not-found 
             exit 1
         else
             fail "

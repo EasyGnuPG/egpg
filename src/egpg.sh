@@ -230,7 +230,12 @@ main() {
 
     # set config variables
     EGPG_DIR="${EGPG_DIR:-$HOME/.egpg}"
-    [[ -d "$EGPG_DIR" ]] || fail "No directory '$EGPG_DIR'\nTry first: $(basename $0) init"
+    if [[ ! -d "$EGPG_DIR" ]]; then
+        if is_true $GUI
+            then gui not-initialized || exit 1
+            else fail "No directory '$EGPG_DIR'\nTry first: $(basename $0) init"
+        fi
+    fi
     config
 
     # customize platform dependent functions

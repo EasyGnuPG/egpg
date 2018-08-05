@@ -1,19 +1,22 @@
-gui_verify() {
-    local file output err msg_type
+gui_contacts_details(){
+    local contact_id=$1
 
-    file=$(yad \
-               --file \
-               --title="EasyGnuPG | Verify Signature"\
-               --file-filter="Signature files | *.signature" \
-        ) || return 0
+    details_text="<big><tt> \
+                $(call cmd_contact_list "$1" | pango_raw | sed 's/[^ ]*/\<b\>&\<\/b\>/') \
+                </tt></big>"
 
-    output=$(call cmd_verify "$file" 2>&1)
-    err=$?
-    is_true $DEBUG && echo "$output"
-    [[ $err == 0 ]] && msg_type="info" || msg_type="error"
-
-    message $msg_type "<tt>$(echo "$output" | grep '^gpg:' | pango_raw)</tt>"
-    return $err
+    [[ -z "$contact_id" ]] \
+    && message error "<tt>Please select a contact first.</tt>" \
+    || yad --text="$details_text" \
+           --selectable-labels \
+           --borders=10 \
+           --form \
+           --columns=4 \
+           --field="Delete":FBTN "bash -c 'gui contacts_delete'" \
+           --field="Certify":FBTN "bash -c 'gui contacts_certify'" \
+           --field="Trust":FBTN "bash -c 'gui contacts_trust'" \
+           --field="Export":FBTN "bash -c 'gui contacts_export'" \
+           --button=gtk-quit
 }
 
 #
