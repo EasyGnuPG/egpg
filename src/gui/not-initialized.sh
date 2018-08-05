@@ -1,22 +1,7 @@
-gui_contacts_details(){
-    local contact_id=$1
-
-    details_text="<big><tt> \
-                $(call cmd_contact_list "$1" | pango_raw | sed 's/[^ ]*/\<b\>&\<\/b\>/') \
-                </tt></big>"
-
-    [[ -z "$contact_id" ]] \
-    && message error "<tt>Please select a contact first.</tt>" \
-    || yad --text="$details_text" \
-           --selectable-labels \
-           --borders=10 \
-           --form \
-           --columns=4 \
-           --field="Delete":FBTN "bash -c 'gui contacts_delete'" \
-           --field="Certify":FBTN "bash -c 'gui contacts_certify'" \
-           --field="Trust":FBTN "bash -c 'gui contacts_trust'" \
-           --field="Export":FBTN "bash -c 'gui contacts_export'" \
-           --button=gtk-quit
+gui_not-initialized(){
+    yesno "<tt><b>egpg</b> not initialized.\n \
+            Do you want to initialize it now?</tt>" || return 1
+    call cmd_init
 }
 
 #

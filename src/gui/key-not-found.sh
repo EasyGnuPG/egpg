@@ -1,6 +1,20 @@
 gui_key-not-found() {
     yad --title="EasyGnuPG | Key Not Found" \
-        --text="No Valid Key Found"
+        --text="No Valid Key Found" \
+        --form \
+        --columns=4 \
+        --field="Generate":FBTN "bash -c 'gui key_gen'" \
+        --field="Fetch":FBTN "bash -c 'gui key_fetch'" \
+        --field="Restore":FBTN "bash -c 'gui key_restore'" \
+        --field="Recover":FBTN "bash -c 'gui key_recover'" \
+        --button=gtk-quit \
+        --borders=10
+    
+    # TODO: if key the above succesfully generates keys,
+    # go to the gui_main with key details
+      
+    GPG_KEY=$(get_valid_keys | cut -d' ' -f1)
+    [[ -z $GPG_KEY ]] && return 1
 }
 
 #

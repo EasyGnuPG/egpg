@@ -52,6 +52,8 @@ get_contacts() {
 }
 
 select_contacts() {
+    # TODO: Use checkboxes in front of contacts
+
     get_contacts "$@" | yad --title="EasyGnuPG | Select Contacts" \
     --list \
     --multiple \
