@@ -1,14 +1,5 @@
-gui_contacts_add(){
-    yad --title="EasyGnuPG | Contact Add" \
-        --text="Add a contact" \
-        --form \
-        --columns=4 \
-        --field="Fetch":FBTN "bash -c 'gui contact_fetch'" \
-        --field="Search":FBTN "bash -c 'gui contact_search'" \
-        --field="Receive":FBTN "bash -c 'gui contact_receive'" \
-        --field="Import":FBTN "bash -c 'gui contact_import'" \
-        --button=gtk-quit \
-        --borders=10
+gui_contacts_import(){
+    message error "<tt> ${FUNCNAME[0]}  \n not implemented yet </tt>"
 }
 
 #
