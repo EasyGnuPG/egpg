@@ -1,5 +1,25 @@
 gui_contacts_export(){
-    message error "<tt> ${FUNCNAME[0]}  \n not implemented yet </tt>"
+    contact_id = $1
+
+    # select a destination filename
+    file=$(yad --file --save --title="Export As") || return 1
+
+    if [[ -f "$file" ]]; then
+        yesno "File already exists:\n<tt>$file</tt>\n\nDo you want to overwrite it?" || return 0
+        rm -f "$file"
+    fi
+
+    output=$(call cmd_contact_export $contact_id -o $file)
+    err=$?
+    is_true $DEBUG && echo "$output"
+
+    if [[ -s "$file" ]] && [[ $err == 0 ]]; then
+        yad --file --filename="$file" &
+        sleep 1
+        message info "Contact exported to:\n <tt>$file</tt>"
+    else
+        message error "Failed to export contact.\n" "<tt>$(echo "$output" | grep '^gpg:' | uniq)</tt>"
+    fi
 }
 
 #
