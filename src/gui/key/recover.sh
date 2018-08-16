@@ -12,5 +12,17 @@ gui_key_recover() {
     key1=$(echo $partials | cut -d'|' -f1)
     key2=$(echo $partials | cut -d'|' -f2)
     echo -e $key1 '\n' $key2 > /dev/tty
-    call cmd_key_recover $key1 $key2
+    
+    output=$(call cmd_key_recover $key1 $key2)
+    output=$(call cmd_key_restore $file 2>&1)
+    err=$?
+    is_true $DEBUG && echo "$output"
+
+    if [[ $err == 0 ]]; then
+        # TODO go to the key display interface (main) after closing this
+    else
+        fail_details=$(echo "$output" | grep '^gpg:' | uniq | pango_raw)
+        message error "Failed to recover a key from given files.\n <tt>$fail_details</tt>" 
+        return 1
+    fi
 }

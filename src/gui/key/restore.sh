@@ -7,5 +7,15 @@ gui_key_restore() {
         --button=gtk-yes \
         --button=gtk-quit \
         --borders=10 | cut -d'|' -f1) || return 1
-    call cmd_key_restore $file
+    output=$(call cmd_key_restore $file 2>&1)
+    err=$?
+    is_true $DEBUG && echo "$output"
+
+    if [[ $err == 0 ]]; then
+        # TODO go to the key display interface (main) after closing this
+    else
+        fail_details=$(echo "$output" | grep '^gpg:' | uniq | pango_raw)
+        message error "Failed to resotre key.\n <tt>$fail_details</tt>" 
+        return 1
+    fi
 }
