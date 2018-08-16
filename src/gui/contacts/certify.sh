@@ -1,5 +1,33 @@
 gui_contacts_certify(){
-    message error "<tt> ${FUNCNAME[0]}  \n not implemented yet </tt>"
+    contact_id=$1
+    details=$(yad --title="EasyGnuPG | Certify" \
+        --text="Enter certification details:" \
+        --form \
+        --columns=2 \
+        --field="Level":CB unknown\!onfaith\!casual\!extensive \
+        --field="Certificaion Expiry":DT\
+        --button=gtk-yes \
+        --button=gtk-quit \
+        --borders=10) || return 1
+
+    # TODO: Add option for no expiry; May be a checkbox
+    # TODO: Add checkbox for publish
+    level=$(echo $details | cut -d'|' -f1)
+    exp_time=$(echo $details | cut -d'|' -f2)
+    days=$(( ($(date -d "$exp_time" "+%s") - $(date "+%s") )/(60*60*24) ))
+    echo $level $days > /dev/tty
+    output=$(call cmd_contact_certify "$contact_id" -l "$level" -t "${days}d" 2>&1)
+    err=$?
+    is_true $DEBUG && echo "$output"
+
+    # TODO improve messages
+    if [[ $err == 0 ]]; then
+        message info "Contact $contact_id certified as $level!</tt>"
+    else
+        fail_details=$(echo "$output" | grep '^gpg:' | uniq | pango_raw)
+        message error "Failed to certify contact $contact_id.\n <tt>$fail_details</tt>" 
+        return 1
+    fi
 }
 
 #
