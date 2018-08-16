@@ -1,5 +1,25 @@
 gui_contacts_trust(){
-    message error "<tt> ${FUNCNAME[0]}  \n not implemented yet </tt>"
+    contact_id=$1
+    level=$(yad --title="EasyGnuPG | Trust" \
+        --text="Enter details:" \
+        --form \
+        --field="Level":CB unknown\!none\!marginal\!full \
+        --button=gtk-yes \
+        --button=gtk-quit \
+        --borders=10 | cut -d'|' -f1) || return 1
+
+    output=$(call cmd_contact_trust "$contact_id" -l "$level" 2>&1)
+    err=$?
+    is_true $DEBUG && echo "$output"
+
+    # TODO improve messages
+    if [[ $err == 0 ]]; then
+        message info "Contact $contact_id trusted as $level!"
+    else
+        fail_details=$(echo "$output" | grep '^gpg:' | uniq | pango_raw)
+        message error "Failed to trust contact $contact_id.\n <tt>$fail_details</tt>" 
+        return 1
+    fi
 }
 
 #
