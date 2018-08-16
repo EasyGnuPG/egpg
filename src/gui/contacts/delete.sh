@@ -8,7 +8,7 @@ gui_contacts_delete(){
     # TODO improve messages
     # TODO Think something about force
     if [[ $err == 0 ]]; then
-        message info "Contact $contact_id deleted!</tt>"
+        message info "Contact $contact_id deleted!"
     else
         fail_details=$(echo "$output" | grep '^gpg:' | uniq | pango_raw)
         message error "Failed to delete contact $contact_id.\n <tt>$fail_details</tt>" 

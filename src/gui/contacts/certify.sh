@@ -22,7 +22,7 @@ gui_contacts_certify(){
 
     # TODO improve messages
     if [[ $err == 0 ]]; then
-        message info "Contact $contact_id certified as $level!</tt>"
+        message info "Contact $contact_id certified as $level!"
     else
         fail_details=$(echo "$output" | grep '^gpg:' | uniq | pango_raw)
         message error "Failed to certify contact $contact_id.\n <tt>$fail_details</tt>" 
