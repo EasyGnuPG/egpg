@@ -1,8 +1,7 @@
 gui_contacts_details(){
     local contact_id=$1
-
     details_text="<big><tt> \
-                $(call cmd_contact_list "$1" | pango_raw | sed 's/[^ ]*/\<b\>&\<\/b\>/') \
+                $(call cmd_contact_list "$contact_id" | pango_raw | sed 's/[^ ]*/\<b\>&\<\/b\>/') \
                 </tt></big>"
 
     [[ -z "$contact_id" ]] \
@@ -12,10 +11,10 @@ gui_contacts_details(){
            --borders=10 \
            --form \
            --columns=4 \
-           --field="Delete":FBTN "bash -c 'gui contacts_delete'" \
-           --field="Certify":FBTN "bash -c 'gui contacts_certify'" \
-           --field="Trust":FBTN "bash -c 'gui contacts_trust'" \
-           --field="Export":FBTN "bash -c 'gui contacts_export'" \
+           --field="Delete":FBTN "bash -c 'gui contacts_delete $contact_id'" \
+           --field="Certify":FBTN "bash -c 'gui contacts_certify $contact_id'" \
+           --field="Trust":FBTN "bash -c 'gui contacts_trust $contact_id'" \
+           --field="Export":FBTN "bash -c 'gui contacts_export $contact_id'" \
            --button=gtk-quit
 }
 
