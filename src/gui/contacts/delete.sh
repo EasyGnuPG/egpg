@@ -1,5 +1,19 @@
 gui_contacts_delete(){
-    message error "<tt> ${FUNCNAME[0]}  \n not implemented yet </tt>"
+    contact_id=$1
+    yesno "Delete Contact?" || return 1
+    output=$(call cmd_contact_delete $contact_id --force 2>&1)
+    err=$?
+    is_true $DEBUG && echo "$output"
+
+    # TODO improve messages
+    # TODO Think something about force
+    if [[ $err == 0 ]]; then
+        message info "Contact $contact_id deleted!</tt>"
+    else
+        fail_details=$(echo "$output" | grep '^gpg:' | uniq | pango_raw)
+        message error "Failed to delete contact $contact_id.\n <tt>$fail_details</tt>" 
+        return 1
+    fi
 }
 
 #
