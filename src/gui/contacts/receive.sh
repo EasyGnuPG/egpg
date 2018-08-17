@@ -1,5 +1,32 @@
 gui_contacts_receive(){
-    message error "<tt> ${FUNCNAME[0]}  \n not implemented yet </tt>"
+    details=$(yad --title="EasyGnuPG | Receive Contact" \
+        --text="Enter the contact uri" \
+        --form \
+        --coloumns=2 \
+        --field="KeyID" "" \
+        --field="Keyserver" "$KEYSERVER" \
+        --button=gtk-yes \
+        --button=gtk-quit \
+        --borders=10) || return 1
+
+    keyid=$(echo $details | cut  -d'|' -f1)
+    keyserver=$(echo $details | cut  -d'|' -f2)
+
+    # TODO show a processing dialog or something on its line
+    output=$(call cmd_contact_receive $keyid --keyserver=$keyserver 2>&1)
+    err=$?
+    is_true $DEBUG && echo "$output"
+
+    # TODO improve messages
+    if [[ $err == 0 ]]; then
+        message info "Contact received successfully"
+        # TODO open details of the received contact(if possible)
+        # otherwise open the complete contact list
+    else
+        fail_details=$(echo "$output" | grep '^gpg:' | uniq | pango_raw)
+        message error "Failed to receive contact.\n <tt>$fail_details</tt>" 
+        return 1
+    fi
 }
 
 #
