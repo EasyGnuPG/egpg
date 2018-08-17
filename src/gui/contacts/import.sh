@@ -1,5 +1,28 @@
 gui_contacts_import(){
-    message error "<tt> ${FUNCNAME[0]}  \n not implemented yet </tt>"
+    # Fetch and fetch uri are will be here
+    # TODO add fetch-uri also here
+    file=$(yad --title="EasyGnuPG | Import Contacts" \
+        --text="Select file to import from:" \
+        --form \
+        --field="select file":FL\
+        --button=gtk-yes \
+        --button=gtk-quit \
+        --borders=10 | cut -d'|' -f1) || return 1
+    
+    output=$(call cmd_contact_import $file 2>&1)
+    err=$?
+    is_true $DEBUG && echo "$output"
+
+    # TODO improve messages
+    if [[ $err == 0 ]]; then
+        message info "Contacts imported successfully"
+        # TODO open contact list of the fetched contacts(if possible)
+        # else open the complete contact list
+    else
+        fail_details=$(echo "$output" | grep '^gpg:' | uniq | pango_raw)
+        message error "Failed to import contacts.\n <tt>$fail_details</tt>" 
+        return 1
+    fi
 }
 
 #
