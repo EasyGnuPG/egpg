@@ -1,6 +1,29 @@
 gui_contacts_fetch(){
-    # Fetch and fetch uri are both in fetch
-    message error "<tt> ${FUNCNAME[0]}  \n not implemented yet </tt>"
+    # Fetch and fetch uri are will be here
+    # TODO add fetch-uri also here
+    directory=$(yad --title="EasyGnuPG | Fetch Contact" \
+        --text="Select folder to import from:" \
+        --form \
+        --columns=2 \
+        --field=".gnupg folder":DIR\
+        --button=gtk-yes \
+        --button=gtk-quit \
+        --borders=10 | cut -d'|' -f1) || return 1
+    
+    output=$(call cmd_contact_fetch --homedir $directory 2>&1)
+    err=$?
+    is_true $DEBUG && echo "$output"
+
+    # TODO improve messages
+    if [[ $err == 0 ]]; then
+        message info "Contacts fetched successfully"
+        # TODO open contact list of the fetched contacts(if possible)
+        # else open the complete contact list
+    else
+        fail_details=$(echo "$output" | grep '^gpg:' | uniq | pango_raw)
+        message error "Failed to fetch contacts.\n <tt>$fail_details</tt>" 
+        return 1
+    fi
 }
 
 #

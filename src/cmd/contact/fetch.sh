@@ -31,10 +31,13 @@ cmd_contact_fetch() {
     workdir_make
     local file="$WORKDIR/contacts.asc"
     gpg --homedir="$homedir" --armor --export "$@" > "$file"
+    err=$?
 
     # import from the tmp file
     gpg --import "$file"
+    err1=$?
     workdir_clear
+    [[ $err || $err1 ]] && return 1
 }
 
 #
