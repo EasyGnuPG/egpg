@@ -14,6 +14,8 @@ gui_key_fetch() {
 
     if [[ $err == 0 ]]; then
         # TODO go to the key display interface (main) after closing this
+        # and remove this message
+        message info "key fetched successfully"
     else
         fail_details=$(echo "$output" | grep '^gpg:' | uniq | pango_raw)
         message error "Failed to fetch keys from $homedir.\n <tt>$fail_details</tt>" 

@@ -13,6 +13,8 @@ gui_key_restore() {
 
     if [[ $err == 0 ]]; then
         # TODO go to the key display interface (main) after closing this
+        # and remove this  message
+        message info "key restored successfully"
     else
         fail_details=$(echo "$output" | grep '^gpg:' | uniq | pango_raw)
         message error "Failed to resotre key.\n <tt>$fail_details</tt>" 
