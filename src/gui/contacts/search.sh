@@ -1,21 +1,23 @@
-gui_contacts_details(){
-    local contact_id=$1
-    details_text="<big><tt> \
-                $(call cmd_contact_list "$contact_id" | pango_raw | sed 's/[^ ]*/\<b\>&\<\/b\>/') \
-                </tt></big>"
+gui_contacts_search(){
+    details=$(yad --title="EasyGnuPG | Search Contact" \
+        --text="Enter the contact uri" \
+        --form \
+        --coloumns=2 \
+        --field="Name" "" \
+        --field="Keyserver" "$KEYSERVER" \
+        --button=gtk-yes \
+        --button=gtk-quit \
+        --borders=10) || return 1
 
-    [[ -z "$contact_id" ]] \
-    && message error "<tt>Please select a contact first.</tt>" \
-    || yad --text="$details_text" \
-           --selectable-labels \
-           --borders=10 \
-           --form \
-           --columns=4 \
-           --field="Delete":FBTN "bash -c 'gui contacts_delete $contact_id'" \
-           --field="Certify":FBTN "bash -c 'gui contacts_certify $contact_id'" \
-           --field="Trust":FBTN "bash -c 'gui contacts_trust $contact_id'" \
-           --field="Export":FBTN "bash -c 'gui contacts_export $contact_id'" \
-           --button=gtk-quit
+    name=$(echo $details | cut  -d'|' -f1)
+    keyserver=$(echo $details | cut  -d'|' -f2)
+
+    # TODO show a processing dialog or something on its line
+    # TODO make this work in gui, Currently launcing it in terminal
+    # we may need to use the python scripts
+    GUI='false'
+    gnome-terminal -x egpg contact search $name --keyserver=$keyserver
+    GUI='true'
 }
 
 #

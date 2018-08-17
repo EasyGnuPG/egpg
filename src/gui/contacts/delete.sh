@@ -1,21 +1,19 @@
-gui_contacts_details(){
-    local contact_id=$1
-    details_text="<big><tt> \
-                $(call cmd_contact_list "$contact_id" | pango_raw | sed 's/[^ ]*/\<b\>&\<\/b\>/') \
-                </tt></big>"
+gui_contacts_delete(){
+    contact_id=$1
+    yesno "Delete Contact?" || return 1
+    output=$(call cmd_contact_delete $contact_id --force 2>&1)
+    err=$?
+    is_true $DEBUG && echo "$output"
 
-    [[ -z "$contact_id" ]] \
-    && message error "<tt>Please select a contact first.</tt>" \
-    || yad --text="$details_text" \
-           --selectable-labels \
-           --borders=10 \
-           --form \
-           --columns=4 \
-           --field="Delete":FBTN "bash -c 'gui contacts_delete $contact_id'" \
-           --field="Certify":FBTN "bash -c 'gui contacts_certify $contact_id'" \
-           --field="Trust":FBTN "bash -c 'gui contacts_trust $contact_id'" \
-           --field="Export":FBTN "bash -c 'gui contacts_export $contact_id'" \
-           --button=gtk-quit
+    # TODO improve messages
+    # TODO Think something about force
+    if [[ $err == 0 ]]; then
+        message info "Contact $contact_id deleted!"
+    else
+        fail_details=$(echo "$output" | grep '^gpg:' | uniq | pango_raw)
+        message error "Failed to delete contact $contact_id.\n <tt>$fail_details</tt>" 
+        return 1
+    fi
 }
 
 #

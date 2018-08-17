@@ -1,16 +1,28 @@
-gui_contacts_add(){
-    yad --title="EasyGnuPG | Contact Add" \
-        --text="Add a contact" \
+gui_contacts_import(){
+    # Fetch and fetch uri are will be here
+    # TODO add fetch-uri also here
+    file=$(yad --title="EasyGnuPG | Import Contacts" \
+        --text="Select file to import from:" \
         --form \
-        --columns=4 \
-        --field="Fetch":FBTN "bash -c 'gui contacts_fetch'" \
-        --field="Search":FBTN "bash -c 'gui contacts_search'" \
-        --field="Receive":FBTN "bash -c 'gui contacts_receive'" \
-        --field="Import":FBTN "bash -c 'gui contacts_import'" \
+        --field="select file":FL\
+        --button=gtk-yes \
         --button=gtk-quit \
-        --borders=10
+        --borders=10 | cut -d'|' -f1) || return 1
     
-    # TODO display details of contact if addition was succesful
+    output=$(call cmd_contact_import $file 2>&1)
+    err=$?
+    is_true $DEBUG && echo "$output"
+
+    # TODO improve messages
+    if [[ $err == 0 ]]; then
+        message info "Contacts imported successfully"
+        # TODO open contact list of the fetched contacts(if possible)
+        # else open the complete contact list
+    else
+        fail_details=$(echo "$output" | grep '^gpg:' | uniq | pango_raw)
+        message error "Failed to import contacts.\n <tt>$fail_details</tt>" 
+        return 1
+    fi
 }
 
 #

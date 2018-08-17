@@ -24,7 +24,20 @@ gui_key_gen(){
 
     [[ -z "$passphrase" ]] &&  passphrase="--no-passphrase"
 
-    call cmd_key_gen "$email" "$name" "$passphrase"
+    output=$(call cmd_key_gen "$email" "$name" "$passphrase")
+    output=$(call cmd_key_restore $file 2>&1)
+    err=$?
+    is_true $DEBUG && echo "$output"
+
+    if [[ $err == 0 ]]; then
+        # TODO go to the key display interface (main) after closing this
+        # and remove this message
+        message info "Key generated successfully"
+    else
+        fail_details=$(echo "$output" | grep '^gpg:' | uniq | pango_raw)
+        message error "Failed to generate a key.\n <tt>$fail_details</tt>" 
+        return 1
+    fi
 }
 
 #

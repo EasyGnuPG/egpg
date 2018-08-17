@@ -1,21 +1,25 @@
-gui_contacts_details(){
-    local contact_id=$1
-    details_text="<big><tt> \
-                $(call cmd_contact_list "$contact_id" | pango_raw | sed 's/[^ ]*/\<b\>&\<\/b\>/') \
-                </tt></big>"
+gui_contacts_export(){
+    contact_id = $1
 
-    [[ -z "$contact_id" ]] \
-    && message error "<tt>Please select a contact first.</tt>" \
-    || yad --text="$details_text" \
-           --selectable-labels \
-           --borders=10 \
-           --form \
-           --columns=4 \
-           --field="Delete":FBTN "bash -c 'gui contacts_delete $contact_id'" \
-           --field="Certify":FBTN "bash -c 'gui contacts_certify $contact_id'" \
-           --field="Trust":FBTN "bash -c 'gui contacts_trust $contact_id'" \
-           --field="Export":FBTN "bash -c 'gui contacts_export $contact_id'" \
-           --button=gtk-quit
+    # select a destination filename
+    file=$(yad --file --save --title="Export As") || return 1
+
+    if [[ -f "$file" ]]; then
+        yesno "File already exists:\n<tt>$file</tt>\n\nDo you want to overwrite it?" || return 0
+        rm -f "$file"
+    fi
+
+    output=$(call cmd_contact_export $contact_id -o $file)
+    err=$?
+    is_true $DEBUG && echo "$output"
+
+    if [[ -s "$file" ]] && [[ $err == 0 ]]; then
+        yad --file --filename="$file" &
+        sleep 1
+        message info "Contact exported to:\n <tt>$file</tt>"
+    else
+        message error "Failed to export contact.\n" "<tt>$(echo "$output" | grep '^gpg:' | uniq)</tt>"
+    fi
 }
 
 #
