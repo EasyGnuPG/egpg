@@ -1,5 +1,23 @@
 gui_contacts_search(){
-    message error "<tt> ${FUNCNAME[0]}  \n not implemented yet </tt>"
+    details=$(yad --title="EasyGnuPG | Search Contact" \
+        --text="Enter the contact uri" \
+        --form \
+        --coloumns=2 \
+        --field="Name" "" \
+        --field="Keyserver" "$KEYSERVER" \
+        --button=gtk-yes \
+        --button=gtk-quit \
+        --borders=10) || return 1
+
+    name=$(echo $details | cut  -d'|' -f1)
+    keyserver=$(echo $details | cut  -d'|' -f2)
+
+    # TODO show a processing dialog or something on its line
+    # TODO make this work in gui, Currently launcing it in terminal
+    # we may need to use the python scripts
+    GUI='false'
+    gnome-terminal -x egpg contact search $name --keyserver=$keyserver
+    GUI='true'
 }
 
 #
