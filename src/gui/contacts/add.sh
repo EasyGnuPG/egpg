@@ -3,12 +3,14 @@ gui_contacts_add(){
         --text="Add a contact" \
         --form \
         --columns=4 \
-        --field="Fetch":FBTN "bash -c 'gui contact_fetch'" \
-        --field="Search":FBTN "bash -c 'gui contact_search'" \
-        --field="Receive":FBTN "bash -c 'gui contact_receive'" \
-        --field="Import":FBTN "bash -c 'gui contact_import'" \
+        --field="Fetch":FBTN "bash -c 'gui contacts_fetch'" \
+        --field="Search":FBTN "bash -c 'gui contacts_search'" \
+        --field="Receive":FBTN "bash -c 'gui contacts_receive'" \
+        --field="Import":FBTN "bash -c 'gui contacts_import'" \
         --button=gtk-quit \
         --borders=10
+    
+    # TODO display details of contact if addition was succesful
 }
 
 #
