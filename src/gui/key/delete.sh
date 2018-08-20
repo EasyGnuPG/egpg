@@ -1,5 +1,19 @@
 gui_key_delete(){
-    message error "<tt> ${FUNCNAME[0]}  \n not implemented yet </tt>"
+    yesno "Are you sure you want to delete key?\n <tt>$GPG_KEY</tt>" || return 1
+    output=$(call cmd_key_delete 2>&1)
+    err=$?
+    is_true $DEBUG && echo "$output"
+
+    # TODO improve messages
+    # TODO Think something about force
+    if [[ $err == 0 ]]; then
+        message info "Key <tt>$GPG_KEY</tt> deleted!"
+        # GOTO no key found/switch context etc.
+    else
+        fail_details=$(echo "$output" | grep '^gpg:' | uniq | pango_raw)
+        message error "Failed to delete key <tt>$GPG_KEY</tt>.\n <tt>$fail_details</tt>" 
+        return 1
+    fi
 }
 #
 # This file is part of EasyGnuPG.  EasyGnuPG is a wrapper around GnuPG
