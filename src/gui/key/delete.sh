@@ -1,27 +1,6 @@
-# The main interface of the application.
-
-gui_main() {
-    get_gpg_key
-
-    local out
-    is_true $DEBUG && out='/dev/tty' || out='/dev/null'
-    yad --title="EasyGnuPG" \
-        --text="$(key_info $GPG_KEY)" \
-        --selectable-labels \
-        --borders=10 \
-        --form \
-        --columns=4 \
-        --field="Sign File":FBTN "bash -c 'gui sign'" \
-        --field="Verify File Signature":FBTN "bash -c 'gui verify'" \
-        --field="Seal File(s)":FBTN "bash -c 'gui seal'" \
-        --field="Open Sealed File(s)":FBTN "bash -c 'gui open'" \
-        --field="Manage Key":FBTN "bash -c 'gui key_main'" \
-        --field="Manage Contacts":FBTN "bash -c 'gui contacts_list'" \
-        --field="Settings":FBTN "bash -c 'gui settings'" \
-        --button=gtk-quit \
-        &> $out
+gui_key_delete(){
+    message error "<tt> ${FUNCNAME[0]}  \n not implemented yet </tt>"
 }
-
 #
 # This file is part of EasyGnuPG.  EasyGnuPG is a wrapper around GnuPG
 # to simplify its operations.  Copyright (C) 2018 Dashamir Hoxha,
@@ -39,4 +18,4 @@ gui_main() {
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see http://www.gnu.org/licenses/
-#
+# 
