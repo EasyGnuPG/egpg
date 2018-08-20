@@ -1,5 +1,27 @@
 gui_key_backup(){
-    message error "<tt> ${FUNCNAME[0]}  \n not implemented yet </tt>"
+    details=$(yad --title="EasyGnuPG | Key Backup" \
+            --text="KeyID $GPG_KEY" \
+            --form \
+            --field="QR ENCODE":CHK\
+            --button=gtk-yes \
+            --button=gtk-quit \
+            --borders=10) || return 1
+
+    qrencode=$(echo $details | cut -d'|' -f1)
+    is_true $qrencode && qrencode='--qrencode' || qrencode=''
+    output=$(call cmd_key_backup "$GPG_KEY" $qrencode 2>&1)
+    err=$?
+    is_true $DEBUG && echo "$output"
+
+    # TODO improve messages
+    if [[ $err == 0 ]]; then
+        # TODO: maybe we can also ask/show the backup file location
+        message info "$output"
+    else
+        fail_details=$(echo "$output" | grep '^gpg:' | uniq | pango_raw)
+        message error "Failed to backup key $GPG_KEY.\n <tt>$fail_details</tt>" 
+        return 1
+    fi
 }
 #
 # This file is part of EasyGnuPG.  EasyGnuPG is a wrapper around GnuPG
