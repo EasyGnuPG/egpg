@@ -1,5 +1,20 @@
 gui_key_pass(){
-    message error "<tt> ${FUNCNAME[0]}  \n not implemented yet </tt>"
+    # TODO: maybe we should give option for removing passphrase
+    # though it would require change in cmd_key_pass
+
+    # This is same as cli part. TODO: just change the pinentry to gui pinentry
+    output=$(call cmd_key_pass 2>&1)
+    err=$?
+    is_true $DEBUG && echo "$output"
+
+    # TODO improve messages
+    if [[ $err == 0 ]]; then
+        message info "Passphrase changed"
+    else
+        fail_details=$(echo "$output" | grep '^gpg:' | uniq | pango_raw)
+        message error "Failed to change passphrase for <tt>$GPG_KEY</tt>.\n <tt>$fail_details</tt>" 
+        return 1
+    fi
 }
 #
 # This file is part of EasyGnuPG.  EasyGnuPG is a wrapper around GnuPG
