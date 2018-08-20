@@ -1,5 +1,17 @@
 gui_key_share(){
-    message error "<tt> ${FUNCNAME[0]}  \n not implemented yet </tt>"
+    yesno "Are you sure?\nThis will publish your key <tt>$GPG_KEY</tt> to the keyserver: $KEYSERVER and others" || return 1
+    output=$(call cmd_key_share 2>&1)
+    err=$?
+    is_true $DEBUG && echo "$output"
+
+    # TODO improve messages
+    if [[ $err == 0 ]]; then
+        message info "Key <tt>$GPG_KEY</tt> shared!".
+    else
+        fail_details=$(echo "$output" | grep '^gpg:' | uniq | pango_raw)
+        message error "Failed to share key <tt>$GPG_KEY</tt>.\n <tt>$fail_details</tt>" 
+        return 1
+    fi
 }
 #
 # This file is part of EasyGnuPG.  EasyGnuPG is a wrapper around GnuPG
