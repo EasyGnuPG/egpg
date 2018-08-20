@@ -15,7 +15,6 @@ gui_contacts_certify(){
     level=$(echo $details | cut -d'|' -f1)
     exp_time=$(echo $details | cut -d'|' -f2)
     days=$(( ($(date -d "$exp_time" "+%s") - $(date "+%s") )/(60*60*24) ))
-    echo $level $days > /dev/tty
     output=$(call cmd_contact_certify "$contact_id" -l "$level" -t "${days}d" 2>&1)
     err=$?
     is_true $DEBUG && echo "$output"
