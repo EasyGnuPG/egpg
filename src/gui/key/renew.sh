@@ -1,5 +1,27 @@
 gui_key_renew(){
-    message error "<tt> ${FUNCNAME[0]}  \n not implemented yet </tt>"
+    details=$(yad --title="EasyGnuPG | Key Renew" \
+        --date-format="%Y-%m-%d" \
+        --text="Enter details:" \
+        --form \
+        --field="Expiry":DT\
+        --button=gtk-yes \
+        --button=gtk-quit \
+        --borders=10) || return 1
+
+    # TODO: Add option for no expiry; May be a checkbox
+    exp_time=$(echo $details | cut -d'|' -f1)
+    output=$(call cmd_key_renew "$exp_time" 2>&1)
+    err=$?
+    is_true $DEBUG && echo "$output"
+
+    # TODO improve messages
+    if [[ $err == 0 ]]; then
+        message info "Key $GPG_KEY renewed till $exp_time!"
+    else
+        fail_details=$(echo "$output" | grep '^gpg:' | uniq | pango_raw)
+        message error "Failed to renew key $GPG_KEY.\n <tt>$fail_details</tt>" 
+        return 1
+    fi
 }
 #
 # This file is part of EasyGnuPG.  EasyGnuPG is a wrapper around GnuPG
