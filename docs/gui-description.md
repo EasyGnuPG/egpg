@@ -87,10 +87,10 @@
     
 ### 04. Manage Keys
 
-    ![](img/key-management.png)
+   ![](img/key-management.png)
 
 ### 05. Manage Contacts
 
-    ![](img/contact-modify.png)
+   ![](img/contact-modify.png)
 
-    ![](img/contact-add.png)
+   ![](img/contact-add.png)
