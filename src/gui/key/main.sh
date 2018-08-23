@@ -11,7 +11,7 @@ gui_key_main(){
         --field="Pass":FBTN "bash -c 'gui key_pass '" \
         --field="Renew":FBTN "bash -c 'gui key_renew '" \
         --field="Revcert":FBTN "bash -c 'gui key_revcert '" \
-        --field="Revoke":FBTN "bash -c 'gui key_revoke '" \
+        --field="Revoke":FBTN "bash -c 'gui key_rev '" \
         --field="Share":FBTN "bash -c 'gui key_share '" \
         --field="Split":FBTN "bash -c 'gui key_split '" \
         --button=gtk-quit
