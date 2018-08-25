@@ -1,5 +1,27 @@
 gui_key_split(){
-    message error "<tt> ${FUNCNAME[0]}  \n not implemented yet </tt>"
+    details=$(yad --title="EasyGnuPG | Split Key" \
+        --text="Select folders to split key $GPG_KEY:" \
+        --form \
+        --field="Dongle directory":DIR ""\
+        --field="Backup directory":DIR "$(pwd)"\
+        --button=gtk-yes \
+        --button=gtk-quit \
+        --borders=10) || return 1
+    
+    backup_dir=$(echo $details | cut -d"|" -f1)
+    dongle_dir=$(echo $details | cut -d"|" -f2)
+    output=$(call cmd_key_split -d $dongle_dir -b $backup_dir 2>&1)
+    err=$?
+    is_true $DEBUG && echo "$output"
+
+    # TODO improve messages
+    if [[ $err == 0 ]]; then
+        message info "Key splited successfully"
+    else
+        fail_details=$(echo "$output" | grep '^gpg:' | uniq | pango_raw)
+        message error "Failed to split key $GPG_KEY.\n <tt>$fail_details</tt>" 
+        return 1
+    fi
 }
 #
 # This file is part of EasyGnuPG.  EasyGnuPG is a wrapper around GnuPG
