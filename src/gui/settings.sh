@@ -1,5 +1,5 @@
 gui_settings() {
-    local debug share gnupghome keyserver dongle
+    local debug share gnupghome keyserver dongle gnupghome details
     is_true $DEBUG && debug=true
     is_true $SHARE && share=true
     # TODO: think something about dongle, dongle can use DIR field
