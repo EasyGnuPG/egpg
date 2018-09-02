@@ -1,4 +1,5 @@
 gui_key_recover() {
+    local partials key1 key2 output err
     partials=$(yad --title="EasyGnuPG | Recover" \
         --text="Recover a key from partial files" \
         --form \

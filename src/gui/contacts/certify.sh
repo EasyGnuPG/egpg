@@ -1,4 +1,5 @@
 gui_contacts_certify(){
+    local contact_id details level exp_time days output err fail_details
     contact_id=$1
     details=$(yad --title="EasyGnuPG | Certify" \
         --text="Enter certification details:" \
@@ -15,7 +16,6 @@ gui_contacts_certify(){
     level=$(echo $details | cut -d'|' -f1)
     exp_time=$(echo $details | cut -d'|' -f2)
     days=$(( ($(date -d "$exp_time" "+%s") - $(date "+%s") )/(60*60*24) ))
-    echo $level $days > /dev/tty
     output=$(call cmd_contact_certify "$contact_id" -l "$level" -t "${days}d" 2>&1)
     err=$?
     is_true $DEBUG && echo "$output"

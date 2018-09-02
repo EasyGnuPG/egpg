@@ -1,22 +1,26 @@
-gui_contacts_delete(){
-    local contact_id output err
-    contact_id=$1
-    yesno "Delete Contact?" || return 1
-    output=$(call cmd_contact_delete $contact_id --force 2>&1)
+gui_key_revcert(){
+    local description output err
+    description=$(yad --title="EasyGnuPG | Revcert" \
+        --text="Generate revcert for $GPG_KEY" \
+        --form \
+        --columns=2 \
+        --field="Description" \
+        --button=gtk-yes \
+        --button=gtk-quit \
+        --borders=10 | cut -d'|' -f1)
+    output=$(call cmd_key_revcert $description)
+
     err=$?
     is_true $DEBUG && echo "$output"
 
-    # TODO improve messages
-    # TODO Think something about force
     if [[ $err == 0 ]]; then
-        message info "Contact $contact_id deleted!"
+        message info "Revocation certificate generated successfully"
     else
         fail_details=$(echo "$output" | grep '^gpg:' | uniq | pango_raw)
-        message error "Failed to delete contact $contact_id.\n <tt>$fail_details</tt>" 
+        message error "Failed to generate revocation certificate for $GPG_KEY.\n <tt>$fail_details</tt>" 
         return 1
     fi
 }
-
 #
 # This file is part of EasyGnuPG.  EasyGnuPG is a wrapper around GnuPG
 # to simplify its operations.  Copyright (C) 2018 Dashamir Hoxha,
@@ -34,4 +38,4 @@ gui_contacts_delete(){
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see http://www.gnu.org/licenses/
-#
+# 

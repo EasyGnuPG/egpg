@@ -1,22 +1,22 @@
-gui_contacts_delete(){
-    local contact_id output err
-    contact_id=$1
-    yesno "Delete Contact?" || return 1
-    output=$(call cmd_contact_delete $contact_id --force 2>&1)
+gui_key_pass(){
+    local output err fail_details
+    # TODO: maybe we should give option for removing passphrase
+    # though it would require change in cmd_key_pass
+
+    # This is same as cli part. TODO: just change the pinentry to gui pinentry
+    output=$(call cmd_key_pass 2>&1)
     err=$?
     is_true $DEBUG && echo "$output"
 
     # TODO improve messages
-    # TODO Think something about force
     if [[ $err == 0 ]]; then
-        message info "Contact $contact_id deleted!"
+        message info "Passphrase changed"
     else
         fail_details=$(echo "$output" | grep '^gpg:' | uniq | pango_raw)
-        message error "Failed to delete contact $contact_id.\n <tt>$fail_details</tt>" 
+        message error "Failed to change passphrase for <tt>$GPG_KEY</tt>.\n <tt>$fail_details</tt>" 
         return 1
     fi
 }
-
 #
 # This file is part of EasyGnuPG.  EasyGnuPG is a wrapper around GnuPG
 # to simplify its operations.  Copyright (C) 2018 Dashamir Hoxha,
@@ -34,4 +34,4 @@ gui_contacts_delete(){
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see http://www.gnu.org/licenses/
-#
+# 

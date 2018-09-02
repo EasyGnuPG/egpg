@@ -1,22 +1,29 @@
-gui_contacts_delete(){
-    local contact_id output err
-    contact_id=$1
-    yesno "Delete Contact?" || return 1
-    output=$(call cmd_contact_delete $contact_id --force 2>&1)
+gui_key_renew(){
+    local details exp_time output err
+    details=$(yad --title="EasyGnuPG | Key Renew" \
+        --date-format="%Y-%m-%d" \
+        --text="Enter details:" \
+        --form \
+        --field="Expiry":DT\
+        --button=gtk-yes \
+        --button=gtk-quit \
+        --borders=10) || return 1
+
+    # TODO: Add option for no expiry; May be a checkbox
+    exp_time=$(echo $details | cut -d'|' -f1)
+    output=$(call cmd_key_renew "$exp_time" 2>&1)
     err=$?
     is_true $DEBUG && echo "$output"
 
     # TODO improve messages
-    # TODO Think something about force
     if [[ $err == 0 ]]; then
-        message info "Contact $contact_id deleted!"
+        message info "Key $GPG_KEY renewed till $exp_time!"
     else
         fail_details=$(echo "$output" | grep '^gpg:' | uniq | pango_raw)
-        message error "Failed to delete contact $contact_id.\n <tt>$fail_details</tt>" 
+        message error "Failed to renew key $GPG_KEY.\n <tt>$fail_details</tt>" 
         return 1
     fi
 }
-
 #
 # This file is part of EasyGnuPG.  EasyGnuPG is a wrapper around GnuPG
 # to simplify its operations.  Copyright (C) 2018 Dashamir Hoxha,
@@ -34,4 +41,4 @@ gui_contacts_delete(){
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see http://www.gnu.org/licenses/
-#
+# 

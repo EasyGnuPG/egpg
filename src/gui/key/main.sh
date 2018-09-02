@@ -1,29 +1,24 @@
-# The main interface of the application.
-
-gui_main() {
-    get_gpg_key
-
-    local out
-    is_true $DEBUG && out='/dev/tty' || out='/dev/null'
-    yad --title="EasyGnuPG" \
-        --text="$(key_info $GPG_KEY)" \
+gui_key_main(){
+    # TODO: Think about the description if it is necessary
+    # also do we require any more details??
+    yad --text="$(key_info $GPG_KEY)" \
         --selectable-labels \
         --borders=10 \
         --form \
         --columns=4 \
-        --field="Sign File":FBTN "bash -c 'gui sign'" \
-        --field="Verify File Signature":FBTN "bash -c 'gui verify'" \
-        --field="Seal File(s)":FBTN "bash -c 'gui seal'" \
-        --field="Open Sealed File(s)":FBTN "bash -c 'gui open'" \
-        --field="Manage Key":FBTN "bash -c 'gui key_main'" \
-        --field="Manage Contacts":FBTN "bash -c 'gui contacts_list'" \
-        --field="Settings":FBTN "bash -c 'gui settings'" \
-        --button=gtk-quit \
-        &> $out
+        --field="Delete":FBTN "bash -c 'gui key_delete'" \
+        --field="Backup":FBTN "bash -c 'gui key_backup '" \
+        --field="Pass":FBTN "bash -c 'gui key_pass '" \
+        --field="Renew":FBTN "bash -c 'gui key_renew '" \
+        --field="Revcert":FBTN "bash -c 'gui key_revcert '" \
+        --field="Revoke":FBTN "bash -c 'gui key_rev '" \
+        --field="Share":FBTN "bash -c 'gui key_share '" \
+        --field="Split":FBTN "bash -c 'gui key_split '" \
+        --button=gtk-quit
 }
 
 #
-# This file is part of EasyGnuPG.  EasyGnuPG is a wrapper around GnuPG
+# This file is part of EasyGnuPG.  EasyGnuPG is a wrappe`r around GnuPG
 # to simplify its operations.  Copyright (C) 2018 Dashamir Hoxha,
 # Divesh Uttamchandani
 #

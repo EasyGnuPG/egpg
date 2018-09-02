@@ -1,4 +1,5 @@
 gui_contacts_receive(){
+    local receive details keyid keyserver output err fail_details
     details=$(yad --title="EasyGnuPG | Receive Contact" \
         --text="Enter the contact uri" \
         --form \

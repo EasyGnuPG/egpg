@@ -1,4 +1,5 @@
 gui_contacts_import(){
+    local file output err fail_details
     # Fetch and fetch uri are will be here
     # TODO add fetch-uri also here
     file=$(yad --title="EasyGnuPG | Import Contacts" \

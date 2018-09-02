@@ -1,4 +1,5 @@
 gui_contacts_trust(){
+    local contact_id level output err fail_details
     contact_id=$1
     level=$(yad --title="EasyGnuPG | Trust" \
         --text="Enter details:" \

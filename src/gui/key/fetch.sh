@@ -1,4 +1,5 @@
 gui_key_fetch() {
+    local homedir output err
     homedir=$(yad --title="EasyGnuPG | Fetch" \
         --text="Fetch a key from another directory" \
         --form \
