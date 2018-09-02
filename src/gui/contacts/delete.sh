@@ -1,4 +1,5 @@
 gui_contacts_delete(){
+    local contact_id output err
     contact_id=$1
     yesno "Delete Contact?" || return 1
     output=$(call cmd_contact_delete $contact_id --force 2>&1)

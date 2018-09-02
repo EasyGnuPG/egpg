@@ -1,4 +1,5 @@
 gui_key_renew(){
+    local details exp_time output err
     details=$(yad --title="EasyGnuPG | Key Renew" \
         --date-format="%Y-%m-%d" \
         --text="Enter details:" \

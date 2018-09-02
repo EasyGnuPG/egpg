@@ -1,4 +1,5 @@
 gui_key_rev(){
+    local revcert output err
     get_gpg_key
     revcert=$(yad --title="EasyGnuPG | Revoke Key" \
             --text="Select a revocation certificate" \

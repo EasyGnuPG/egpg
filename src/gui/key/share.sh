@@ -1,4 +1,5 @@
 gui_key_share(){
+    local output err
     yesno "Are you sure?\nThis will publish your key <tt>$GPG_KEY</tt> to the keyserver: $KEYSERVER and others" || return 1
     output=$(call cmd_key_share 2>&1)
     err=$?

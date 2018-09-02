@@ -1,4 +1,5 @@
 gui_contacts_export(){
+    local contact_id file output err
     contact_id = $1
 
     # select a destination filename

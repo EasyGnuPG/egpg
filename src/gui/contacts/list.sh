@@ -1,6 +1,7 @@
 export tmpfile=$(mktemp)
 
 on_select() {
+    local selected
     selected=$1
     echo $selected > $tmpfile
 }

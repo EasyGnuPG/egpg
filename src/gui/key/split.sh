@@ -1,4 +1,5 @@
 gui_key_split(){
+    local details backup_dir dongle_dir output err
     details=$(yad --title="EasyGnuPG | Split Key" \
         --text="Select folders to split key $GPG_KEY:" \
         --form \

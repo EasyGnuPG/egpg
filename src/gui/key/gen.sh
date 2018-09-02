@@ -1,4 +1,5 @@
 gui_key_gen(){
+    local key_details email name passphrase confirm output err
     # TODO: Improve the no-passphrase with using checkbox
     key_details="$(yad --title="EasyGnuPG | Generate Key" \
            --text="Enter details for the key\nLeave passphrases fields blank for no passphrase" \

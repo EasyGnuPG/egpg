@@ -1,4 +1,5 @@
 gui_key_delete(){
+    local output err
     yesno "Are you sure you want to delete key?\n <tt>$GPG_KEY</tt>" || return 1
     output=$(call cmd_key_delete 2>&1)
     err=$?

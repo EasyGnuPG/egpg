@@ -1,4 +1,5 @@
 gui_contacts_fetch(){
+    local directory output err fail_details
     # Fetch and fetch uri are will be here
     # TODO add fetch-uri also here
     directory=$(yad --title="EasyGnuPG | Fetch Contact" \

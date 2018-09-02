@@ -1,4 +1,5 @@
 gui_key_revcert(){
+    local description output err
     description=$(yad --title="EasyGnuPG | Revcert" \
         --text="Generate revcert for $GPG_KEY" \
         --form \

@@ -1,4 +1,5 @@
 gui_key_backup(){
+    local details qrencode output err
     details=$(yad --title="EasyGnuPG | Key Backup" \
             --text="KeyID $GPG_KEY" \
             --form \

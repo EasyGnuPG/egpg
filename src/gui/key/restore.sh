@@ -1,4 +1,5 @@
 gui_key_restore() {
+    local file output err
     file=$(yad --title="EasyGnuPG | Restore" \
         --text="Retore a key from backup file" \
         --form \

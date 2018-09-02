@@ -1,5 +1,6 @@
 gui_contacts_details(){
-    local contact_id=$1
+    local contact_id details_text
+    contact_id=$1
     details_text="<big><tt> \
                 $(call cmd_contact_list "$contact_id" | pango_raw | sed 's/[^ ]*/\<b\>&\<\/b\>/') \
                 </tt></big>"

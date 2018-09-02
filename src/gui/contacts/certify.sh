@@ -1,4 +1,5 @@
 gui_contacts_certify(){
+    local contact_id details level exp_time days output err fail_details
     contact_id=$1
     details=$(yad --title="EasyGnuPG | Certify" \
         --text="Enter certification details:" \

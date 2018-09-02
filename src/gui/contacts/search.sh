@@ -1,4 +1,5 @@
 gui_contacts_search(){
+    local details name keyserver
     details=$(yad --title="EasyGnuPG | Search Contact" \
         --text="Enter the contact uri" \
         --form \

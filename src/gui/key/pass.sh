@@ -1,4 +1,5 @@
 gui_key_pass(){
+    local output err fail_details
     # TODO: maybe we should give option for removing passphrase
     # though it would require change in cmd_key_pass
 
